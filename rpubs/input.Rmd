@@ -146,7 +146,9 @@ ggplot(dat, aes(x = `Wired/Wireless`, y = `Latency (in ms)`, color = `Wired/Wire
 
 
 ```{r, echo=FALSE, warning=FALSE}
-ggplot(dat) +
+dat %>%
+  arrange(`Latency (in ms)`) %>%
+  ggplot() +
   geom_point(aes(x = 1:nrow(dat), y = `Latency (in ms)`, color = `Wired/Wireless`)) +
   scale_color_manual(values = c("Wired" = '#2708A0', "Wireless" = '#F9C80E')) +
   geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
