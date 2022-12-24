@@ -12,6 +12,14 @@ int pinButton = 5; // Pulls button LOW
 int pinMister = 2; // Registers press (needs to be an interrupt pin)
  
 int delayPress = 16; // Time between HIGH and LOW toggles
+
+// Additional time to wait if a press is taking too long to respond
+// If you see mostly awful values (with ~233ms max) with a few really good ones (<1ms) you may want to increase this
+int maxExtraDelayPress = 200; 
+
+volatile long unsigned extraDelayStartTime; // For tracking time until maxExtraDelayPress
+
+bool pressRegistered = true; // For tracking if additional waiting is needed
  
 void setup() {
   // I wanted decent random seed generation. This isn't perfect but it does the job much better than just reading a blank pin.
@@ -36,9 +44,21 @@ void setup() {
  
 void loop() {
  
-  // Random button presses
+  // Make button press time random (on microsecond scale)
   delayMicroseconds(random(0, 1000));
  
+  
+  // Verify that press has registered before resetting timer
+  extraDelayStartTime = micros();
+  
+  // Wait out the additional time if the last press still hasn't registered
+  while (!pressRegistered) {
+    if (micros() - extraDelayStartTime >= maxExtraDelayPress) {
+      pressRegistered == true;
+    }
+  }
+  
+  
   // Start timer
   startMicros = micros();
   
@@ -67,5 +87,6 @@ void timeArrival(){
   Serial.print(ISRCounter);
   Serial.print(", ");
   Serial.println(duration / float(1000));
+  pressRegistered == true;
   
 }
