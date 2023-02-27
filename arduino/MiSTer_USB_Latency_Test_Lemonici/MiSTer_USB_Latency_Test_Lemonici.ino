@@ -54,12 +54,13 @@ void loop() {
   // Wait out the additional time if the last press still hasn't registered
   while (!pressRegistered) {
     if (micros() - extraDelayStartTime >= maxExtraDelayPress) {
-      pressRegistered == true;
+      pressRegistered = true;
     }
   }
   
   
-  // Start timer
+  // Reset press check and start timer
+  pressRegistered = false;
   startMicros = micros();
   
   // Controller button to ground
@@ -87,6 +88,6 @@ void timeArrival(){
   Serial.print(ISRCounter);
   Serial.print(", ");
   Serial.println(duration / float(1000));
-  pressRegistered == true;
+  pressRegistered = true;
   
 }
