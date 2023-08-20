@@ -25,6 +25,7 @@ dat <- dat_raw %>%
     "Wired/Wireless" = `Wired / Wireless`,
     "WirelessConnection" = `Wireless Connection`,
     `Home Button`,
+    `Latency Tier`,
     "Latency (in ms)" = `Average Measured Latency (in ms)`,
     "SD" = `Standard Deviation of Measured Latency (in ms)`,
     "Max" = `Max Measured Latency (in ms)`,
@@ -64,9 +65,12 @@ bscols(widths = c(12),
     filter_checkbox("Category", "Category", shared_dat, ~Category,
                     inline = TRUE),
     filter_checkbox("Face Buttons", "Face Buttons", shared_dat, ~`Face Buttons`,
+                    inline = TRUE),
+    filter_checkbox("Latency Tier", "Latency Tier", shared_dat, ~`Latency Tier`,
                     inline = TRUE)
     )
-  )
+)
+
 
 datatable(shared_dat,
           options = list(
