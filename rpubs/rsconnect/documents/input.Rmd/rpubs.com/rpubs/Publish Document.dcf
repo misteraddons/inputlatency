@@ -3,9 +3,8 @@ title:
 username:
 account: rpubs
 server: rpubs.com
-envVars: rpubs.com
-hostUrl: https://api.rpubs.com/api/v1/document/946885/f9af5dbd120b4e32819d5ed1253ceeaa
-appId: https://api.rpubs.com/api/v1/document/946885/f9af5dbd120b4e32819d5ed1253ceeaa
-bundleId: http://rpubs.com/misteraddons/946885
-url: 1692561892.22656
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/1204484/75ce6d224d1545e7b4502a748ac83011
+bundleId: https://api.rpubs.com/api/v1/document/1204484/75ce6d224d1545e7b4502a748ac83011
+url: http://rpubs.com/publish/claim/1204484/19843d117a294386b97935fabebcfb99
 version: 1
