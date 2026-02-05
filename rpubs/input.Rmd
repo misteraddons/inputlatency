@@ -55,6 +55,28 @@ truncate_name <- function(name, max_chars = 40) {
          paste0(substr(name, 1, max_chars - 3), "..."),
          name)
 }
+
+# Color palettes for consistent styling
+connection_colors <- c(
+  "Wired" = "#2ECC71",
+  "Wireless" = "#9B59B6"
+)
+
+category_colors <- c(
+  "Arcade Stick" = "#E74C3C",
+  "Controller" = "#3498DB",
+  "Adapter" = "#F39C12",
+  "Arcade Encoder" = "#1ABC9C",
+  "Gamepad" = "#3498DB",
+  "Flight Stick" = "#E67E22",
+  "Racing Wheel" = "#34495E",
+  "Other" = "#95A5A6"
+)
+
+wireless_type_colors <- c(
+  "Bluetooth" = "#8E44AD",
+  "2.4 GHz" = "#16A085"
+)
 ```
 
 ```{r load-gsheet-data, echo=FALSE, warning=FALSE}
@@ -259,7 +281,7 @@ p_wired <- dat %>%
              color = `Wired/Wireless`, text = DeviceClean)) +
   geom_boxplot(outlier.shape = NA) +
   geom_jitter(width = 0.2, alpha = 0.6, size = 2) +
-  scale_color_manual(values = c(`Wired` = '#F9C80E', `Wireless` = '#2708A0')) +
+  scale_color_manual(values = connection_colors) +
   geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
   labs(title = "Wired vs. Wireless Latency Distribution") +
   theme_minimal() +
@@ -283,7 +305,7 @@ if (nrow(wireless_dat) > 0) {
                color = WirelessConnection, text = DeviceClean)) +
     geom_boxplot(outlier.shape = NA) +
     geom_jitter(width = 0.2, alpha = 0.6, size = 2) +
-    scale_color_manual(values = c("Bluetooth" = '#2708A0', "2.4 GHz" = '#F9C80E')) +
+    scale_color_manual(values = wireless_type_colors) +
     geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
     xlab("Wireless Type") +
     ylab("Latency (in ms)") +
@@ -309,7 +331,7 @@ p_rank <- dat_ranked %>%
   ggplot(aes(x = Rank, y = `Latency (in ms)`,
              color = `Wired/Wireless`, text = DeviceClean)) +
   geom_point(alpha = 0.7, size = 2.5) +
-  scale_color_manual(values = c("Wired" = '#F9C80E', "Wireless" = '#2708A0')) +
+  scale_color_manual(values = connection_colors) +
   geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
   xlab("Rank (Lower = Better)") +
   ylab("Latency (in ms)") +
@@ -329,8 +351,9 @@ p_category <- dat %>%
   filter(!is.na(Category)) %>%
   ggplot(aes(x = reorder(Category, `Latency (in ms)`, FUN = median),
              y = `Latency (in ms)`, fill = Category, text = DeviceClean)) +
-  geom_boxplot(alpha = 0.6, outlier.shape = NA) +
+  geom_boxplot(alpha = 0.7, outlier.shape = NA) +
   geom_jitter(width = 0.2, alpha = 0.6, size = 2) +
+  scale_fill_manual(values = category_colors) +
   geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
   coord_flip() +
   labs(title = "Latency Distribution by Category",
