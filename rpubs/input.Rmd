@@ -324,13 +324,13 @@ ggplotly(p_rank, tooltip = c("text", "y", "x"), width = 1200, height = 500) %>%
 
 ## Category Comparison
 
-```{r category-violin-plotly, echo=FALSE, fig.height=10, fig.width=14, warning=FALSE}
+```{r category-boxplot-plotly, echo=FALSE, fig.height=10, fig.width=14, warning=FALSE}
 p_category <- dat %>%
   filter(!is.na(Category)) %>%
   ggplot(aes(x = reorder(Category, `Latency (in ms)`, FUN = median),
              y = `Latency (in ms)`, fill = Category, text = DeviceClean)) +
-  geom_violin(alpha = 0.7) +
-  geom_jitter(width = 0.15, alpha = 0.5, size = 1.5) +
+  geom_boxplot(alpha = 0.6, outlier.shape = NA) +
+  geom_jitter(width = 0.2, alpha = 0.6, size = 2) +
   geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
   coord_flip() +
   labs(title = "Latency Distribution by Category",
