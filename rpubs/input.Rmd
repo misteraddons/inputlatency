@@ -6,6 +6,40 @@ output:
     theme: cosmo
 ---
 
+<style>
+/* Wider container */
+.main-container {
+  max-width: 1600px !important;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Make tables scroll horizontally on small screens */
+.dataTables_wrapper {
+  overflow-x: auto;
+}
+
+/* Improve plotly chart container */
+.plotly {
+  width: 100% !important;
+}
+
+/* Better spacing for filter checkboxes */
+.crosstalk-input-checkboxgroup label {
+  margin-right: 15px;
+  white-space: nowrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .main-container {
+    max-width: 95% !important;
+  }
+}
+</style>
+
 ```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(ggplot2)
@@ -14,6 +48,13 @@ library(DT)
 library(crosstalk)
 library(plotly)
 library(htmlwidgets)
+
+# Helper function to truncate long device names
+truncate_name <- function(name, max_chars = 40) {
+  ifelse(nchar(name) > max_chars,
+         paste0(substr(name, 1, max_chars - 3), "..."),
+         name)
+}
 ```
 
 ```{r load-gsheet-data, echo=FALSE, warning=FALSE}
@@ -211,26 +252,28 @@ In all plots, the dashed red line corresponds to one frame (16.67 ms at 60 Hz).
 
 ## Wired vs. Wireless
 
-```{r wired-wireless-plotly, echo=FALSE, fig.height=8, warning=FALSE}
+```{r wired-wireless-plotly, echo=FALSE, fig.height=8, fig.width=12, warning=FALSE}
 p_wired <- dat %>%
   filter(!is.na(`Wired/Wireless`)) %>%
   ggplot(aes(x = `Wired/Wireless`, y = `Latency (in ms)`,
              color = `Wired/Wireless`, text = DeviceClean)) +
   geom_boxplot(outlier.shape = NA) +
-  geom_jitter(width = 0.2, alpha = 0.6) +
+  geom_jitter(width = 0.2, alpha = 0.6, size = 2) +
   scale_color_manual(values = c(`Wired` = '#2708A0', `Wireless` = '#F9C80E')) +
   geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
   labs(title = "Wired vs. Wireless Latency Distribution") +
   theme_minimal() +
-  theme(legend.position = "none")
+  theme(legend.position = "none",
+        axis.text = element_text(size = 11),
+        axis.title = element_text(size = 12))
 
-ggplotly(p_wired, tooltip = c("text", "y")) %>%
+ggplotly(p_wired, tooltip = c("text", "y"), width = 1000, height = 500) %>%
   layout(hovermode = "closest")
 ```
 
 ## Bluetooth vs. 2.4 GHz Wireless
 
-```{r bt-vs-24ghz-plotly, echo=FALSE, fig.height=8, warning=FALSE}
+```{r bt-vs-24ghz-plotly, echo=FALSE, fig.height=8, fig.width=12, warning=FALSE}
 wireless_dat <- dat %>%
   filter(WirelessConnection %in% c("Bluetooth", "2.4 GHz"))
 
@@ -239,23 +282,25 @@ if (nrow(wireless_dat) > 0) {
     ggplot(aes(x = WirelessConnection, y = `Latency (in ms)`,
                color = WirelessConnection, text = DeviceClean)) +
     geom_boxplot(outlier.shape = NA) +
-    geom_jitter(width = 0.2, alpha = 0.6) +
+    geom_jitter(width = 0.2, alpha = 0.6, size = 2) +
     scale_color_manual(values = c("Bluetooth" = '#2708A0', "2.4 GHz" = '#F9C80E')) +
     geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
     xlab("Wireless Type") +
     ylab("Latency (in ms)") +
     labs(title = "Bluetooth vs. 2.4 GHz Wireless Latency") +
     theme_minimal() +
-    theme(legend.position = "none")
+    theme(legend.position = "none",
+          axis.text = element_text(size = 11),
+          axis.title = element_text(size = 12))
 
-  ggplotly(p_wireless, tooltip = c("text", "y")) %>%
+  ggplotly(p_wireless, tooltip = c("text", "y"), width = 1000, height = 500) %>%
     layout(hovermode = "closest")
 }
 ```
 
 ## Latency by Rank
 
-```{r latency-rank-plotly, echo=FALSE, warning=FALSE}
+```{r latency-rank-plotly, echo=FALSE, fig.width=14, warning=FALSE}
 dat_ranked <- dat %>%
   arrange(`Latency (in ms)`) %>%
   mutate(Rank = row_number())
@@ -263,35 +308,39 @@ dat_ranked <- dat %>%
 p_rank <- dat_ranked %>%
   ggplot(aes(x = Rank, y = `Latency (in ms)`,
              color = `Wired/Wireless`, text = DeviceClean)) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.7, size = 2.5) +
   scale_color_manual(values = c("Wired" = '#2708A0', "Wireless" = '#F9C80E')) +
   geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
   xlab("Rank (Lower = Better)") +
   ylab("Latency (in ms)") +
   labs(title = "Latency by Rank") +
-  theme_minimal()
+  theme_minimal() +
+  theme(axis.text = element_text(size = 11),
+        axis.title = element_text(size = 12))
 
-ggplotly(p_rank, tooltip = c("text", "y", "x")) %>%
+ggplotly(p_rank, tooltip = c("text", "y", "x"), width = 1200, height = 500) %>%
   layout(hovermode = "closest")
 ```
 
 ## Category Comparison
 
-```{r category-violin-plotly, echo=FALSE, fig.height=10, warning=FALSE}
+```{r category-violin-plotly, echo=FALSE, fig.height=10, fig.width=14, warning=FALSE}
 p_category <- dat %>%
   filter(!is.na(Category)) %>%
   ggplot(aes(x = reorder(Category, `Latency (in ms)`, FUN = median),
              y = `Latency (in ms)`, fill = Category, text = DeviceClean)) +
   geom_violin(alpha = 0.7) +
-  geom_jitter(width = 0.15, alpha = 0.5, size = 1) +
+  geom_jitter(width = 0.15, alpha = 0.5, size = 1.5) +
   geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
   coord_flip() +
   labs(title = "Latency Distribution by Category",
        x = "Category", y = "Latency (in ms)") +
   theme_minimal() +
-  theme(legend.position = "none")
+  theme(legend.position = "none",
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
 
-ggplotly(p_category, tooltip = c("text", "y")) %>%
+ggplotly(p_category, tooltip = c("text", "y"), width = 1200, height = 600) %>%
   layout(hovermode = "closest")
 ```
 
@@ -332,30 +381,32 @@ if (nrow(raw_stats) > 0) {
 
 ## Latency Distribution by Device
 
-```{r raw-histogram-plotly, echo=FALSE, fig.height=8, warning=FALSE}
+```{r raw-histogram-plotly, echo=FALSE, fig.height=10, fig.width=14, warning=FALSE}
 if (nrow(raw_data) > 0) {
-  # Get top 20 devices by reading count for cleaner visualization
+  # Get top 16 devices by reading count for cleaner visualization
   top_devices <- raw_data %>%
     count(Device) %>%
     arrange(desc(n)) %>%
-    head(20) %>%
+    head(16) %>%
     pull(Device)
 
   raw_subset <- raw_data %>%
-    filter(Device %in% top_devices)
+    filter(Device %in% top_devices) %>%
+    mutate(DeviceShort = truncate_name(Device, 35))
 
   p_hist <- raw_subset %>%
-    ggplot(aes(x = delay, fill = Device)) +
-    geom_histogram(bins = 50, alpha = 0.7, position = "identity") +
-    facet_wrap(~Device, scales = "free_y", ncol = 4) +
+    ggplot(aes(x = delay, fill = DeviceShort)) +
+    geom_histogram(bins = 40, alpha = 0.7, position = "identity") +
+    facet_wrap(~DeviceShort, scales = "free_y", ncol = 4) +
     geom_vline(xintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
     labs(title = "Latency Distribution (Raw Data)",
          x = "Latency (ms)", y = "Count") +
     theme_minimal() +
     theme(legend.position = "none",
-          strip.text = element_text(size = 7))
+          strip.text = element_text(size = 8),
+          axis.text = element_text(size = 7))
 
-  ggplotly(p_hist) %>%
+  ggplotly(p_hist, height = 600, width = 1400) %>%
     layout(hovermode = "closest")
 }
 ```
@@ -364,7 +415,7 @@ if (nrow(raw_data) > 0) {
 
 Shows first 200 readings to reveal polling patterns and sawtooth cycles.
 
-```{r raw-timeseries-plotly, echo=FALSE, fig.height=10, warning=FALSE}
+```{r raw-timeseries-plotly, echo=FALSE, fig.height=12, fig.width=14, warning=FALSE}
 if (nrow(raw_data) > 0) {
   # Select a subset of interesting devices for pattern analysis
   pattern_devices <- raw_data %>%
@@ -381,21 +432,23 @@ if (nrow(raw_data) > 0) {
       pull(Device)
 
     pattern_subset <- pattern_devices %>%
-      filter(Device %in% selected_devices)
+      filter(Device %in% selected_devices) %>%
+      mutate(DeviceShort = truncate_name(Device, 40))
 
     p_pattern <- pattern_subset %>%
-      ggplot(aes(x = read, y = delay, color = Device)) +
+      ggplot(aes(x = read, y = delay, color = DeviceShort)) +
       geom_line(alpha = 0.7) +
       geom_point(size = 0.5, alpha = 0.5) +
-      facet_wrap(~Device, scales = "free_y", ncol = 2) +
+      facet_wrap(~DeviceShort, scales = "free_y", ncol = 2) +
       geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
       labs(title = "Latency Time Series (First 200 Readings)",
            subtitle = "Look for periodic sawtooth patterns indicating polling intervals",
            x = "Reading Number", y = "Latency (ms)") +
       theme_minimal() +
-      theme(legend.position = "none")
+      theme(legend.position = "none",
+            strip.text = element_text(size = 9))
 
-    ggplotly(p_pattern) %>%
+    ggplotly(p_pattern, height = 700, width = 1400) %>%
       layout(hovermode = "closest")
   }
 }
@@ -405,11 +458,12 @@ if (nrow(raw_data) > 0) {
 
 Devices with higher consistency scores have more predictable latency (less variance relative to mean).
 
-```{r consistency-plotly, echo=FALSE, warning=FALSE}
+```{r consistency-plotly, echo=FALSE, fig.width=12, warning=FALSE}
 if (nrow(raw_stats) > 0) {
   p_consistency <- raw_stats %>%
     filter(!is.na(Consistency)) %>%
-    ggplot(aes(x = RawMean, y = Consistency, text = Device)) +
+    mutate(DeviceShort = truncate_name(Device, 40)) %>%
+    ggplot(aes(x = RawMean, y = Consistency, text = DeviceShort)) +
     geom_point(aes(size = N), alpha = 0.7, color = '#2708A0') +
     geom_hline(yintercept = 90, color = '#22A722', linetype = "dashed") +
     geom_vline(xintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
@@ -417,9 +471,11 @@ if (nrow(raw_stats) > 0) {
          subtitle = "Green line: 90% consistency threshold. Red line: one frame.",
          x = "Mean Latency (ms)", y = "Consistency Score (%)",
          size = "# Readings") +
-    theme_minimal()
+    theme_minimal() +
+    theme(axis.text = element_text(size = 10),
+          axis.title = element_text(size = 11))
 
-  ggplotly(p_consistency, tooltip = c("text", "x", "y")) %>%
+  ggplotly(p_consistency, tooltip = c("text", "x", "y"), width = 1200, height = 500) %>%
     layout(hovermode = "closest")
 }
 ```
@@ -430,20 +486,23 @@ These plots show approximate latency ranges using 95% confidence intervals. Due 
 
 ## Wired Device Latency Ranges
 
-```{r wired-errorbar, echo=FALSE, fig.height=15, warning=FALSE}
+```{r wired-errorbar, echo=FALSE, fig.height=18, fig.width=14, warning=FALSE}
 wired_plot_dat <- dat %>%
   filter(`Wired/Wireless` == "Wired") %>%
-  mutate(DeviceLabel = gsub("<[^>]+>", "", Device)) # Remove HTML for plotting
+  mutate(
+    DeviceLabel = gsub("<[^>]+>", "", Device),
+    DeviceShort = truncate_name(DeviceLabel, 50)
+  )
 
 if (nrow(wired_plot_dat) > 0) {
   p_wired_range <- wired_plot_dat %>%
-    ggplot(aes(x = reorder(DeviceLabel, desc(`Latency (in ms)`)),
+    ggplot(aes(x = reorder(DeviceShort, desc(`Latency (in ms)`)),
                y = `Latency (in ms)`,
                text = paste0(DeviceLabel, "\nLatency: ", round(`Latency (in ms)`, 2), " ms"))) +
     geom_errorbar(aes(ymin = `SD down`, ymax = `SD up`,
                       color = factor(Imputed, levels = c(TRUE, FALSE))),
                   width = 0.3) +
-    geom_point(size = 1) +
+    geom_point(size = 1.5) +
     geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
     geom_hline(yintercept = 0, color = '#2708A0', alpha = 0.3) +
     coord_flip() +
@@ -451,31 +510,36 @@ if (nrow(wired_plot_dat) > 0) {
                        labels = c("TRUE" = "Imputed SD", "FALSE" = "Measured SD")) +
     labs(title = "Wired Device Latency Ranges (95% CI)",
          caption = "Note: Ranges assume normal distribution. Red bars indicate imputed standard deviation.",
-         x = "Device", y = "Latency (ms)", color = "SD Source") +
+         x = "", y = "Latency (ms)", color = "SD Source") +
     theme_minimal() +
-    theme(axis.text.y = element_text(size = 7))
+    theme(axis.text.y = element_text(size = 8),
+          plot.margin = margin(10, 10, 10, 10))
 
-  ggplotly(p_wired_range, tooltip = "text") %>%
-    layout(hovermode = "closest")
+  ggplotly(p_wired_range, tooltip = "text", height = 900, width = 1400) %>%
+    layout(hovermode = "closest",
+           margin = list(l = 250))
 }
 ```
 
 ## Wireless Device Latency Ranges
 
-```{r wireless-errorbar, echo=FALSE, fig.height=10, warning=FALSE}
+```{r wireless-errorbar, echo=FALSE, fig.height=12, fig.width=14, warning=FALSE}
 wireless_plot_dat <- dat %>%
   filter(`Wired/Wireless` == "Wireless") %>%
-  mutate(DeviceLabel = gsub("<[^>]+>", "", Device))
+  mutate(
+    DeviceLabel = gsub("<[^>]+>", "", Device),
+    DeviceShort = truncate_name(DeviceLabel, 50)
+  )
 
 if (nrow(wireless_plot_dat) > 0) {
   p_wireless_range <- wireless_plot_dat %>%
-    ggplot(aes(x = reorder(DeviceLabel, desc(`Latency (in ms)`)),
+    ggplot(aes(x = reorder(DeviceShort, desc(`Latency (in ms)`)),
                y = `Latency (in ms)`,
                text = paste0(DeviceLabel, "\nLatency: ", round(`Latency (in ms)`, 2), " ms"))) +
     geom_errorbar(aes(ymin = `SD down`, ymax = `SD up`,
                       color = factor(Imputed, levels = c(TRUE, FALSE))),
                   width = 0.3) +
-    geom_point(size = 1) +
+    geom_point(size = 1.5) +
     geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
     geom_hline(yintercept = 0, color = '#2708A0', alpha = 0.3) +
     coord_flip() +
@@ -483,12 +547,14 @@ if (nrow(wireless_plot_dat) > 0) {
                        labels = c("TRUE" = "Imputed SD", "FALSE" = "Measured SD")) +
     labs(title = "Wireless Device Latency Ranges (95% CI)",
          caption = "Note: Ranges assume normal distribution. Red bars indicate imputed standard deviation.",
-         x = "Device", y = "Latency (ms)", color = "SD Source") +
+         x = "", y = "Latency (ms)", color = "SD Source") +
     theme_minimal() +
-    theme(axis.text.y = element_text(size = 8))
+    theme(axis.text.y = element_text(size = 9),
+          plot.margin = margin(10, 10, 10, 10))
 
-  ggplotly(p_wireless_range, tooltip = "text") %>%
-    layout(hovermode = "closest")
+  ggplotly(p_wireless_range, tooltip = "text", height = 600, width = 1400) %>%
+    layout(hovermode = "closest",
+           margin = list(l = 250))
 }
 ```
 
