@@ -271,7 +271,7 @@ ggplotly(p_wired, tooltip = c("text", "y"), width = 1000, height = 500) %>%
   layout(hovermode = "closest")
 ```
 
-## Bluetooth vs. 2.4 GHz Wireless
+## 2.4GHz Wireless vs. Bluetooth
 
 ```{r bt-vs-24ghz-plotly, echo=FALSE, fig.height=8, fig.width=12, warning=FALSE}
 wireless_dat <- dat %>%
@@ -287,7 +287,7 @@ if (nrow(wireless_dat) > 0) {
     geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
     xlab("Wireless Type") +
     ylab("Latency (in ms)") +
-    labs(title = "Bluetooth vs. 2.4 GHz Wireless Latency") +
+    labs(title = "2.4GHz Wireless vs. Bluetooth Latency") +
     theme_minimal() +
     theme(legend.position = "none",
           axis.text = element_text(size = 11),
@@ -381,9 +381,11 @@ if (nrow(raw_stats) > 0) {
 
 ## Latency Distribution by Device
 
+Showing the 16 devices with the most raw data readings for statistical reliability.
+
 ```{r raw-histogram-plotly, echo=FALSE, fig.height=10, fig.width=14, warning=FALSE}
 if (nrow(raw_data) > 0) {
-  # Get top 16 devices by reading count for cleaner visualization
+  # Get top 16 devices by reading count for statistical reliability
   top_devices <- raw_data %>%
     count(Device) %>%
     arrange(desc(n)) %>%
@@ -392,7 +394,7 @@ if (nrow(raw_data) > 0) {
 
   raw_subset <- raw_data %>%
     filter(Device %in% top_devices) %>%
-    mutate(DeviceShort = truncate_name(Device, 35))
+    mutate(DeviceShort = truncate_name(Device, 30))
 
   p_hist <- raw_subset %>%
     ggplot(aes(x = delay, fill = DeviceShort)) +
@@ -400,41 +402,40 @@ if (nrow(raw_data) > 0) {
     facet_wrap(~DeviceShort, scales = "free_y", ncol = 4) +
     geom_vline(xintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
     labs(title = "Latency Distribution (Raw Data)",
+         subtitle = "Top 16 devices by number of readings",
          x = "Latency (ms)", y = "Count") +
     theme_minimal() +
     theme(legend.position = "none",
-          strip.text = element_text(size = 8),
-          axis.text = element_text(size = 7))
+          strip.text = element_text(size = 7),
+          axis.text = element_text(size = 6))
 
-  ggplotly(p_hist, height = 600, width = 1400) %>%
+  ggplotly(p_hist, height = 700, width = 1400) %>%
     layout(hovermode = "closest")
 }
 ```
 
 ## Time-Series Pattern Viewer
 
-Shows first 200 readings to reveal polling patterns and sawtooth cycles.
+Shows first 200 readings from the 8 devices with the most raw data (minimum 200 readings required). Look for periodic sawtooth patterns indicating polling intervals.
 
 ```{r raw-timeseries-plotly, echo=FALSE, fig.height=12, fig.width=14, warning=FALSE}
 if (nrow(raw_data) > 0) {
-  # Select a subset of interesting devices for pattern analysis
-  pattern_devices <- raw_data %>%
+  # Select devices with most readings (min 200) for pattern analysis
+  devices_with_enough_data <- raw_data %>%
+    count(Device) %>%
+    filter(n >= 200) %>%
+    arrange(desc(n)) %>%
+    head(8) %>%
+    pull(Device)
+
+  pattern_subset <- raw_data %>%
+    filter(Device %in% devices_with_enough_data) %>%
     group_by(Device) %>%
-    filter(n() >= 200) %>%
     slice_head(n = 200) %>%
-    ungroup()
+    ungroup() %>%
+    mutate(DeviceShort = truncate_name(Device, 35))
 
-  if (nrow(pattern_devices) > 0) {
-    # Limit to 8 devices for readability
-    selected_devices <- pattern_devices %>%
-      distinct(Device) %>%
-      head(8) %>%
-      pull(Device)
-
-    pattern_subset <- pattern_devices %>%
-      filter(Device %in% selected_devices) %>%
-      mutate(DeviceShort = truncate_name(Device, 40))
-
+  if (nrow(pattern_subset) > 0) {
     p_pattern <- pattern_subset %>%
       ggplot(aes(x = read, y = delay, color = DeviceShort)) +
       geom_line(alpha = 0.7) +
@@ -442,11 +443,11 @@ if (nrow(raw_data) > 0) {
       facet_wrap(~DeviceShort, scales = "free_y", ncol = 2) +
       geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
       labs(title = "Latency Time Series (First 200 Readings)",
-           subtitle = "Look for periodic sawtooth patterns indicating polling intervals",
+           subtitle = "Top 8 devices by number of readings",
            x = "Reading Number", y = "Latency (ms)") +
       theme_minimal() +
       theme(legend.position = "none",
-            strip.text = element_text(size = 9))
+            strip.text = element_text(size = 8))
 
     ggplotly(p_pattern, height = 700, width = 1400) %>%
       layout(hovermode = "closest")
@@ -486,13 +487,16 @@ These plots show approximate latency ranges using 95% confidence intervals. Due 
 
 ## Wired Device Latency Ranges
 
-```{r wired-errorbar, echo=FALSE, fig.height=18, fig.width=14, warning=FALSE}
+```{r wired-errorbar, echo=FALSE, fig.height=20, fig.width=14, warning=FALSE}
 wired_plot_dat <- dat %>%
   filter(`Wired/Wireless` == "Wired") %>%
   mutate(
     DeviceLabel = gsub("<[^>]+>", "", Device),
-    DeviceShort = truncate_name(DeviceLabel, 50)
+    DeviceShort = truncate_name(DeviceLabel, 45)
   )
+
+# Calculate dynamic height based on number of devices (20px per device, min 400)
+wired_height <- max(400, nrow(wired_plot_dat) * 22)
 
 if (nrow(wired_plot_dat) > 0) {
   p_wired_range <- wired_plot_dat %>%
@@ -501,8 +505,8 @@ if (nrow(wired_plot_dat) > 0) {
                text = paste0(DeviceLabel, "\nLatency: ", round(`Latency (in ms)`, 2), " ms"))) +
     geom_errorbar(aes(ymin = `SD down`, ymax = `SD up`,
                       color = factor(Imputed, levels = c(TRUE, FALSE))),
-                  width = 0.3) +
-    geom_point(size = 1.5) +
+                  width = 0.4) +
+    geom_point(size = 2) +
     geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
     geom_hline(yintercept = 0, color = '#2708A0', alpha = 0.3) +
     coord_flip() +
@@ -512,24 +516,27 @@ if (nrow(wired_plot_dat) > 0) {
          caption = "Note: Ranges assume normal distribution. Red bars indicate imputed standard deviation.",
          x = "", y = "Latency (ms)", color = "SD Source") +
     theme_minimal() +
-    theme(axis.text.y = element_text(size = 8),
-          plot.margin = margin(10, 10, 10, 10))
+    theme(axis.text.y = element_text(size = 7),
+          plot.margin = margin(5, 10, 5, 5))
 
-  ggplotly(p_wired_range, tooltip = "text", height = 900, width = 1400) %>%
+  ggplotly(p_wired_range, tooltip = "text", height = wired_height, width = 1400) %>%
     layout(hovermode = "closest",
-           margin = list(l = 250))
+           margin = list(l = 280, t = 50, b = 50))
 }
 ```
 
 ## Wireless Device Latency Ranges
 
-```{r wireless-errorbar, echo=FALSE, fig.height=12, fig.width=14, warning=FALSE}
+```{r wireless-errorbar, echo=FALSE, fig.height=14, fig.width=14, warning=FALSE}
 wireless_plot_dat <- dat %>%
   filter(`Wired/Wireless` == "Wireless") %>%
   mutate(
     DeviceLabel = gsub("<[^>]+>", "", Device),
-    DeviceShort = truncate_name(DeviceLabel, 50)
+    DeviceShort = truncate_name(DeviceLabel, 45)
   )
+
+# Calculate dynamic height based on number of devices
+wireless_height <- max(400, nrow(wireless_plot_dat) * 22)
 
 if (nrow(wireless_plot_dat) > 0) {
   p_wireless_range <- wireless_plot_dat %>%
@@ -538,8 +545,8 @@ if (nrow(wireless_plot_dat) > 0) {
                text = paste0(DeviceLabel, "\nLatency: ", round(`Latency (in ms)`, 2), " ms"))) +
     geom_errorbar(aes(ymin = `SD down`, ymax = `SD up`,
                       color = factor(Imputed, levels = c(TRUE, FALSE))),
-                  width = 0.3) +
-    geom_point(size = 1.5) +
+                  width = 0.4) +
+    geom_point(size = 2) +
     geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
     geom_hline(yintercept = 0, color = '#2708A0', alpha = 0.3) +
     coord_flip() +
@@ -549,13 +556,54 @@ if (nrow(wireless_plot_dat) > 0) {
          caption = "Note: Ranges assume normal distribution. Red bars indicate imputed standard deviation.",
          x = "", y = "Latency (ms)", color = "SD Source") +
     theme_minimal() +
-    theme(axis.text.y = element_text(size = 9),
-          plot.margin = margin(10, 10, 10, 10))
+    theme(axis.text.y = element_text(size = 8),
+          plot.margin = margin(5, 10, 5, 5))
 
-  ggplotly(p_wireless_range, tooltip = "text", height = 600, width = 1400) %>%
+  ggplotly(p_wireless_range, tooltip = "text", height = wireless_height, width = 1400) %>%
     layout(hovermode = "closest",
-           margin = list(l = 250))
+           margin = list(l = 280, t = 50, b = 50))
 }
+```
+
+# Best Performers by Category
+
+Top performing devices in each category, separated by wired and wireless connection.
+
+```{r best-performers, echo=FALSE}
+# Get best wired device per category
+best_wired <- dat %>%
+  filter(`Wired/Wireless` == "Wired", !is.na(Category)) %>%
+  group_by(Category) %>%
+  slice_min(`Latency (in ms)`, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  mutate(Connection = "Wired") %>%
+  select(Category, Device = DeviceClean, `Latency (in ms)`, Connection)
+
+# Get best wireless device per category
+best_wireless <- dat %>%
+  filter(`Wired/Wireless` == "Wireless", !is.na(Category)) %>%
+  group_by(Category) %>%
+  slice_min(`Latency (in ms)`, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  mutate(Connection = "Wireless") %>%
+  select(Category, Device = DeviceClean, `Latency (in ms)`, Connection)
+
+# Combine and arrange
+best_performers <- bind_rows(best_wired, best_wireless) %>%
+  arrange(Category, Connection) %>%
+  mutate(`Latency (in ms)` = round(`Latency (in ms)`, 2))
+
+datatable(best_performers,
+          options = list(
+            pageLength = 25,
+            dom = 't',
+            columnDefs = list(
+              list(className = 'dt-left', targets = c(0, 1, 3)),
+              list(className = 'dt-right', targets = 2)
+            )
+          ),
+          rownames = FALSE,
+          caption = "Best performing device in each category (lowest latency)")
 ```
 
 # Methodology
