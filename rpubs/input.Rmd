@@ -529,47 +529,46 @@ bscols(widths = c(12),
 )
 ```
 
-```{r latency-range-plot, echo=FALSE, fig.height=20, fig.width=14, warning=FALSE}
-# Create the plot with shared data
-p_range <- plot_ly(shared_range_dat,
-                   y = ~reorder(DeviceShort, `Latency (in ms)`),
-                   x = ~`Latency (in ms)`,
-                   type = 'scatter',
-                   mode = 'markers',
-                   marker = list(size = 8, color = '#333'),
-                   error_x = list(
-                     type = 'data',
-                     symmetric = FALSE,
-                     arrayminus = ~(`Latency (in ms)` - `SD down`),
-                     array = ~(`SD up` - `Latency (in ms)`),
-                     color = ~ifelse(Imputed, '#E63946', '#457B9D'),
-                     thickness = 2
-                   ),
-                   text = ~paste0(DeviceLabel,
-                                  "<br>Latency: ", round(`Latency (in ms)`, 2), " ms",
-                                  "<br>Category: ", Category,
-                                  "<br>Connection: ", `Wired/Wireless`),
-                   hoverinfo = 'text') %>%
-  layout(
-    title = "Device Latency Ranges (95% CI)",
-    xaxis = list(title = "Latency (ms)", zeroline = TRUE),
-    yaxis = list(title = "", tickfont = list(size = 9)),
-    shapes = list(
-      list(type = "line", x0 = 100/6, x1 = 100/6, y0 = 0, y1 = 1,
-           yref = "paper", line = list(color = "#BA1B1D", dash = "dash", width = 2))
-    ),
-    annotations = list(
-      list(x = 100/6, y = 1.02, yref = "paper", text = "One Frame (16.67ms)",
-           showarrow = FALSE, font = list(size = 10, color = "#BA1B1D"))
-    ),
-    margin = list(l = 300, r = 50, t = 80, b = 50),
-    height = max(500, nrow(range_plot_dat) * 18)
-  )
+```{r latency-range-plot, echo=FALSE, fig.height=25, fig.width=14, warning=FALSE}
+# Sort data by latency (low to high) and create ordered factor for y-axis
+range_plot_sorted <- range_plot_dat %>%
+  arrange(`Latency (in ms)`) %>%
+  mutate(DeviceShort = factor(DeviceShort, levels = rev(unique(DeviceShort))))
 
-p_range
+# Calculate appropriate height
+plot_height <- max(600, nrow(range_plot_sorted) * 20)
+
+# Create the plot using ggplot + plotly for better control
+p_range_gg <- range_plot_sorted %>%
+  ggplot(aes(x = `Latency (in ms)`, y = DeviceShort,
+             text = paste0(DeviceLabel,
+                          "\nLatency: ", round(`Latency (in ms)`, 2), " ms",
+                          "\nCategory: ", Category,
+                          "\nConnection: ", `Wired/Wireless`))) +
+  geom_errorbarh(aes(xmin = `SD down`, xmax = `SD up`,
+                     color = factor(Imputed, levels = c(TRUE, FALSE))),
+                 height = 0.3) +
+  geom_point(size = 2, color = "#333") +
+  geom_vline(xintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
+  scale_color_manual(values = c("TRUE" = "#E63946", "FALSE" = "#457B9D"),
+                     labels = c("TRUE" = "Imputed SD", "FALSE" = "Measured SD")) +
+  labs(title = "Device Latency Ranges (95% CI)",
+       subtitle = "Sorted by average latency (lowest first)",
+       x = "Latency (ms)", y = "", color = "SD Source") +
+  theme_minimal() +
+  theme(axis.text.y = element_text(size = 7),
+        legend.position = "bottom")
+
+ggplotly(p_range_gg, tooltip = "text", height = plot_height, width = 1400) %>%
+  layout(hovermode = "closest",
+         margin = list(l = 280, t = 80, b = 80))
 ```
 
+<br><br>
+
 <small>**Note:** Red error bars indicate imputed standard deviation (estimated via linear regression). Blue bars are measured values.</small>
+
+<br><br>
 
 # Best Performers by Category
 
