@@ -485,85 +485,68 @@ if (nrow(raw_stats) > 0) {
 
 These plots show approximate latency ranges using 95% confidence intervals. Due to limited data, some standard deviations were imputed using linear regression. Imputed values are shown in a different color.
 
-## Wired Device Latency Ranges
+Use the filters below to show specific device types and connection methods.
 
-```{r wired-errorbar, echo=FALSE, fig.height=20, fig.width=14, warning=FALSE}
-wired_plot_dat <- dat %>%
-  filter(`Wired/Wireless` == "Wired") %>%
+```{r latency-range-filters, echo=FALSE}
+# Prepare data for filtered plot
+range_plot_dat <- dat %>%
+  filter(!is.na(`Wired/Wireless`), !is.na(Category)) %>%
   mutate(
     DeviceLabel = gsub("<[^>]+>", "", Device),
     DeviceShort = truncate_name(DeviceLabel, 45)
   )
 
-# Calculate dynamic height based on number of devices (20px per device, min 400)
-wired_height <- max(400, nrow(wired_plot_dat) * 22)
+shared_range_dat <- SharedData$new(range_plot_dat)
 
-if (nrow(wired_plot_dat) > 0) {
-  p_wired_range <- wired_plot_dat %>%
-    ggplot(aes(x = reorder(DeviceShort, desc(`Latency (in ms)`)),
-               y = `Latency (in ms)`,
-               text = paste0(DeviceLabel, "\nLatency: ", round(`Latency (in ms)`, 2), " ms"))) +
-    geom_errorbar(aes(ymin = `SD down`, ymax = `SD up`,
-                      color = factor(Imputed, levels = c(TRUE, FALSE))),
-                  width = 0.4) +
-    geom_point(size = 2) +
-    geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
-    geom_hline(yintercept = 0, color = '#2708A0', alpha = 0.3) +
-    coord_flip() +
-    scale_color_manual(values = c("TRUE" = "#E63946", "FALSE" = "#457B9D"),
-                       labels = c("TRUE" = "Imputed SD", "FALSE" = "Measured SD")) +
-    labs(title = "Wired Device Latency Ranges (95% CI)",
-         caption = "Note: Ranges assume normal distribution. Red bars indicate imputed standard deviation.",
-         x = "", y = "Latency (ms)", color = "SD Source") +
-    theme_minimal() +
-    theme(axis.text.y = element_text(size = 7),
-          plot.margin = margin(5, 10, 5, 5))
-
-  ggplotly(p_wired_range, tooltip = "text", height = wired_height, width = 1400) %>%
-    layout(hovermode = "closest",
-           margin = list(l = 280, t = 50, b = 50))
-}
+bscols(widths = c(12),
+  list(
+    filter_checkbox("ConnectionType", "Connection", shared_range_dat, ~`Wired/Wireless`, inline = TRUE),
+    filter_checkbox("DeviceCategory", "Category", shared_range_dat, ~Category, inline = TRUE)
+  )
+)
 ```
 
-## Wireless Device Latency Ranges
-
-```{r wireless-errorbar, echo=FALSE, fig.height=14, fig.width=14, warning=FALSE}
-wireless_plot_dat <- dat %>%
-  filter(`Wired/Wireless` == "Wireless") %>%
-  mutate(
-    DeviceLabel = gsub("<[^>]+>", "", Device),
-    DeviceShort = truncate_name(DeviceLabel, 45)
+```{r latency-range-plot, echo=FALSE, fig.height=20, fig.width=14, warning=FALSE}
+# Create the plot with shared data
+p_range <- plot_ly(shared_range_dat,
+                   y = ~reorder(DeviceShort, `Latency (in ms)`),
+                   x = ~`Latency (in ms)`,
+                   type = 'scatter',
+                   mode = 'markers',
+                   marker = list(size = 8, color = '#333'),
+                   error_x = list(
+                     type = 'data',
+                     symmetric = FALSE,
+                     arrayminus = ~(`Latency (in ms)` - `SD down`),
+                     array = ~(`SD up` - `Latency (in ms)`),
+                     color = ~ifelse(Imputed, '#E63946', '#457B9D'),
+                     thickness = 2
+                   ),
+                   text = ~paste0(DeviceLabel,
+                                  "<br>Latency: ", round(`Latency (in ms)`, 2), " ms",
+                                  "<br>Category: ", Category,
+                                  "<br>Connection: ", `Wired/Wireless`),
+                   hoverinfo = 'text') %>%
+  layout(
+    title = "Device Latency Ranges (95% CI)",
+    xaxis = list(title = "Latency (ms)", zeroline = TRUE),
+    yaxis = list(title = "", tickfont = list(size = 9)),
+    shapes = list(
+      list(type = "line", x0 = 100/6, x1 = 100/6, y0 = 0, y1 = 1,
+           yref = "paper", line = list(color = "#BA1B1D", dash = "dash", width = 2))
+    ),
+    annotations = list(
+      list(x = 100/6, y = 1.02, yref = "paper", text = "One Frame (16.67ms)",
+           showarrow = FALSE, font = list(size = 10, color = "#BA1B1D"))
+    ),
+    margin = list(l = 300, r = 50, t = 80, b = 50),
+    height = max(500, nrow(range_plot_dat) * 18)
   )
 
-# Calculate dynamic height based on number of devices
-wireless_height <- max(400, nrow(wireless_plot_dat) * 22)
-
-if (nrow(wireless_plot_dat) > 0) {
-  p_wireless_range <- wireless_plot_dat %>%
-    ggplot(aes(x = reorder(DeviceShort, desc(`Latency (in ms)`)),
-               y = `Latency (in ms)`,
-               text = paste0(DeviceLabel, "\nLatency: ", round(`Latency (in ms)`, 2), " ms"))) +
-    geom_errorbar(aes(ymin = `SD down`, ymax = `SD up`,
-                      color = factor(Imputed, levels = c(TRUE, FALSE))),
-                  width = 0.4) +
-    geom_point(size = 2) +
-    geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
-    geom_hline(yintercept = 0, color = '#2708A0', alpha = 0.3) +
-    coord_flip() +
-    scale_color_manual(values = c("TRUE" = "#E63946", "FALSE" = "#457B9D"),
-                       labels = c("TRUE" = "Imputed SD", "FALSE" = "Measured SD")) +
-    labs(title = "Wireless Device Latency Ranges (95% CI)",
-         caption = "Note: Ranges assume normal distribution. Red bars indicate imputed standard deviation.",
-         x = "", y = "Latency (ms)", color = "SD Source") +
-    theme_minimal() +
-    theme(axis.text.y = element_text(size = 8),
-          plot.margin = margin(5, 10, 5, 5))
-
-  ggplotly(p_wireless_range, tooltip = "text", height = wireless_height, width = 1400) %>%
-    layout(hovermode = "closest",
-           margin = list(l = 280, t = 50, b = 50))
-}
+p_range
 ```
+
+<small>**Note:** Red error bars indicate imputed standard deviation (estimated via linear regression). Blue bars are measured values.</small>
 
 # Best Performers by Category
 
