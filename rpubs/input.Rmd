@@ -404,77 +404,149 @@ if (nrow(raw_stats) > 0) {
 
 ## Latency Distribution by Device
 
-Showing the 16 devices with the most raw data readings for statistical reliability.
+Select a device to view its latency distribution histogram.
 
-```{r raw-histogram-plotly, echo=FALSE, fig.height=10, fig.width=14, warning=FALSE}
+```{r raw-histogram-interactive, echo=FALSE, warning=FALSE}
 if (nrow(raw_data) > 0) {
-  # Get top 16 devices by reading count for statistical reliability
-  top_devices <- raw_data %>%
-    count(Device) %>%
-    arrange(desc(n)) %>%
-    head(16) %>%
+  # Get all devices sorted by mean latency
+  device_list <- raw_stats %>%
+    arrange(RawMean) %>%
     pull(Device)
 
-  raw_subset <- raw_data %>%
-    filter(Device %in% top_devices) %>%
-    mutate(DeviceShort = truncate_name(Device, 30))
+  # Create histogram data for each device
+  hist_plots <- lapply(device_list, function(dev) {
+    dev_data <- raw_data %>% filter(Device == dev)
+    plot_ly(x = ~dev_data$delay, type = "histogram",
+            nbinsx = 40, name = dev,
+            marker = list(color = '#3498DB', line = list(color = '#2980B9', width = 1))) %>%
+      layout(
+        shapes = list(
+          list(type = "line", x0 = 100/6, x1 = 100/6, y0 = 0, y1 = 1,
+               yref = "paper", line = list(color = "#BA1B1D", dash = "dash", width = 2))
+        )
+      )
+  })
 
-  p_hist <- raw_subset %>%
-    ggplot(aes(x = delay, fill = DeviceShort)) +
-    geom_histogram(bins = 40, alpha = 0.7, position = "identity") +
-    facet_wrap(~DeviceShort, scales = "free_y", ncol = 4) +
-    geom_vline(xintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
-    labs(title = "Latency Distribution (Raw Data)",
-         subtitle = "Top 16 devices by number of readings",
-         x = "Latency (ms)", y = "Count") +
-    theme_minimal() +
-    theme(legend.position = "none",
-          strip.text = element_text(size = 7),
-          axis.text = element_text(size = 6))
+  # Create dropdown buttons
+  buttons <- lapply(seq_along(device_list), function(i) {
+    visibility <- rep(FALSE, length(device_list))
+    visibility[i] <- TRUE
+    list(
+      method = "update",
+      args = list(list(visible = visibility)),
+      label = truncate_name(device_list[i], 50)
+    )
+  })
 
-  ggplotly(p_hist, height = 700, width = 1400) %>%
-    layout(hovermode = "closest")
+  # Combine all traces
+  p_hist <- plot_ly()
+  for (i in seq_along(device_list)) {
+    dev_data <- raw_data %>% filter(Device == device_list[i])
+    p_hist <- p_hist %>%
+      add_histogram(x = ~dev_data$delay, name = device_list[i],
+                    visible = (i == 1),
+                    marker = list(color = '#3498DB'))
+  }
+
+  p_hist %>%
+    layout(
+      title = list(text = "Latency Distribution", y = 0.95),
+      xaxis = list(title = "Latency (ms)"),
+      yaxis = list(title = "Count"),
+      showlegend = FALSE,
+      shapes = list(
+        list(type = "line", x0 = 100/6, x1 = 100/6, y0 = 0, y1 = 1,
+             yref = "paper", line = list(color = "#BA1B1D", dash = "dash", width = 2))
+      ),
+      updatemenus = list(
+        list(
+          type = "dropdown",
+          active = 0,
+          buttons = buttons,
+          x = 0.0,
+          xanchor = "left",
+          y = 1.15,
+          yanchor = "top"
+        )
+      ),
+      annotations = list(
+        list(text = "Select Device:", x = 0, xref = "paper", xanchor = "left",
+             y = 1.22, yref = "paper", showarrow = FALSE)
+      ),
+      margin = list(t = 100)
+    )
 }
 ```
 
 ## Time-Series Pattern Viewer
 
-Shows first 200 readings from the 8 devices with the most raw data (minimum 200 readings required). Look for periodic sawtooth patterns indicating polling intervals.
+Select a device to view its latency over time. Look for periodic sawtooth patterns indicating polling intervals.
 
-```{r raw-timeseries-plotly, echo=FALSE, fig.height=12, fig.width=14, warning=FALSE}
+```{r raw-timeseries-interactive, echo=FALSE, warning=FALSE}
 if (nrow(raw_data) > 0) {
-  # Select devices with most readings (min 200) for pattern analysis
-  devices_with_enough_data <- raw_data %>%
+  # Get devices with at least 100 readings
+  devices_with_data <- raw_data %>%
     count(Device) %>%
-    filter(n >= 200) %>%
+    filter(n >= 100) %>%
     arrange(desc(n)) %>%
-    head(8) %>%
     pull(Device)
 
-  pattern_subset <- raw_data %>%
-    filter(Device %in% devices_with_enough_data) %>%
-    group_by(Device) %>%
-    slice_head(n = 200) %>%
-    ungroup() %>%
-    mutate(DeviceShort = truncate_name(Device, 35))
+  # Create dropdown buttons
+  buttons_ts <- lapply(seq_along(devices_with_data), function(i) {
+    visibility <- rep(FALSE, length(devices_with_data))
+    visibility[i] <- TRUE
+    list(
+      method = "update",
+      args = list(list(visible = visibility)),
+      label = truncate_name(devices_with_data[i], 50)
+    )
+  })
 
-  if (nrow(pattern_subset) > 0) {
-    p_pattern <- pattern_subset %>%
-      ggplot(aes(x = read, y = delay, color = DeviceShort)) +
-      geom_line(alpha = 0.7) +
-      geom_point(size = 0.5, alpha = 0.5) +
-      facet_wrap(~DeviceShort, scales = "free_y", ncol = 2) +
-      geom_hline(yintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
-      labs(title = "Latency Time Series (First 200 Readings)",
-           subtitle = "Top 8 devices by number of readings",
-           x = "Reading Number", y = "Latency (ms)") +
-      theme_minimal() +
-      theme(legend.position = "none",
-            strip.text = element_text(size = 8))
+  # Build plot with all device traces
+  p_ts <- plot_ly()
+  for (i in seq_along(devices_with_data)) {
+    dev_data <- raw_data %>%
+      filter(Device == devices_with_data[i]) %>%
+      slice_head(n = 500)  # First 500 readings
 
-    ggplotly(p_pattern, height = 700, width = 1400) %>%
-      layout(hovermode = "closest")
+    p_ts <- p_ts %>%
+      add_trace(x = ~dev_data$read, y = ~dev_data$delay,
+                type = 'scatter', mode = 'lines+markers',
+                name = devices_with_data[i],
+                visible = (i == 1),
+                line = list(color = '#3498DB', width = 1),
+                marker = list(color = '#3498DB', size = 3))
   }
+
+  p_ts %>%
+    layout(
+      title = list(text = "Latency Time Series (First 500 Readings)", y = 0.95),
+      xaxis = list(title = "Reading Number"),
+      yaxis = list(title = "Latency (ms)"),
+      showlegend = FALSE,
+      shapes = list(
+        list(type = "line", x0 = 0, x1 = 1, xref = "paper",
+             y0 = 100/6, y1 = 100/6,
+             line = list(color = "#BA1B1D", dash = "dash", width = 2))
+      ),
+      updatemenus = list(
+        list(
+          type = "dropdown",
+          active = 0,
+          buttons = buttons_ts,
+          x = 0.0,
+          xanchor = "left",
+          y = 1.15,
+          yanchor = "top"
+        )
+      ),
+      annotations = list(
+        list(text = "Select Device:", x = 0, xref = "paper", xanchor = "left",
+             y = 1.22, yref = "paper", showarrow = FALSE)
+      ),
+      margin = list(t = 100),
+      height = 500
+    )
 }
 ```
 
