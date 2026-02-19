@@ -7,3 +7,56 @@ The purpose of this setup is to measure the latency of a USB controller using an
 * Troubleshooting
   * If no response is registered, ensure the button is mapped in the core
     * If this does not fix it, try flipping the + and - leads from the arduino to the button. Some only trigger when wired backwards from normal.
+
+## Latency report site
+
+The website is generated from `rpubs/input.Rmd` and published from `docs/input.html`.
+
+### Where the HTML lives
+
+- Authoring template: `rpubs/input.Rmd`
+- Build script: `render.R`
+- Generated site page: `docs/input.html`
+- Generated dependencies/assets: `docs/input_libs/`
+
+Workflow:
+
+1. Edit `rpubs/input.Rmd`
+2. Run `Rscript render.R`
+3. Commit and push `docs/input.html` (and `docs/input_libs/` updates when present)
+4. GitHub Pages serves the content from the `docs/` folder on the default branch
+
+### Build
+
+```bash
+Rscript render.R
+```
+
+### Data source behavior
+
+- Primary source: live Google Sheet used by the project.
+- Cache fallback: `results/latency_sheet_cache.csv`.
+- During render, if live sheet fetch succeeds, the cache file is refreshed.
+- If live fetch fails, render falls back to the cache so the report can still build offline.
+
+### Build artifacts
+
+- Main report: `docs/input.html`
+- Report assets: `docs/input_libs/`
+- UI: responsive layout with persistent light/dark theme toggle
+- Derived exports:
+  - `results/latency_cleaned_export.csv`
+  - `results/raw_capture_unmatched.csv`
+  - `results/database_without_raw_capture.csv`
+
+### Publish to `misteraddons.com`
+
+Recommended setup is a subdomain (for example: `inputlatency.misteraddons.com`) pointed to this repo's GitHub Pages site.
+
+1. In GitHub repo settings, open Pages and set source to default branch + `/docs`.
+2. Set custom domain to `inputlatency.misteraddons.com`.
+3. Add `docs/CNAME` with one line:
+   - `inputlatency.misteraddons.com`
+4. In DNS for `misteraddons.com`, create:
+   - `CNAME` record: `inputlatency` -> `misteraddons.github.io`
+5. After DNS propagates, enable HTTPS in GitHub Pages.

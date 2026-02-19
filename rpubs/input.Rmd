@@ -4,41 +4,953 @@ author: "Porkchop Express, Lemonici"
 output:
   html_document:
     theme: cosmo
+    toc: true
+    toc_float: true
 ---
 
 <style>
-/* Wider container */
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+:root {
+  --bg: #f4f6fb;
+  --bg-accent-a: rgba(80, 0, 220, 0.18);
+  --bg-accent-b: rgba(230, 255, 30, 0.2);
+  --text: #101622;
+  --muted: #4c5a70;
+  --card: rgba(255, 255, 255, 0.82);
+  --card-solid: #ffffff;
+  --panel: rgba(255, 255, 255, 0.74);
+  --border: rgba(17, 35, 61, 0.14);
+  --border-strong: rgba(17, 35, 61, 0.24);
+  --tab-idle: #253044;
+  --shadow: 0 18px 45px rgba(32, 54, 94, 0.12);
+  --shadow-soft: 0 6px 20px rgba(22, 44, 86, 0.1);
+  --ring: rgba(80, 0, 220, 0.28);
+  --primary: #5000DC;
+  --primary-strong: #3f00ad;
+  --accent: #E6FF1E;
+  --accent-strong: #bdd200;
+  --cta: linear-gradient(135deg, #5000DC 0%, #6f2cff 100%);
+  --chip-bg: rgba(255, 255, 255, 0.75);
+  --chip-border: rgba(23, 40, 66, 0.14);
+  --table-row: rgba(255, 255, 255, 0.9);
+  --plot-bg: #ffffff;
+  --header-grad: linear-gradient(120deg, rgba(80, 0, 220, 0.15), rgba(230, 255, 30, 0.14));
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html[data-theme="dark"] {
+  --bg: #0d111a;
+  --bg-accent-a: rgba(123, 75, 255, 0.3);
+  --bg-accent-b: rgba(230, 255, 30, 0.2);
+  --text: #e6edf8;
+  --muted: #a6b5cf;
+  --card: rgba(24, 31, 45, 0.86);
+  --card-solid: #171f2e;
+  --panel: rgba(22, 29, 42, 0.86);
+  --border: rgba(179, 198, 232, 0.2);
+  --border-strong: rgba(179, 198, 232, 0.3);
+  --tab-idle: #cad6ea;
+  --shadow: 0 22px 55px rgba(1, 4, 10, 0.46);
+  --shadow-soft: 0 10px 28px rgba(1, 6, 14, 0.35);
+  --ring: rgba(163, 134, 255, 0.4);
+  --primary: #a783ff;
+  --primary-strong: #c2a9ff;
+  --accent: #E6FF1E;
+  --accent-strong: #f0ff7a;
+  --cta: linear-gradient(135deg, #7b4bff 0%, #9c77ff 100%);
+  --chip-bg: rgba(29, 37, 52, 0.92);
+  --chip-border: rgba(156, 182, 233, 0.24);
+  --table-row: rgba(26, 34, 48, 0.86);
+  --plot-bg: #151b29;
+  --header-grad: linear-gradient(120deg, rgba(123, 75, 255, 0.3), rgba(230, 255, 30, 0.16));
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Space Grotesk", "Segoe UI", "Trebuchet MS", "Helvetica Neue", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(1200px 540px at 10% -5%, var(--bg-accent-a), transparent 60%),
+    radial-gradient(1000px 500px at 98% 0%, var(--bg-accent-b), transparent 62%);
+  z-index: -1;
+}
+
+a {
+  color: var(--primary);
+}
+
+a:hover {
+  color: var(--primary-strong);
+}
+
 .main-container {
-  max-width: 1600px !important;
+  max-width: 1580px !important;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 15px;
-  padding-right: 15px;
+  padding: 20px 20px 28px;
 }
 
-/* Make tables scroll horizontally on small screens */
+#TOC {
+  margin: 0 !important;
+  padding: 10px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  background: var(--panel) !important;
+  box-shadow: var(--shadow-soft) !important;
+}
+
+div.tocify {
+  position: sticky !important;
+  top: 10px !important;
+  width: 100% !important;
+  max-width: 320px !important;
+  max-height: calc(100vh - 24px) !important;
+  overflow-y: auto !important;
+  background: transparent !important;
+  margin-left: 0 !important;
+}
+
+.tocify .tocify-header,
+.tocify .tocify-item {
+  line-height: 1.35 !important;
+}
+
+.tocify .list-group-item {
+  border: 1px solid transparent !important;
+  border-radius: 10px !important;
+  margin-bottom: 5px;
+  padding: 8px 10px !important;
+  background: transparent !important;
+  color: var(--muted) !important;
+  font-weight: 600;
+}
+
+.tocify .list-group-item:hover {
+  background: rgba(80, 0, 220, 0.08) !important;
+  color: var(--text) !important;
+  border-color: rgba(80, 0, 220, 0.18) !important;
+}
+
+.tocify .list-group-item.active,
+.tocify .list-group-item.active:hover,
+.tocify .list-group-item.active:focus {
+  color: var(--text) !important;
+  background: linear-gradient(90deg, rgba(80, 0, 220, 0.16), rgba(230, 255, 30, 0.2)) !important;
+  border-color: rgba(80, 0, 220, 0.28) !important;
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+
+.tocify-subheader .list-group-item {
+  font-size: 0.92rem !important;
+  padding-left: 16px !important;
+}
+
+#header {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--header-grad);
+  box-shadow: var(--shadow-soft);
+  padding: 28px 24px 22px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(6px);
+}
+
+#header h1.title {
+  margin-top: 0;
+  margin-bottom: 6px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  font-size: clamp(1.65rem, 2.2vw, 2.45rem);
+}
+
+#header .author {
+  color: var(--muted);
+  margin-bottom: 0;
+}
+
+.tab-content > .tab-pane {
+  line-height: 1.6;
+}
+
+.nav-tabs {
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 18px;
+}
+
+.nav-tabs > li > a {
+  font-size: 1.02rem;
+  font-weight: 600;
+  padding: 12px 18px;
+  border-radius: 12px 12px 0 0;
+  color: var(--tab-idle);
+  transition: background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+  border: 1px solid transparent;
+}
+
+.nav-tabs > li > a:hover {
+  background: var(--panel);
+  border-color: var(--border);
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+  color: var(--text);
+  background: var(--card);
+  border-color: var(--border);
+  border-bottom-color: transparent;
+}
+
+.bg-source-note {
+  margin: 4px 0 18px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--muted);
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 0.92rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.bg-hero {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 16px 14px;
+  margin: 6px 0 18px;
+  background:
+    linear-gradient(135deg, rgba(80, 0, 220, 0.12), rgba(230, 255, 30, 0.12)),
+    var(--panel);
+  box-shadow: var(--shadow-soft);
+}
+
+.bg-hero-title {
+  font-size: clamp(1.12rem, 2vw, 1.42rem);
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.bg-hero-sub {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.bg-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.bg-hero-btn {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--card-solid);
+}
+
+.bg-hero-btn:hover {
+  text-decoration: none;
+  border-color: var(--border-strong);
+}
+
+.bg-hero-meta {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bg-hero-meta span {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--card-solid);
+  font-family: var(--mono);
+}
+
+.bg-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 8px 0 18px;
+}
+
+.bg-kpi {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: var(--panel);
+  box-shadow: var(--shadow-soft);
+}
+
+.bg-kpi .label {
+  font-size: 0.74rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  margin-bottom: 4px;
+}
+
+.bg-kpi .value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.bg-filter-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 24px 24px 20px;
+  margin-top: 8px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(7px);
+}
+
+.bg-filter-panel h4 {
+  margin: 0 0 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--muted);
+}
+
+.bg-filter-group {
+  margin-bottom: 18px;
+}
+
+.bg-filter-group:last-child {
+  margin-bottom: 0;
+}
+
+.bg-filter-controls {
+  display: grid;
+  grid-template-columns: minmax(230px, 1fr) auto auto auto auto auto;
+  gap: 10px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.bg-filter-search {
+  min-width: 0;
+}
+
+.bg-filter-search input,
+.bg-filter-sort select,
+.bg-density-btn,
+.bg-theme-btn,
+.bg-reset-btn {
+  min-height: 42px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-solid);
+  color: var(--text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.bg-filter-search input {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 0.94rem;
+}
+
+.bg-filter-search input:focus,
+.bg-filter-sort select:focus,
+.bg-density-btn:focus,
+.bg-theme-btn:focus,
+.bg-reset-btn:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+.bg-filter-sort select {
+  padding: 8px 10px;
+  font-size: 0.92rem;
+}
+
+.bg-density-btn,
+.bg-theme-btn,
+.bg-reset-btn {
+  padding: 9px 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.bg-density-btn:hover,
+.bg-theme-btn:hover,
+.bg-reset-btn:hover {
+  border-color: var(--border-strong);
+}
+
+.filter-btn {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 4px 6px 4px 0;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card-solid);
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  line-height: 1.2;
+}
+
+.filter-btn:hover {
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.filter-btn.active {
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 8px 18px rgba(80, 0, 220, 0.28);
+}
+
+.filter-btn.active[data-dim="category"] { background: var(--primary); }
+.filter-btn.active[data-dim="connection"] {
+  background: var(--accent);
+  color: #2a2d07;
+  box-shadow: 0 8px 18px rgba(181, 204, 0, 0.3);
+}
+.filter-btn.active[data-dim="platform"] { background: #3a0ca4; }
+
+.bg-counter {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-top: 4px;
+  margin-bottom: 14px;
+  font-family: var(--mono);
+}
+
+.bg-recent-strip {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 6px 4px 12px;
+  margin-bottom: 22px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bg-recent-strip::-webkit-scrollbar {
+  height: 6px;
+}
+
+.bg-recent-strip::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 6px;
+}
+
+.bg-recent-chip {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--chip-bg);
+  border: 1px solid var(--chip-border);
+  border-radius: 999px;
+  padding: 7px 14px;
+  font-size: 0.84rem;
+  white-space: nowrap;
+  color: var(--text);
+}
+
+.bg-recent-chip .chip-badge {
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+}
+
+.bg-card-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.bg-card {
+  position: relative;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 18px 14px;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "rank name latency"
+    "rank meta latency"
+    "rank meter meter"
+    "rank tags tags"
+    "rank buy buy";
+  column-gap: 14px;
+  row-gap: 10px;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: cardReveal 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  animation-delay: calc(var(--stagger, 0) * 28ms);
+}
+
+.bg-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  opacity: 0.6;
+}
+
+.bg-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow);
+}
+
+@keyframes cardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bg-card-rank {
+  grid-area: rank;
+  align-self: start;
+  padding-top: 2px;
+  font-family: var(--mono);
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.bg-card-name {
+  grid-area: name;
+  font-size: 1.36rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.bg-card-make-price {
+  grid-area: meta;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 1.02rem;
+  color: var(--muted);
+  gap: 8px;
+}
+
+.bg-card-price {
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.bg-card-latency {
+  grid-area: latency;
+  text-align: right;
+  white-space: nowrap;
+  font-size: 2.08rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.bg-card-tags {
+  grid-area: tags;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 0;
+}
+
+.bg-tag {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.35;
+  border: 1px solid transparent;
+}
+
+.bg-tag-tier-a { background: rgba(35, 167, 102, 0.16); color: #0a7d49; border-color: rgba(35, 167, 102, 0.35); }
+.bg-tag-tier-b { background: rgba(235, 167, 42, 0.16); color: #9b6200; border-color: rgba(235, 167, 42, 0.35); }
+.bg-tag-tier-c { background: rgba(231, 84, 84, 0.16); color: #b23a3a; border-color: rgba(231, 84, 84, 0.35); }
+.bg-tag-category { background: rgba(80, 0, 220, 0.16); color: #5000dc; border-color: rgba(80, 0, 220, 0.35); }
+.bg-tag-connection { background: rgba(80, 0, 220, 0.16); color: #4300b8; border-color: rgba(80, 0, 220, 0.35); }
+.bg-tag-platform { background: rgba(99, 117, 146, 0.14); color: #2f3b4f; border-color: rgba(99, 117, 146, 0.3); font-weight: 600; }
+
+html[data-theme="dark"] .bg-tag-tier-a { color: #8be5bc; }
+html[data-theme="dark"] .bg-tag-tier-b { color: #f2d28a; }
+html[data-theme="dark"] .bg-tag-tier-c { color: #ffb6b6; }
+html[data-theme="dark"] .bg-tag-category { color: #93b6ff; }
+html[data-theme="dark"] .bg-tag-connection { color: #bca7ff; }
+html[data-theme="dark"] .bg-tag-platform { color: #c5d1e8; }
+
+.bg-card-buy {
+  grid-area: buy;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.bg-card-buy a {
+  display: inline-block;
+  padding: 9px 14px;
+  background: var(--cta);
+  color: #fff;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  box-shadow: 0 8px 20px rgba(80, 0, 220, 0.3);
+}
+
+.bg-card-buy a:hover {
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.bg-card-latency-meter {
+  grid-area: meter;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 2px;
+}
+
+.bg-meter-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.bg-meter-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+  font-family: var(--mono);
+  font-weight: 600;
+  color: var(--text);
+  background: var(--card-solid);
+  letter-spacing: 0;
+}
+
+.bg-meter-track {
+  position: relative;
+  overflow: hidden;
+  height: 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(99, 117, 146, 0.18);
+}
+
+.bg-meter-fill {
+  height: 100%;
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 0 10px rgba(0, 0, 0, 0.08);
+}
+
+.bg-meter-scale {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.bg-meter-scale span {
+  text-align: center;
+}
+
+.bg-meter-scale span:first-child {
+  text-align: left;
+}
+
+.bg-meter-scale span:last-child {
+  text-align: right;
+}
+
+.bg-meter-note {
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
 .dataTables_wrapper {
   overflow-x: auto;
+  color: var(--text);
 }
 
-/* Improve plotly chart container */
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+  background: var(--card-solid);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+  color: var(--muted) !important;
+}
+
+table.dataTable tbody tr {
+  background: var(--table-row);
+}
+
+table.dataTable thead th,
+table.dataTable tfoot th {
+  color: var(--text);
+}
+
 .plotly {
   width: 100% !important;
 }
 
-/* Better spacing for filter checkboxes */
 .crosstalk-input-checkboxgroup label {
-  margin-right: 15px;
+  margin-right: 14px;
   white-space: nowrap;
+  color: var(--muted);
 }
 
-/* Responsive adjustments */
+.bg-table-fallback {
+  margin-top: 10px;
+}
+
+.bg-table-fallback summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--muted);
+  padding: 8px 0;
+}
+
+.bg-inline-note {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 0.93rem;
+}
+
+small {
+  color: var(--muted);
+}
+
 @media (max-width: 1200px) {
   .main-container {
-    max-width: 95% !important;
+    max-width: 98% !important;
+  }
+}
+
+@media (min-width: 1020px) {
+  .bg-filter-panel {
+    position: sticky;
+    top: 10px;
+    z-index: 30;
+  }
+}
+
+html[data-density="compact"] .bg-card-grid {
+  gap: 10px;
+}
+
+html[data-density="compact"] .bg-card {
+  padding: 12px 14px 11px;
+  column-gap: 10px;
+  row-gap: 6px;
+}
+
+html[data-density="compact"] .bg-card-name {
+  font-size: 1.14rem;
+}
+
+html[data-density="compact"] .bg-card-latency {
+  font-size: 1.68rem;
+}
+
+html[data-density="compact"] .bg-tag {
+  padding: 4px 10px;
+  font-size: 0.82rem;
+}
+
+html[data-density="compact"] .bg-meter-title {
+  font-size: 0.9rem;
+}
+
+html[data-density="compact"] .bg-meter-chip {
+  font-size: 0.82rem;
+}
+
+@media (max-width: 980px) {
+  .bg-filter-controls {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  div.tocify {
+    position: relative !important;
+    top: 0 !important;
+    max-width: none !important;
+  }
+
+  .main-container {
+    padding: 10px 12px 18px;
+  }
+
+  #header {
+    border-radius: 16px;
+    padding: 18px 15px;
+  }
+
+  .bg-card-grid {
+    gap: 10px;
+  }
+
+  .bg-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 14px 12px 12px;
+  }
+
+  .bg-card-name {
+    font-size: 1.22rem;
+  }
+
+  .bg-card-latency {
+    text-align: left;
+    font-size: 1.78rem;
+  }
+
+  .bg-card-make-price {
+    flex-wrap: wrap;
+  }
+
+  .bg-tag {
+    font-size: 0.84rem;
+  }
+
+  .bg-meter-title {
+    font-size: 0.9rem;
+  }
+
+  .bg-meter-chip {
+    font-size: 0.84rem;
+  }
+
+  .bg-meter-note {
+    font-size: 0.86rem;
+  }
+
+  .bg-filter-panel {
+    padding: 16px 14px 14px;
+    border-radius: 14px;
+  }
+
+  .bg-filter-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .bg-hero-actions {
+    gap: 6px;
+  }
+
+  .bg-kpi-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .nav-tabs > li > a {
+    padding: 9px 12px;
+    font-size: 0.94rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }
 </style>
+
+```{r theme-bootstrap, echo=FALSE, results='asis'}
+htmltools::HTML('
+<script>
+(function() {
+  var THEME_KEY = "inputlatency-theme";
+  var DENSITY_KEY = "inputlatency-density";
+  var saved = null;
+  try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
+  var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  var theme = saved || (prefersDark ? "dark" : "light");
+  document.documentElement.setAttribute("data-theme", theme);
+
+  var density = "comfortable";
+  try {
+    var storedDensity = localStorage.getItem(DENSITY_KEY);
+    if (storedDensity === "comfortable" || storedDensity === "compact") {
+      density = storedDensity;
+    }
+  } catch (e) {}
+  document.documentElement.setAttribute("data-density", density);
+})();
+</script>
+')
+```
 
 ```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -56,34 +968,103 @@ truncate_name <- function(name, max_chars = 40) {
          name)
 }
 
+normalize_device_name <- function(x) {
+  x %>%
+    tolower() %>%
+    stringr::str_replace_all("&", " and ") %>%
+    stringr::str_replace_all("[^a-z0-9]+", " ") %>%
+    stringr::str_squish()
+}
+
 # Color palettes for consistent styling
 connection_colors <- c(
-  "Wired" = "#2ECC71",
-  "Wireless" = "#9B59B6"
+  "Wired" = "#A8BE00",
+  "Wireless" = "#5000DC"
 )
 
 category_colors <- c(
-  "Arcade Stick" = "#E74C3C",
-  "Controller" = "#3498DB",
-  "Adapter" = "#F39C12",
-  "Arcade Encoder" = "#1ABC9C",
-  "Gamepad" = "#3498DB",
-  "Flight Stick" = "#E67E22",
-  "Racing Wheel" = "#34495E",
-  "Other" = "#95A5A6"
+  "Arcade Stick" = "#5000DC",
+  "Controller" = "#6A2DF0",
+  "Adapter" = "#9BB000",
+  "Arcade Encoder" = "#C6DD00",
+  "Gamepad" = "#7D4DE2",
+  "Flight Stick" = "#705600",
+  "Racing Wheel" = "#2E215A",
+  "Other" = "#7A8499"
 )
 
 wireless_type_colors <- c(
-  "Bluetooth" = "#8E44AD",
-  "2.4 GHz" = "#16A085"
+  "Bluetooth" = "#5000DC",
+  "2.4 GHz" = "#A8BE00"
 )
 ```
 
 ```{r load-gsheet-data, echo=FALSE, warning=FALSE}
-dat_raw <- gsheet2tbl('https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/edit#gid=0')
+sheet_url <- "https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/edit#gid=0"
+cache_csv <- "../results/latency_sheet_cache.csv"
+data_source <- "live"
+data_source_label <- "Google Sheet (live)"
+data_source_cached_at <- as.POSIXct(NA)
+fetch_error <- NA_character_
+
+dat_raw <- tryCatch({
+  gsheet2tbl(sheet_url)
+}, error = function(e) {
+  fetch_error <<- conditionMessage(e)
+  NULL
+})
+
+if (!is.null(dat_raw) && nrow(dat_raw) > 0) {
+  write.csv(dat_raw, cache_csv, row.names = FALSE, na = "")
+  if (file.exists(cache_csv)) {
+    data_source_cached_at <- as.POSIXct(file.info(cache_csv)$mtime)
+  }
+} else if (file.exists(cache_csv)) {
+  dat_raw <- read.csv(cache_csv, stringsAsFactors = FALSE, check.names = FALSE, na.strings = c("", "NA"))
+  data_source <- "cache"
+  data_source_label <- "Local cache (fallback)"
+  data_source_cached_at <- as.POSIXct(file.info(cache_csv)$mtime)
+  message("Using cached latency dataset from: ", format(data_source_cached_at, "%Y-%m-%d %H:%M %Z"))
+} else {
+  stop(
+    "Unable to load data from Google Sheets and no cache file exists at ", cache_csv,
+    ". Last error: ", fetch_error
+  )
+}
+
+if (!"Latency Tier" %in% names(dat_raw) && "Tier" %in% names(dat_raw)) {
+  dat_raw$`Latency Tier` <- dat_raw$Tier
+}
+
+# Ensure schema compatibility across sheet revisions / cache snapshots
+required_cols <- c(
+  "Make", "Model", "Device", "Link", "Connection", "Wired / Wireless",
+  "Wireless Connection", "Home Button", "Latency Tier",
+  "Average Measured Latency (in ms)",
+  "Standard Deviation of Measured Latency (in ms)",
+  "Max Measured Latency (in ms)",
+  "Min Measured Latency (in ms)",
+  "Category", "Face Buttons", "Date Added", "Valid Results"
+)
+for (col in required_cols) {
+  if (!col %in% names(dat_raw)) {
+    dat_raw[[col]] <- NA
+  }
+}
+
+numeric_cols <- c(
+  "Average Measured Latency (in ms)",
+  "Standard Deviation of Measured Latency (in ms)",
+  "Max Measured Latency (in ms)",
+  "Min Measured Latency (in ms)"
+)
+for (col in intersect(numeric_cols, names(dat_raw))) {
+  dat_raw[[col]] <- suppressWarnings(as.numeric(gsub("[^0-9.-]", "", dat_raw[[col]])))
+}
+
 dat <- dat_raw %>%
   mutate(Row = 2:(nrow(dat_raw) + 1)) %>%
-  filter(`Valid Results` == "YES") %>%
+  filter(toupper(as.character(`Valid Results`)) %in% c("YES", "TRUE", "1")) %>%
   select(
     Make, Model, Device, Link, Connection,
     "Wired/Wireless" = `Wired / Wireless`,
@@ -94,20 +1075,59 @@ dat <- dat_raw %>%
     "SD" = `Standard Deviation of Measured Latency (in ms)`,
     "Max" = `Max Measured Latency (in ms)`,
     "Min" = `Min Measured Latency (in ms)`,
-    Category, `Face Buttons`, Row, `Date Added`
+    Category, `Face Buttons`, Row, `Date Added`,
+    Amazon = any_of("Amazon"),
+    Price = any_of("Price"),
+    any_of(c("MiSTer / PC", "Switch", "PS4", "PS5", "Xbox One", "Xbox Series"))
   ) %>%
   filter(!is.na(`Latency (in ms)`)) %>%
   arrange(`Latency (in ms)`) %>%
   mutate(
-    `Missed` = ifelse(`Latency (in ms)` < 100 / 6, `Latency (in ms)` / (100 / 6), 1),
-    `On Time` = 1 - Missed,
     ID = row_number(),
     DeviceClean = Device,
+    DeviceNorm = normalize_device_name(DeviceClean),
     Device = ifelse(is.na(Link),
                     Device,
-                    paste0('<a target=_blank href=', Link, '>', Device, '</a>'))
+                    paste0('<a target=_blank href="', Link, '">', Device, '</a>'))
   ) %>%
-  distinct(DeviceClean, Connection, .keep_all = TRUE)
+  distinct(DeviceClean, Connection, .keep_all = TRUE) %>%
+  arrange(`Latency (in ms)`)
+
+# Build Platforms list-column from platform columns if they exist
+platform_cols <- intersect(c("MiSTer / PC", "Switch", "PS4", "PS5", "Xbox One", "Xbox Series"), names(dat))
+if (length(platform_cols) > 0) {
+  dat$Platforms <- apply(dat[, platform_cols, drop = FALSE], 1, function(row) {
+    cols <- platform_cols[!is.na(row) & trimws(toupper(row)) %in% c("YES", "TRUE", "X", "1")]
+    paste(cols, collapse = ",")
+  })
+} else {
+  dat$Platforms <- ""
+}
+
+# Clean Price column if it exists
+if ("Price" %in% names(dat)) {
+  dat$PriceNum <- as.numeric(gsub("[^0-9.]", "", dat$Price))
+} else {
+  dat$Price <- NA_character_
+  dat$PriceNum <- NA_real_
+}
+
+# Ensure Amazon column exists
+if (!"Amazon" %in% names(dat)) {
+  dat$Amazon <- NA_character_
+}
+
+# Convert Excel serial dates to mm/dd/YYYY when needed (cache fallback compatibility)
+if ("Date Added" %in% names(dat)) {
+  serial_dates <- suppressWarnings(as.numeric(dat$`Date Added`))
+  needs_serial_parse <- !is.na(serial_dates) & !grepl("/", dat$`Date Added`)
+  if (any(needs_serial_parse, na.rm = TRUE)) {
+    dat$`Date Added`[needs_serial_parse] <- format(
+      as.Date(serial_dates[needs_serial_parse], origin = "1899-12-30"),
+      "%m/%d/%Y"
+    )
+  }
+}
 ```
 
 ```{r load-csv-data, echo=FALSE, warning=FALSE}
@@ -131,7 +1151,38 @@ load_csv_with_device <- function(file_path) {
 
 raw_data <- lapply(csv_files, load_csv_with_device) %>%
   bind_rows() %>%
-  filter(!is.na(delay))
+  filter(!is.na(delay)) %>%
+  mutate(DeviceNorm = normalize_device_name(Device))
+
+frame_ms <- 100 / 6
+
+same_frame_from_samples <- function(delay_ms, frame_window_ms = frame_ms) {
+  mean(pmax(0, 1 - delay_ms / frame_window_ms), na.rm = TRUE) * 100
+}
+
+same_frame_from_normal <- function(mu, sigma, frame_window_ms = frame_ms) {
+  out <- rep(NA_real_, length(mu))
+
+  valid <- !is.na(mu) & !is.na(sigma) & sigma > 0
+  if (any(valid)) {
+    z <- (frame_window_ms - mu[valid]) / sigma[valid]
+    out[valid] <- (((frame_window_ms - mu[valid]) * pnorm(z)) + sigma[valid] * dnorm(z)) /
+      frame_window_ms * 100
+  }
+
+  deterministic <- !is.na(mu) & (!is.na(sigma) & sigma <= 0)
+  if (any(deterministic)) {
+    out[deterministic] <- pmax(0, 1 - mu[deterministic] / frame_window_ms) * 100
+  }
+
+  fallback <- !is.na(mu) & is.na(out)
+  if (any(fallback)) {
+    out[fallback] <- pmax(0, 1 - mu[fallback] / frame_window_ms) * 100
+  }
+
+  out <- pmax(pmin(out, 100), 0)
+  out
+}
 
 # Calculate percentile statistics from raw data
 raw_stats <- raw_data %>%
@@ -147,7 +1198,33 @@ raw_stats <- raw_data %>%
     IQR = IQR(delay, na.rm = TRUE),
     RawMin = min(delay, na.rm = TRUE),
     RawMax = max(delay, na.rm = TRUE),
+    PctOnTime = round(same_frame_from_samples(delay), 1),
+    BinA = round(sum(delay <= 100/6) / n() * 100, 1),
+    BinB = round(sum(delay > 100/6 & delay <= 200/6) / n() * 100, 1),
+    BinC = round(sum(delay > 200/6) / n() * 100, 1),
     .groups = 'drop'
+  ) %>%
+  mutate(Consistency = round(100 * (1 - RawSD / RawMean), 1))
+
+raw_stats_by_norm <- raw_data %>%
+  group_by(DeviceNorm) %>%
+  summarise(
+    MatchedCaptureFiles = n_distinct(Device),
+    N = n(),
+    RawMean = mean(delay, na.rm = TRUE),
+    RawSD = sd(delay, na.rm = TRUE),
+    Median = median(delay, na.rm = TRUE),
+    P90 = quantile(delay, 0.90, na.rm = TRUE),
+    P95 = quantile(delay, 0.95, na.rm = TRUE),
+    P99 = quantile(delay, 0.99, na.rm = TRUE),
+    IQR = IQR(delay, na.rm = TRUE),
+    RawMin = min(delay, na.rm = TRUE),
+    RawMax = max(delay, na.rm = TRUE),
+    PctOnTime = round(same_frame_from_samples(delay), 1),
+    BinA = round(sum(delay <= 100/6) / n() * 100, 1),
+    BinB = round(sum(delay > 100/6 & delay <= 200/6) / n() * 100, 1),
+    BinC = round(sum(delay > 200/6) / n() * 100, 1),
+    .groups = "drop"
   ) %>%
   mutate(Consistency = round(100 * (1 - RawSD / RawMean), 1))
 ```
@@ -157,45 +1234,673 @@ raw_stats <- raw_data %>%
 dat$Device <- factor(dat$Device, levels = unique(dat$Device))
 fit <- lm(data = dat, SD ~ `Latency (in ms)` + Min)
 dat$Imputed <- is.na(dat$SD)
-dat$SD[dat$Imputed] <- predict.lm(fit, dat[dat$Imputed, ])
+dat$SD[dat$Imputed] <- pmax(predict.lm(fit, dat[dat$Imputed, ]), 0.1)
 
 dat <- dat %>%
   mutate(
     `SD up` = `Latency (in ms)` + qnorm(.975) * SD,
-    `SD down` = `Latency (in ms)` - qnorm(.975) * SD
+    `SD down` = pmax(`Latency (in ms)` - qnorm(.975) * SD, 0)
   )
 
-# Merge raw stats where available (fuzzy match on device name)
+# Merge raw stats where available (normalized name matching)
 dat <- dat %>%
-  left_join(raw_stats, by = c("DeviceClean" = "Device"), suffix = c("", "_raw"))
+  left_join(raw_stats_by_norm, by = "DeviceNorm")
+
+# Estimate PctOnTime/bins for devices without raw CSV data using normal distribution
+missing <- is.na(dat$PctOnTime)
+dat$PctOnTime[missing] <- round(
+  same_frame_from_normal(dat$`Latency (in ms)`[missing], dat$SD[missing]),
+  1
+)
+dat$BinA[missing] <- round(pnorm(100/6, dat$`Latency (in ms)`[missing], dat$SD[missing]) * 100, 1)
+dat$BinB[missing] <- round(
+  (pnorm(200/6, dat$`Latency (in ms)`[missing], dat$SD[missing]) -
+   pnorm(100/6, dat$`Latency (in ms)`[missing], dat$SD[missing])) * 100, 1)
+dat$BinC[missing] <- round(100 - dat$BinA[missing] - dat$BinB[missing], 1)
+# Clamp negatives
+dat$BinA <- pmax(dat$BinA, 0)
+dat$BinB <- pmax(dat$BinB, 0)
+dat$BinC <- pmax(dat$BinC, 0)
+
+dat <- dat %>%
+  mutate(
+    HasRawCapture = !is.na(N),
+    MetricSource = ifelse(HasRawCapture, "Measured (raw capture)", "Estimated (normal model)")
+  )
+
+raw_unmatched <- raw_stats_by_norm %>%
+  select(DeviceNorm, MatchedCaptureFiles) %>%
+  left_join(
+    raw_data %>% distinct(DeviceNorm, Device) %>% group_by(DeviceNorm) %>% summarise(
+      CaptureExamples = paste(head(sort(unique(Device)), 3), collapse = "; "),
+      .groups = "drop"
+    ),
+    by = "DeviceNorm"
+  ) %>%
+  anti_join(dat %>% distinct(DeviceNorm), by = "DeviceNorm") %>%
+  arrange(desc(MatchedCaptureFiles), DeviceNorm)
+
+sheet_without_raw <- dat %>%
+  distinct(DeviceClean, DeviceNorm) %>%
+  anti_join(raw_stats_by_norm %>% distinct(DeviceNorm), by = "DeviceNorm") %>%
+  arrange(DeviceClean)
+
+raw_coverage_pct <- ifelse(nrow(dat) > 0, round(mean(dat$HasRawCapture) * 100, 1), 0)
+
+# Export derived datasets for maintenance workflows
+write.csv(
+  dat %>%
+    mutate(
+      `Latency (in ms)` = round(`Latency (in ms)`, 3),
+      SD = round(SD, 3),
+      PctOnTime = round(PctOnTime, 2)
+    ),
+  "../results/latency_cleaned_export.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+write.csv(
+  raw_unmatched,
+  "../results/raw_capture_unmatched.csv",
+  row.names = FALSE,
+  na = ""
+)
+
+write.csv(
+  sheet_without_raw,
+  "../results/database_without_raw_capture.csv",
+  row.names = FALSE,
+  na = ""
+)
 ```
 
-# Latency Overview
+# MiSTer Controller Latency Database {.tabset .tabset-fade}
 
-You can find the full spreadsheet [here](https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/edit#gid=0). If you see a controller you'd like more info on, its row value listed here will match the "Detailed Results" tab. Store links are often affiliate.
+You can find the full spreadsheet [here](https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/edit#gid=0). Store links are often affiliate.
 
-```{r latency-filters, echo=FALSE}
+```{r data-source-status, echo=FALSE, results='asis'}
+cache_txt <- if (!is.na(data_source_cached_at)) {
+  format(data_source_cached_at, "%Y-%m-%d %H:%M %Z")
+} else {
+  "not cached yet"
+}
+
+cat(sprintf(
+  '<div class="bg-source-note"><strong>Data source:</strong> %s. <strong>Last cache write:</strong> %s.</div>',
+  data_source_label,
+  cache_txt
+))
+```
+
+```{r hero-summary, echo=FALSE}
+source_short <- ifelse(data_source == "live", "Live Sheet", "Cache Fallback")
+h <- c(
+  '<section class="bg-hero">',
+  '<div class="bg-hero-title">Fast, searchable controller latency intelligence</div>',
+  '<p class="bg-hero-sub">Filter by platform and connection, compare on-time behavior, and drill into raw-capture quality in one workflow.</p>',
+  '<div class="bg-hero-actions">',
+  "<a class=\"bg-hero-btn\" href=\"#buyers-guide\">Buyer's Guide</a>",
+  '<a class="bg-hero-btn" href="#detailed-analysis">Detailed Analysis</a>',
+  '<a class="bg-hero-btn" href="#raw-data-deep-dive">Raw Data Deep Dive</a>',
+  '</div>',
+  '<div class="bg-hero-meta">',
+  sprintf('<span>%d devices tracked</span>', nrow(dat)),
+  sprintf('<span>%.1f%% raw capture coverage</span>', raw_coverage_pct),
+  sprintf('<span>Data source: %s</span>', source_short),
+  '</div>',
+  '</section>'
+)
+htmltools::HTML(paste(h, collapse = "\n"))
+```
+
+## Buyer's Guide
+
+Find the right controller for your setup. Filter by category, connection type, and platform, then browse results ranked by latency.
+
+```{r buyers-guide-kpis, echo=FALSE}
+under_one_frame <- sum(dat$`Latency (in ms)` < 100/6, na.rm = TRUE)
+wireless_count <- sum(dat$`Wired/Wireless` == "Wireless", na.rm = TRUE)
+
+h <- c(
+  '<div class="bg-kpi-grid">',
+  sprintf('<div class="bg-kpi"><div class="label">Devices</div><div class="value">%d</div></div>', nrow(dat)),
+  sprintf('<div class="bg-kpi"><div class="label">Under 1 Frame</div><div class="value">%d</div></div>', under_one_frame),
+  sprintf('<div class="bg-kpi"><div class="label">Wireless Tested</div><div class="value">%d</div></div>', wireless_count),
+  sprintf('<div class="bg-kpi"><div class="label">Raw Capture Coverage</div><div class="value">%.1f%%</div></div>', raw_coverage_pct),
+  '</div>'
+)
+
+htmltools::HTML(paste(h, collapse = "\n"))
+```
+
+```{r buyers-guide-recent, echo=FALSE, warning=FALSE}
+# ── Recently Added strip ──────────────────────────────────
+recent <- dat %>%
+  mutate(DateParsed = as.Date(`Date Added`, format = "%m/%d/%Y")) %>%
+  filter(!is.na(DateParsed)) %>%
+  arrange(desc(DateParsed)) %>%
+  slice_head(n = 8)
+
+if (nrow(recent) > 0) {
+  h <- c('<h4 style="margin-bottom:12px;">Recently Added</h4>',
+         '<div class="bg-recent-strip">')
+  for (i in seq_len(nrow(recent))) {
+    r <- recent[i, ]
+    lat <- round(r$`Latency (in ms)`, 2)
+    tier_class <- if (lat < 100/6) "bg-tag-tier-a" else if (lat < 200/6) "bg-tag-tier-b" else "bg-tag-tier-c"
+    h <- c(h, sprintf('<div class="bg-recent-chip"><span class="chip-badge %s">%.2f ms</span> %s</div>',
+                       tier_class, lat, htmltools::htmlEscape(r$DeviceClean)))
+  }
+  h <- c(h, '</div>')
+  htmltools::HTML(paste(h, collapse = "\n"))
+}
+```
+
+```{r buyers-guide-filters, echo=FALSE, warning=FALSE}
+# ── Filter panel ──────────────────────────────────────────
+categories <- sort(unique(na.omit(dat$Category)))
+connections <- sort(unique(na.omit(dat$`Wired/Wireless`)))
+
+# Derive available platforms
+all_platforms <- c("MiSTer / PC", "Switch", "PS4", "PS5", "Xbox One", "Xbox Series")
+avail_platforms <- intersect(all_platforms, platform_cols)
+
+h <- c(
+  '<div class="bg-filter-panel">',
+  '<div class="bg-filter-controls">',
+  '<div class="bg-filter-search"><input type="search" id="bg-search" placeholder="Search device, brand, category, platform..." aria-label="Search devices"></div>',
+  '<div class="bg-filter-sort"><select id="bg-sort" aria-label="Sort devices">',
+  '<option value="latency_asc">Sort: Lowest latency</option>',
+  '<option value="latency_desc">Sort: Highest latency</option>',
+  '<option value="ontime_desc">Sort: Highest same-frame probability</option>',
+  '<option value="price_asc">Sort: Lowest price</option>',
+  '</select></div>',
+  '<button class="bg-density-btn" type="button" id="density-toggle" onclick="toggleDensity()">Density</button>',
+  '<button class="bg-theme-btn" type="button" id="theme-toggle" onclick="toggleTheme()">Theme</button>',
+  '<button class="bg-reset-btn" type="button" id="bg-reset" onclick="resetFilters()">Reset</button>',
+  '</div>'
+)
+
+# Category row
+h <- c(h, '<div class="bg-filter-group"><h4>Category</h4>',
+       '<button class="filter-btn active" data-dim="category" data-val="all" onclick="toggleFilter(\'category\',\'all\',this)">All</button>')
+for (cat_name in categories) {
+  esc <- htmltools::htmlEscape(cat_name)
+  h <- c(h, sprintf('<button class="filter-btn" data-dim="category" data-val="%s" onclick="toggleFilter(\'category\',\'%s\',this)">%s</button>',
+                     esc, esc, esc))
+}
+h <- c(h, '</div>')
+
+# Connection row
+h <- c(h, '<div class="bg-filter-group"><h4>Connection</h4>',
+       '<button class="filter-btn active" data-dim="connection" data-val="all" onclick="toggleFilter(\'connection\',\'all\',this)">All</button>')
+for (conn in connections) {
+  esc <- htmltools::htmlEscape(conn)
+  h <- c(h, sprintf('<button class="filter-btn" data-dim="connection" data-val="%s" onclick="toggleFilter(\'connection\',\'%s\',this)">%s</button>',
+                     esc, esc, esc))
+}
+h <- c(h, '</div>')
+
+# Platform row (only if platform columns exist)
+if (length(avail_platforms) > 0) {
+  h <- c(h, '<div class="bg-filter-group"><h4>Works With</h4>',
+         '<button class="filter-btn active" data-dim="platform" data-val="all" onclick="toggleFilter(\'platform\',\'all\',this)">All</button>')
+  for (plat in avail_platforms) {
+    esc <- htmltools::htmlEscape(plat)
+    h <- c(h, sprintf('<button class="filter-btn" data-dim="platform" data-val="%s" onclick="toggleFilter(\'platform\',\'%s\',this)">%s</button>',
+                       esc, esc, esc))
+  }
+  h <- c(h, '</div>')
+}
+
+h <- c(h, '</div>',  # close filter panel
+       '<div class="bg-counter" id="bg-counter"></div>',
+       '<div class="bg-counter" id="bg-match-counter"></div>')
+
+htmltools::HTML(paste(h, collapse = "\n"))
+```
+
+```{r buyers-guide-cards, echo=FALSE, warning=FALSE}
+# ── Result cards ──────────────────────────────────────────
+card_data <- dat %>%
+  arrange(`Latency (in ms)`)
+
+h <- c('<div class="bg-card-grid" id="bg-card-grid">')
+
+for (i in seq_len(nrow(card_data))) {
+  d <- card_data[i, ]
+  lat <- round(d$`Latency (in ms)`, 2)
+
+  # Tier badge (latency-based)
+  if (lat < 100/6) {
+    tier_class <- "bg-tag-tier-a"; tier_label <- "&lt; 1 frame"
+  } else if (lat < 200/6) {
+    tier_class <- "bg-tag-tier-b"; tier_label <- "1-2 frames"
+  } else {
+    tier_class <- "bg-tag-tier-c"; tier_label <- "&gt; 2 frames"
+  }
+
+  # Category
+  cat_val <- if (!is.na(d$Category)) d$Category else ""
+  conn_val <- if (!is.na(d$`Wired/Wireless`)) d$`Wired/Wireless` else ""
+  platforms_str <- if (!is.na(d$Platforms)) d$Platforms else ""
+  make_raw <- if (!is.na(d$Make)) d$Make else ""
+
+  # Price
+  price_html <- ""
+  price_num <- NA_real_
+  if (!is.na(d$PriceNum) && d$PriceNum > 0) {
+    price_num <- d$PriceNum
+    price_html <- sprintf("$%.0f", d$PriceNum)
+  }
+
+  # Buy link: prefer Amazon, fall back to Link
+  buy_url <- NA_character_
+  if (!is.na(d$Amazon) && nchar(trimws(d$Amazon)) > 0) {
+    buy_url <- trimws(d$Amazon)
+  } else if (!is.na(d$Link) && nchar(trimws(d$Link)) > 0) {
+    buy_url <- trimws(d$Link)
+  }
+
+  lat_color <- if (lat < 100/6) "#155724" else if (lat < 200/6) "#856404" else "#721c24"
+  make_val <- if (!is.na(d$Make)) htmltools::htmlEscape(d$Make) else ""
+  search_blob <- tolower(paste(d$DeviceClean, make_raw, cat_val, conn_val, platforms_str))
+
+  # Build tag spans
+  tags <- sprintf('<span class="bg-tag %s">%s</span>', tier_class, tier_label)
+  if (nchar(conn_val) > 0) {
+    tags <- c(tags, sprintf('<span class="bg-tag bg-tag-connection">%s</span>', htmltools::htmlEscape(conn_val)))
+  }
+
+  buy_html <- ""
+  if (!is.na(buy_url)) {
+    buy_html <- sprintf('<div class="bg-card-buy"><a href="%s" target="_blank">Buy &rarr;</a></div>',
+                        htmltools::htmlEscape(buy_url))
+  }
+
+  # Correct same-frame probability:
+  # P(same frame) = E[max(0, 1 - delay / frame_ms)]
+  frame_ms <- 100 / 6
+  meter_pct <- if (!is.na(d$PctOnTime)) d$PctOnTime else pmax(0, (1 - lat / frame_ms) * 100)
+  meter_pct <- max(min(meter_pct, 100), 0)
+  if (lat > 0) {
+    meter_pct <- min(meter_pct, 99.9)
+  }
+  meter_color <- if (meter_pct >= 90) "#24a86b" else if (meter_pct >= 75) "#A8BE00" else if (meter_pct >= 50) "#d98d2b" else "#d95656"
+  pct_ontime <- meter_pct
+  ontime_label <- if (abs(meter_pct - round(meter_pct)) < 0.05) sprintf("%.0f%%", round(meter_pct)) else sprintf("%.1f%%", meter_pct)
+
+  meter_html <- sprintf(
+    '<div class="bg-card-latency-meter">
+  <div class="bg-meter-title">
+    <span>Same-Frame</span>
+    <span class="bg-meter-chip">%s</span>
+  </div>
+  <div class="bg-meter-track">
+    <div class="bg-meter-fill" style="width:%.1f%%;background:%s;"></div>
+  </div>
+  <div class="bg-meter-note">Random press same-frame probability</div>
+</div>',
+    ontime_label,
+    meter_pct, meter_color
+  )
+
+  price_attr <- ifelse(is.na(price_num), "", sprintf("%.2f", price_num))
+  h <- c(h, sprintf(
+    '<div class="bg-card" data-category="%s" data-connection="%s" data-platforms="%s" data-search="%s" data-latency="%.3f" data-ontime="%.3f" data-price="%s">
+<div class="bg-card-rank">#%d</div>
+<div class="bg-card-name">%s</div>
+<div class="bg-card-make-price"><span>%s</span><span class="bg-card-price">%s</span></div>
+<div class="bg-card-latency" style="color:%s;">%.2f ms</div>
+%s
+<div class="bg-card-tags">%s</div>
+%s
+</div>',
+    htmltools::htmlEscape(cat_val),
+    htmltools::htmlEscape(conn_val),
+    htmltools::htmlEscape(platforms_str),
+    htmltools::htmlEscape(search_blob),
+    lat,
+    pct_ontime,
+    price_attr,
+    i,
+    htmltools::htmlEscape(d$DeviceClean),
+    make_val, price_html,
+    lat_color, lat,
+    meter_html,
+    paste(tags, collapse = "\n"),
+    buy_html
+  ))
+}
+
+h <- c(h, '</div>')  # close card grid
+
+htmltools::HTML(paste(h, collapse = "\n"))
+```
+
+<p class="bg-inline-note">Prefer a table? See the <strong>Detailed Analysis</strong> tab for the full filterable data table.</p>
+
+```{r buyers-guide-js, echo=FALSE}
+htmltools::HTML('
+<script>
+(function() {
+  var THEME_KEY = "inputlatency-theme";
+  var DENSITY_KEY = "inputlatency-density";
+  var defaultState = { category: ["all"], connection: ["all"], platform: ["all"] };
+  var state = { category: ["all"], connection: ["all"], platform: ["all"] };
+
+  function normalize(x) {
+    return (x || "").toLowerCase().trim();
+  }
+
+  function getControl(id) {
+    return document.getElementById(id);
+  }
+
+  function getStoredTheme() {
+    try {
+      return localStorage.getItem(THEME_KEY);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function getPreferredTheme() {
+    var stored = getStoredTheme();
+    if (stored === "light" || stored === "dark") {
+      return stored;
+    }
+    return (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light";
+  }
+
+  function getStoredDensity() {
+    try {
+      return localStorage.getItem(DENSITY_KEY);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function getPreferredDensity() {
+    var density = getStoredDensity();
+    return (density === "compact" || density === "comfortable") ? density : "comfortable";
+  }
+
+  function updateThemeButton(theme) {
+    var btn = getControl("theme-toggle");
+    if (!btn) return;
+    if (theme === "dark") {
+      btn.textContent = "Switch to Light";
+      btn.setAttribute("aria-label", "Switch to light theme");
+    } else {
+      btn.textContent = "Switch to Dark";
+      btn.setAttribute("aria-label", "Switch to dark theme");
+    }
+  }
+
+  function updateDensityButton(density) {
+    var btn = getControl("density-toggle");
+    if (!btn) return;
+    if (density === "compact") {
+      btn.textContent = "Density: Compact";
+      btn.setAttribute("aria-label", "Switch to comfortable density");
+    } else {
+      btn.textContent = "Density: Comfortable";
+      btn.setAttribute("aria-label", "Switch to compact density");
+    }
+  }
+
+  function applyPlotlyTheme(theme) {
+    if (typeof window.inputLatencyRepaintPlots === "function") {
+      window.inputLatencyRepaintPlots(document);
+      return;
+    }
+    if (typeof Plotly === "undefined") return;
+    var dark = theme === "dark";
+    var baseLayout = {
+      paper_bgcolor: dark ? "#151b29" : "#ffffff",
+      plot_bgcolor: dark ? "#151b29" : "#ffffff",
+      font: { color: dark ? "#e6edf8" : "#101622" }
+    };
+    document.querySelectorAll(".plotly-graph-div").forEach(function(el) {
+      Plotly.relayout(el, baseLayout);
+    });
+  }
+
+  function applyTheme(theme, persist) {
+    document.documentElement.setAttribute("data-theme", theme);
+    updateThemeButton(theme);
+    if (persist) {
+      try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+    }
+    applyPlotlyTheme(theme);
+    if (typeof CustomEvent !== "undefined") {
+      document.dispatchEvent(new CustomEvent("inputlatency:theme", { detail: { theme: theme } }));
+    }
+  }
+
+  function applyDensity(density, persist) {
+    document.documentElement.setAttribute("data-density", density);
+    updateDensityButton(density);
+    if (persist) {
+      try { localStorage.setItem(DENSITY_KEY, density); } catch (e) {}
+    }
+  }
+
+  window.toggleTheme = function() {
+    var current = document.documentElement.getAttribute("data-theme") || "light";
+    var next = current === "dark" ? "light" : "dark";
+    applyTheme(next, true);
+  };
+
+  window.toggleDensity = function() {
+    var current = document.documentElement.getAttribute("data-density") || "comfortable";
+    var next = current === "compact" ? "comfortable" : "compact";
+    applyDensity(next, true);
+  };
+
+  function sortCards(cards, sortBy) {
+    function numAttr(card, key, fallback) {
+      var val = parseFloat(card.getAttribute(key));
+      return Number.isFinite(val) ? val : fallback;
+    }
+
+    cards.sort(function(a, b) {
+      if (sortBy === "latency_desc") {
+        return numAttr(b, "data-latency", -Infinity) - numAttr(a, "data-latency", -Infinity);
+      }
+      if (sortBy === "ontime_desc") {
+        return numAttr(b, "data-ontime", -Infinity) - numAttr(a, "data-ontime", -Infinity);
+      }
+      if (sortBy === "price_asc") {
+        return numAttr(a, "data-price", Infinity) - numAttr(b, "data-price", Infinity);
+      }
+      return numAttr(a, "data-latency", Infinity) - numAttr(b, "data-latency", Infinity);
+    });
+  }
+
+  window.toggleFilter = function(dim, val, btn) {
+    var btns = document.querySelectorAll(".filter-btn[data-dim=\'" + dim + "\']");
+    if (val === "all") {
+      state[dim] = ["all"];
+      btns.forEach(function(b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+    } else {
+      state[dim] = state[dim].filter(function(v) { return v !== "all"; });
+      var allBtn = document.querySelector(".filter-btn[data-dim=\'" + dim + "\'][data-val=\'all\']");
+      if (allBtn) allBtn.classList.remove("active");
+
+      if (btn.classList.contains("active")) {
+        btn.classList.remove("active");
+        state[dim] = state[dim].filter(function(v) { return v !== val; });
+        if (state[dim].length === 0) {
+          state[dim] = ["all"];
+          if (allBtn) allBtn.classList.add("active");
+        }
+      } else {
+        btn.classList.add("active");
+        state[dim].push(val);
+      }
+    }
+    applyFilters();
+  };
+
+  window.resetFilters = function() {
+    state = {
+      category: defaultState.category.slice(),
+      connection: defaultState.connection.slice(),
+      platform: defaultState.platform.slice()
+    };
+
+    ["category", "connection", "platform"].forEach(function(dim) {
+      var btns = document.querySelectorAll(".filter-btn[data-dim=\'" + dim + "\']");
+      btns.forEach(function(b) {
+        b.classList.remove("active");
+        if (b.getAttribute("data-val") === "all") {
+          b.classList.add("active");
+        }
+      });
+    });
+
+    var search = getControl("bg-search");
+    var sort = getControl("bg-sort");
+    if (search) search.value = "";
+    if (sort) sort.value = "latency_asc";
+
+    applyFilters();
+  };
+
+  window.applyFilters = function() {
+    var grid = document.getElementById("bg-card-grid");
+    if (!grid) return;
+
+    var cards = Array.prototype.slice.call(grid.querySelectorAll(".bg-card"));
+    var total = cards.length;
+    var shown = 0;
+    var searchTerm = normalize(getControl("bg-search") ? getControl("bg-search").value : "");
+    var sortBy = getControl("bg-sort") ? getControl("bg-sort").value : "latency_asc";
+    var visibleCards = [];
+
+    cards.forEach(function(card) {
+      var catMatch = state.category.indexOf("all") >= 0 ||
+                     state.category.indexOf(card.getAttribute("data-category")) >= 0;
+      var connMatch = state.connection.indexOf("all") >= 0 ||
+                      state.connection.indexOf(card.getAttribute("data-connection")) >= 0;
+      var searchMatch = !searchTerm ||
+                        normalize(card.getAttribute("data-search")).indexOf(searchTerm) >= 0;
+      var platMatch = true;
+      if (state.platform.indexOf("all") < 0) {
+        var cardPlats = (card.getAttribute("data-platforms") || "").split(",").map(function(p) {
+          return p.trim();
+        });
+        platMatch = state.platform.some(function(p) { return cardPlats.indexOf(p) >= 0; });
+      }
+      if (catMatch && connMatch && platMatch && searchMatch) {
+        visibleCards.push(card);
+      } else {
+        card.style.display = "none";
+      }
+    });
+
+    sortCards(visibleCards, sortBy);
+    visibleCards.forEach(function(card, idx) {
+      card.style.display = "";
+      card.querySelector(".bg-card-rank").textContent = "#" + (idx + 1);
+      card.style.setProperty("--stagger", String(idx % 12));
+      card.style.animation = "none";
+      card.offsetHeight;
+      card.style.animation = "";
+      grid.appendChild(card);
+      shown++;
+    });
+
+    var counter = document.getElementById("bg-counter");
+    if (counter) {
+      counter.textContent = "Showing " + shown + " of " + total + " devices";
+    }
+    var matchCounter = document.getElementById("bg-match-counter");
+    if (matchCounter) {
+      matchCounter.textContent = searchTerm ? "Search: \\"" + searchTerm + "\\"" : "";
+    }
+  };
+
+  function bindControls() {
+    var search = getControl("bg-search");
+    var sort = getControl("bg-sort");
+    if (search) search.addEventListener("input", applyFilters);
+    if (sort) sort.addEventListener("change", applyFilters);
+  }
+
+  function syncSystemThemeWhenUnpinned() {
+    if (!window.matchMedia) return;
+    var media = window.matchMedia("(prefers-color-scheme: dark)");
+    var cb = function(e) {
+      var stored = getStoredTheme();
+      if (stored === "light" || stored === "dark") return;
+      applyTheme(e.matches ? "dark" : "light", false);
+    };
+    if (media.addEventListener) {
+      media.addEventListener("change", cb);
+    } else if (media.addListener) {
+      media.addListener(cb);
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    applyTheme(getPreferredTheme(), false);
+    applyDensity(getPreferredDensity(), false);
+    bindControls();
+    applyFilters();
+    syncSystemThemeWhenUnpinned();
+    setTimeout(function() {
+      applyPlotlyTheme(document.documentElement.getAttribute("data-theme") || "light");
+    }, 200);
+  });
+
+  if (document.readyState !== "loading") {
+    applyTheme(getPreferredTheme(), false);
+    applyDensity(getPreferredDensity(), false);
+    bindControls();
+    applyFilters();
+    syncSystemThemeWhenUnpinned();
+    setTimeout(function() {
+      applyPlotlyTheme(document.documentElement.getAttribute("data-theme") || "light");
+    }, 200);
+  }
+})();
+</script>
+')
+```
+
+## Detailed Analysis
+
+### Latency Overview
+
+If you see a controller you'd like more info on, its row value listed here will match the "Detailed Results" tab in the spreadsheet.
+
+```{r latency-filters-detail, echo=FALSE}
 keep <- c("Device", "Latency (in ms)", "SD", "Category", "Connection", "Latency Tier", "Row")
 keep_logical <- names(dat) %in% keep
 
-shared_dat <- SharedData$new(dat)
+shared_dat_detail <- SharedData$new(dat, group = "detail_table")
 bscols(widths = c(12),
   list(
-    filter_select("Make", "Make", shared_dat, ~Make),
-    filter_checkbox("Connection", "Connection", shared_dat, ~`Wired/Wireless`,
+    filter_select("MakeDetail", "Make", shared_dat_detail, ~Make),
+    filter_checkbox("ConnectionDetail", "Wired/Wireless", shared_dat_detail, ~`Wired/Wireless`,
                     inline = TRUE),
-    filter_checkbox("Home Button", "Home Button", shared_dat, ~`Home Button`,
+    filter_checkbox("HomeButtonDetail", "Home Button", shared_dat_detail, ~`Home Button`,
                     inline = TRUE),
-    filter_checkbox("Category", "Category", shared_dat, ~Category,
+    filter_checkbox("CategoryDetail", "Category", shared_dat_detail, ~Category,
                     inline = TRUE),
-    filter_checkbox("Face Buttons", "Face Buttons", shared_dat, ~`Face Buttons`,
+    filter_checkbox("FaceButtonsDetail", "Face Buttons", shared_dat_detail, ~`Face Buttons`,
                     inline = TRUE),
-    filter_checkbox("Latency Tier", "Latency Tier", shared_dat, ~`Latency Tier`,
+    filter_checkbox("LatencyTierDetail", "Latency Tier", shared_dat_detail, ~`Latency Tier`,
                     inline = TRUE)
   )
 )
 
-datatable(shared_dat,
+datatable(shared_dat_detail,
           options = list(
             autowidth = TRUE,
             fixedColumns = TRUE,
@@ -206,10 +1911,10 @@ datatable(shared_dat,
           escape = FALSE)
 ```
 
-# Recently Added
+### Recently Added
 
-```{r recently-added, echo=FALSE}
-keep_logical <- names(dat) %in% c(keep, "Date Added")
+```{r recently-added-detail, echo=FALSE}
+keep_logical_recent <- names(dat) %in% c(keep, "Date Added")
 
 datatable(dat[rev(order(as.Date(dat$`Date Added`, format = "%m/%d/%Y"))), ],
           options = list(
@@ -217,12 +1922,12 @@ datatable(dat[rev(order(as.Date(dat$`Date Added`, format = "%m/%d/%Y"))), ],
             fixedColumns = TRUE,
             pageLength = 20,
             columnDefs = list(list(visible = FALSE,
-                                   targets = (1:ncol(dat))[!keep_logical]))
+                                   targets = (1:ncol(dat))[!keep_logical_recent]))
           ),
           escape = FALSE)
 ```
 
-# Summary Statistics
+### Summary Statistics
 
 ```{r summary-stats, echo=FALSE, warning=FALSE}
 # Wired vs Wireless statistical comparison
@@ -239,6 +1944,7 @@ if (length(wired_latency) > 2 && length(wireless_latency) > 2) {
 - Total devices tested: `r nrow(dat)`
 - Wired devices: `r sum(dat$'Wired/Wireless' == "Wired", na.rm = TRUE)` (mean latency: `r round(mean(wired_latency, na.rm = TRUE), 2)` ms)
 - Wireless devices: `r sum(dat$'Wired/Wireless' == "Wireless", na.rm = TRUE)` (mean latency: `r round(mean(wireless_latency, na.rm = TRUE), 2)` ms)
+- Devices with raw capture backing: `r sum(dat$HasRawCapture, na.rm = TRUE)` (`r raw_coverage_pct`%)
 - One frame threshold: `r round(100/6, 2)` ms (60 Hz)
 
 ```{r wired-wireless-ttest, echo=FALSE, results='asis'}
@@ -268,11 +1974,11 @@ datatable(category_stats,
           caption = "Latency by Category")
 ```
 
-# Interactive Charts
+### Interactive Charts {.tabset}
 
 In all plots, the dashed red line corresponds to one frame (16.67 ms at 60 Hz).
 
-## Wired vs. Wireless
+#### Wired vs. Wireless
 
 ```{r wired-wireless-plotly, echo=FALSE, fig.height=8, fig.width=12, warning=FALSE}
 p_wired <- dat %>%
@@ -293,7 +1999,7 @@ ggplotly(p_wired, tooltip = c("text", "y"), width = 1000, height = 500) %>%
   layout(hovermode = "closest")
 ```
 
-## 2.4GHz Wireless vs. Bluetooth
+#### 2.4GHz vs. Bluetooth
 
 ```{r bt-vs-24ghz-plotly, echo=FALSE, fig.height=8, fig.width=12, warning=FALSE}
 wireless_dat <- dat %>%
@@ -320,7 +2026,7 @@ if (nrow(wireless_dat) > 0) {
 }
 ```
 
-## Latency by Rank
+#### Latency by Rank
 
 ```{r latency-rank-plotly, echo=FALSE, fig.width=14, warning=FALSE}
 dat_ranked <- dat %>%
@@ -344,7 +2050,7 @@ ggplotly(p_rank, tooltip = c("text", "y", "x"), width = 1200, height = 500) %>%
   layout(hovermode = "closest")
 ```
 
-## Category Comparison
+#### Category Comparison
 
 ```{r category-boxplot-plotly, echo=FALSE, fig.height=10, fig.width=14, warning=FALSE}
 p_category <- dat %>%
@@ -367,7 +2073,7 @@ ggplotly(p_category, tooltip = c("text", "y"), width = 1200, height = 600) %>%
   layout(hovermode = "closest")
 ```
 
-# Raw Data Deep Dive
+### Raw Data Deep Dive
 
 This section analyzes the raw capture data from individual controller tests, providing detailed latency distribution insights.
 
@@ -378,7 +2084,39 @@ n_readings <- nrow(raw_data)
 
 **Raw data available:** `r n_devices_raw` devices with `r format(n_readings, big.mark = ",")` total readings.
 
-## Percentile Statistics from Raw Captures
+#### Data Coverage
+
+- Devices in database: `r nrow(dat)`
+- Devices with matched raw captures: `r sum(dat$HasRawCapture, na.rm = TRUE)` (`r raw_coverage_pct`%)
+- Raw capture files that did not map to a database device: `r nrow(raw_unmatched)`
+
+```{r coverage-missing-captures, echo=FALSE}
+if (nrow(raw_unmatched) > 0) {
+  datatable(
+    raw_unmatched %>%
+      select(
+        `Normalized Name` = DeviceNorm,
+        `Capture Files` = MatchedCaptureFiles,
+        `Examples` = CaptureExamples
+      ),
+    options = list(pageLength = 10, scrollX = TRUE),
+    caption = "Capture files not currently mapped to a device row"
+  )
+}
+```
+
+```{r coverage-sheet-without-raw, echo=FALSE}
+if (nrow(sheet_without_raw) > 0) {
+  datatable(
+    sheet_without_raw %>%
+      select(`Database Device` = DeviceClean),
+    options = list(pageLength = 10, scrollX = TRUE),
+    caption = "Database rows without raw capture files"
+  )
+}
+```
+
+#### Percentile Statistics from Raw Captures
 
 ```{r raw-percentile-table, echo=FALSE}
 if (nrow(raw_stats) > 0) {
@@ -402,7 +2140,7 @@ if (nrow(raw_stats) > 0) {
 }
 ```
 
-## Latency Distribution by Device
+#### Latency Distribution by Device
 
 Select a device to view its latency distribution histogram.
 
@@ -413,18 +2151,13 @@ if (nrow(raw_data) > 0) {
     arrange(RawMean) %>%
     pull(Device)
 
-  # Create histogram data for each device
-  hist_plots <- lapply(device_list, function(dev) {
-    dev_data <- raw_data %>% filter(Device == dev)
-    plot_ly(x = ~dev_data$delay, type = "histogram",
-            nbinsx = 40, name = dev,
-            marker = list(color = '#3498DB', line = list(color = '#2980B9', width = 1))) %>%
-      layout(
-        shapes = list(
-          list(type = "line", x0 = 100/6, x1 = 100/6, y0 = 0, y1 = 1,
-               yref = "paper", line = list(color = "#BA1B1D", dash = "dash", width = 2))
-        )
-      )
+  # Pre-bin histograms to reduce page size vs embedding full raw vectors
+  max_delay <- max(raw_data$delay, na.rm = TRUE)
+  hist_breaks <- seq(0, max(40, ceiling(max_delay)), by = 0.5)
+  hist_cache <- lapply(device_list, function(dev) {
+    dev_delay <- raw_data %>% filter(Device == dev) %>% pull(delay)
+    h <- hist(dev_delay, breaks = hist_breaks, plot = FALSE)
+    tibble::tibble(mid = h$mids, count = h$counts)
   })
 
   # Create dropdown buttons
@@ -441,11 +2174,15 @@ if (nrow(raw_data) > 0) {
   # Combine all traces
   p_hist <- plot_ly()
   for (i in seq_along(device_list)) {
-    dev_data <- raw_data %>% filter(Device == device_list[i])
+    hdat <- hist_cache[[i]]
     p_hist <- p_hist %>%
-      add_histogram(x = ~dev_data$delay, name = device_list[i],
-                    visible = (i == 1),
-                    marker = list(color = '#3498DB'))
+      add_bars(
+        x = ~hdat$mid,
+        y = ~hdat$count,
+        name = device_list[i],
+        visible = (i == 1),
+        marker = list(color = '#3498DB')
+      )
   }
 
   p_hist %>%
@@ -478,17 +2215,26 @@ if (nrow(raw_data) > 0) {
 }
 ```
 
-## Time-Series Pattern Viewer
+#### Time-Series Pattern Viewer
 
 Select a device to view its latency over time. Look for periodic sawtooth patterns indicating polling intervals.
 
 ```{r raw-timeseries-interactive, echo=FALSE, warning=FALSE}
 if (nrow(raw_data) > 0) {
-  # Get devices with at least 100 readings
+  downsample_device_series <- function(df, max_points = 300) {
+    if (nrow(df) <= max_points) {
+      return(df)
+    }
+    idx <- unique(round(seq(1, nrow(df), length.out = max_points)))
+    df[idx, , drop = FALSE]
+  }
+
+  # Get devices with at least 100 readings (cap count for page size)
   devices_with_data <- raw_data %>%
     count(Device) %>%
     filter(n >= 100) %>%
-    arrange(desc(n)) %>%
+    arrange(desc(n), Device) %>%
+    slice_head(n = 20) %>%
     pull(Device)
 
   # Create dropdown buttons
@@ -507,7 +2253,8 @@ if (nrow(raw_data) > 0) {
   for (i in seq_along(devices_with_data)) {
     dev_data <- raw_data %>%
       filter(Device == devices_with_data[i]) %>%
-      slice_head(n = 500)  # First 500 readings
+      arrange(read) %>%
+      downsample_device_series(max_points = 300)
 
     p_ts <- p_ts %>%
       add_trace(x = ~dev_data$read, y = ~dev_data$delay,
@@ -520,7 +2267,7 @@ if (nrow(raw_data) > 0) {
 
   p_ts %>%
     layout(
-      title = list(text = "Latency Time Series (First 500 Readings)", y = 0.95),
+      title = list(text = "Latency Time Series (Downsampled to 300 Points)", y = 0.95),
       xaxis = list(title = "Reading Number"),
       yaxis = list(title = "Latency (ms)"),
       showlegend = FALSE,
@@ -550,7 +2297,7 @@ if (nrow(raw_data) > 0) {
 }
 ```
 
-## Consistency Analysis
+#### Consistency Analysis
 
 Devices with higher consistency scores have more predictable latency (less variance relative to mean).
 
@@ -576,64 +2323,97 @@ if (nrow(raw_stats) > 0) {
 }
 ```
 
-# Latency Ranges
+### Latency Ranges
 
 These plots show approximate latency ranges using 95% confidence intervals. Due to limited data, some standard deviations were imputed using linear regression. Imputed values are shown in a different color.
 
 Use the filters below to show specific device types and connection methods.
 
 ```{r latency-range-filters, echo=FALSE}
-# Prepare data for filtered plot
+# Prepare data for filtered plot - sort by latency and set factor levels
 range_plot_dat <- dat %>%
   filter(!is.na(`Wired/Wireless`), !is.na(Category)) %>%
   mutate(
     DeviceLabel = gsub("<[^>]+>", "", Device),
     DeviceShort = truncate_name(DeviceLabel, 45)
-  )
+  ) %>%
+  arrange(`Latency (in ms)`) %>%
+  mutate(DeviceShort = factor(DeviceShort, levels = rev(unique(DeviceShort))))
 
-shared_range_dat <- SharedData$new(range_plot_dat)
+# Use a named key so filters and plot share the same crosstalk group
+shared_range_dat <- SharedData$new(range_plot_dat, key = ~ID, group = "range_group")
 
 bscols(widths = c(12),
   list(
-    filter_checkbox("ConnectionType", "Connection", shared_range_dat, ~`Wired/Wireless`, inline = TRUE),
+    filter_checkbox("ConnectionType", "Wired/Wireless", shared_range_dat, ~`Wired/Wireless`, inline = TRUE),
     filter_checkbox("DeviceCategory", "Category", shared_range_dat, ~Category, inline = TRUE)
   )
 )
 ```
 
 ```{r latency-range-plot, echo=FALSE, fig.height=25, fig.width=14, warning=FALSE}
-# Sort data by latency (low to high) and create ordered factor for y-axis
-range_plot_sorted <- range_plot_dat %>%
-  arrange(`Latency (in ms)`) %>%
-  mutate(DeviceShort = factor(DeviceShort, levels = rev(unique(DeviceShort))))
-
 # Calculate appropriate height
-plot_height <- max(600, nrow(range_plot_sorted) * 20)
+plot_height <- max(600, nrow(range_plot_dat) * 20)
 
-# Create the plot using ggplot + plotly for better control
-p_range_gg <- range_plot_sorted %>%
-  ggplot(aes(x = `Latency (in ms)`, y = DeviceShort,
-             text = paste0(DeviceLabel,
-                          "\nLatency: ", round(`Latency (in ms)`, 2), " ms",
-                          "\nCategory: ", Category,
-                          "\nConnection: ", `Wired/Wireless`))) +
-  geom_errorbarh(aes(xmin = `SD down`, xmax = `SD up`,
-                     color = factor(Imputed, levels = c(TRUE, FALSE))),
-                 height = 0.3) +
-  geom_point(size = 2, color = "#333") +
-  geom_vline(xintercept = 100 / 6, color = '#BA1B1D', linetype = "dashed") +
-  scale_color_manual(values = c("TRUE" = "#E63946", "FALSE" = "#457B9D"),
-                     labels = c("TRUE" = "Imputed SD", "FALSE" = "Measured SD")) +
-  labs(title = "Device Latency Ranges (95% CI)",
-       subtitle = "Sorted by average latency (lowest first)",
-       x = "Latency (ms)", y = "", color = "SD Source") +
-  theme_minimal() +
-  theme(axis.text.y = element_text(size = 7),
-        legend.position = "bottom")
+# Split data by imputation status for separate legend entries
+imputed_data <- range_plot_dat %>% filter(Imputed == TRUE)
+measured_data <- range_plot_dat %>% filter(Imputed == FALSE)
 
-ggplotly(p_range_gg, tooltip = "text", height = plot_height, width = 1400) %>%
-  layout(hovermode = "closest",
-         margin = list(l = 280, t = 80, b = 80))
+shared_imputed <- SharedData$new(imputed_data, key = ~ID, group = "range_group")
+shared_measured <- SharedData$new(measured_data, key = ~ID, group = "range_group")
+
+# Build native plot_ly so crosstalk filters work
+p_range <- plot_ly(height = plot_height, width = 1400) %>%
+  # Error bars for imputed SD
+  add_trace(data = shared_imputed,
+            x = ~`Latency (in ms)`, y = ~DeviceShort,
+            type = 'scatter', mode = 'markers',
+            error_x = list(
+              type = "data",
+              symmetric = FALSE,
+              array = ~(`SD up` - `Latency (in ms)`),
+              arrayminus = ~(`Latency (in ms)` - `SD down`),
+              color = "#E63946", width = 3
+            ),
+            marker = list(color = "#333", size = 6),
+            name = "Imputed SD",
+            hovertext = ~paste0(DeviceLabel,
+                               "\nLatency: ", round(`Latency (in ms)`, 2), " ms",
+                               "\nCategory: ", Category,
+                               "\nConnection: ", `Wired/Wireless`),
+            hoverinfo = "text") %>%
+  # Error bars for measured SD
+  add_trace(data = shared_measured,
+            x = ~`Latency (in ms)`, y = ~DeviceShort,
+            type = 'scatter', mode = 'markers',
+            error_x = list(
+              type = "data",
+              symmetric = FALSE,
+              array = ~(`SD up` - `Latency (in ms)`),
+              arrayminus = ~(`Latency (in ms)` - `SD down`),
+              color = "#457B9D", width = 3
+            ),
+            marker = list(color = "#333", size = 6),
+            name = "Measured SD",
+            hovertext = ~paste0(DeviceLabel,
+                               "\nLatency: ", round(`Latency (in ms)`, 2), " ms",
+                               "\nCategory: ", Category,
+                               "\nConnection: ", `Wired/Wireless`),
+            hoverinfo = "text") %>%
+  layout(
+    title = list(text = "Device Latency Ranges (95% CI)<br><sup>Sorted by average latency (lowest first)</sup>"),
+    xaxis = list(title = "Latency (ms)"),
+    yaxis = list(title = "", tickfont = list(size = 7)),
+    hovermode = "closest",
+    margin = list(l = 280, t = 80, b = 80),
+    shapes = list(
+      list(type = "line", x0 = 100/6, x1 = 100/6, y0 = 0, y1 = 1,
+           yref = "paper", line = list(color = "#BA1B1D", dash = "dash", width = 2))
+    ),
+    legend = list(orientation = "h", y = -0.05)
+  )
+
+p_range
 ```
 
 <br><br>
@@ -642,7 +2422,7 @@ ggplotly(p_range_gg, tooltip = "text", height = plot_height, width = 1400) %>%
 
 <br><br>
 
-# Best Performers by Category
+### Best Performers by Category
 
 Top 3 performing devices in each category, separated by wired and wireless connection.
 
@@ -690,7 +2470,7 @@ datatable(best_performers,
           caption = "Top 3 devices per category and connection type (lowest latency)")
 ```
 
-# Methodology
+### Methodology
 
 This data was collected using a closed-loop latency testing system consisting of:
 
@@ -701,3 +2481,85 @@ This data was collected using a closed-loop latency testing system consisting of
 The Arduino triggers a button press on the controller under test, and measures the time until the MiSTer core detects the input. Results are captured via serial output in CSV format.
 
 For more details, see the [GitHub repository](https://github.com/misteraddons/inputlatency).
+
+```{r plotly-resize-handler, echo=FALSE}
+htmltools::HTML('
+<script>
+function inputLatencyPlotlyStyle(theme) {
+  var dark = theme === "dark";
+  return {
+    paperBg: dark ? "#151b29" : "#ffffff",
+    plotBg: dark ? "#151b29" : "#ffffff",
+    fontColor: dark ? "#e6edf8" : "#101622",
+    gridColor: dark ? "rgba(186, 204, 235, 0.18)" : "rgba(31, 53, 91, 0.15)",
+    zeroColor: dark ? "rgba(186, 204, 235, 0.26)" : "rgba(31, 53, 91, 0.25)",
+    legendBg: dark ? "rgba(18, 24, 35, 0.6)" : "rgba(255, 255, 255, 0.6)",
+    hoverBg: dark ? "rgba(20, 27, 40, 0.95)" : "rgba(255, 255, 255, 0.95)",
+    hoverBorder: dark ? "rgba(200, 181, 255, 0.36)" : "rgba(80, 0, 220, 0.26)",
+    colorway: dark
+      ? ["#b99eff", "#E6FF1E", "#8f69ff", "#d3eb42", "#ff95c7", "#8ec3ff"]
+      : ["#5000DC", "#A2B800", "#6f2cff", "#c3d900", "#af4eff", "#3e4870"]
+  };
+}
+
+function inputLatencyLayoutPatch(node, style) {
+  var patch = {
+    paper_bgcolor: style.paperBg,
+    plot_bgcolor: style.plotBg,
+    "font.color": style.fontColor,
+    "legend.font.color": style.fontColor,
+    "legend.bgcolor": style.legendBg,
+    "legend.bordercolor": style.gridColor,
+    "hoverlabel.bgcolor": style.hoverBg,
+    "hoverlabel.bordercolor": style.hoverBorder,
+    "hoverlabel.font.color": style.fontColor,
+    colorway: style.colorway
+  };
+
+  var full = node && node._fullLayout ? node._fullLayout : {};
+  Object.keys(full).forEach(function(key) {
+    if (!/^xaxis\\d*$/.test(key) && !/^yaxis\\d*$/.test(key)) return;
+    patch[key + ".gridcolor"] = style.gridColor;
+    patch[key + ".linecolor"] = style.gridColor;
+    patch[key + ".tickcolor"] = style.gridColor;
+    patch[key + ".zerolinecolor"] = style.zeroColor;
+    patch[key + ".tickfont.color"] = style.fontColor;
+    patch[key + ".title.font.color"] = style.fontColor;
+  });
+
+  return patch;
+}
+
+function inputLatencyRepaintPlots(scope) {
+  if (typeof Plotly === "undefined") return;
+  var theme = document.documentElement.getAttribute("data-theme") || "light";
+  var style = inputLatencyPlotlyStyle(theme);
+  var root = scope || document;
+  var nodes = root.querySelectorAll ? root.querySelectorAll(".plotly-graph-div") : [];
+  nodes.forEach(function(node) {
+    var patch = inputLatencyLayoutPatch(node, style);
+    Plotly.Plots.resize(node);
+    Plotly.relayout(node, patch);
+  });
+}
+
+window.inputLatencyRepaintPlots = inputLatencyRepaintPlots;
+window.inputLatencyPlotlyStyle = inputLatencyPlotlyStyle;
+
+// Resize and retheme Plotly/DataTables when switching tabs
+$(document).on("shown.bs.tab", "a[data-toggle=\'tab\']", function() {
+  var pane = $($(this).attr("href"));
+  inputLatencyRepaintPlots(pane.get(0));
+  pane.find(".dataTable").each(function() {
+    var dt = $(this).DataTable();
+    if (dt) dt.columns.adjust();
+  });
+});
+
+// Keep hidden charts synced with theme changes
+document.addEventListener("inputlatency:theme", function() {
+  inputLatencyRepaintPlots(document);
+});
+</script>
+')
+```
