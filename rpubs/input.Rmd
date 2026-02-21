@@ -12,58 +12,58 @@ output:
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
 
 :root {
-  --bg: #f4f6fb;
-  --bg-accent-a: rgba(80, 0, 220, 0.18);
-  --bg-accent-b: rgba(230, 255, 30, 0.2);
-  --text: #101622;
-  --muted: #4c5a70;
-  --card: rgba(255, 255, 255, 0.82);
-  --card-solid: #ffffff;
-  --panel: rgba(255, 255, 255, 0.74);
-  --border: rgba(17, 35, 61, 0.14);
-  --border-strong: rgba(17, 35, 61, 0.24);
-  --tab-idle: #253044;
-  --shadow: 0 18px 45px rgba(32, 54, 94, 0.12);
-  --shadow-soft: 0 6px 20px rgba(22, 44, 86, 0.1);
-  --ring: rgba(80, 0, 220, 0.28);
+  --bg: #5000DC;
+  --bg-accent-a: rgba(230, 255, 30, 0.28);
+  --bg-accent-b: rgba(255, 255, 255, 0.12);
+  --text: #f3edff;
+  --muted: #d8c9ff;
+  --card: rgba(34, 14, 92, 0.72);
+  --card-solid: rgba(29, 12, 80, 0.92);
+  --panel: rgba(41, 16, 110, 0.72);
+  --border: rgba(230, 255, 30, 0.2);
+  --border-strong: rgba(230, 255, 30, 0.42);
+  --tab-idle: #ecdeff;
+  --shadow: 0 18px 45px rgba(17, 3, 48, 0.45);
+  --shadow-soft: 0 6px 20px rgba(11, 2, 34, 0.38);
+  --ring: rgba(230, 255, 30, 0.38);
   --primary: #5000DC;
-  --primary-strong: #3f00ad;
+  --primary-strong: #6f2cff;
   --accent: #E6FF1E;
-  --accent-strong: #bdd200;
-  --cta: linear-gradient(135deg, #5000DC 0%, #6f2cff 100%);
-  --chip-bg: rgba(255, 255, 255, 0.75);
-  --chip-border: rgba(23, 40, 66, 0.14);
-  --table-row: rgba(255, 255, 255, 0.9);
-  --plot-bg: #ffffff;
-  --header-grad: linear-gradient(120deg, rgba(80, 0, 220, 0.15), rgba(230, 255, 30, 0.14));
+  --accent-strong: #f3ff74;
+  --cta: linear-gradient(135deg, #E6FF1E 0%, #bfd900 100%);
+  --chip-bg: rgba(38, 14, 101, 0.86);
+  --chip-border: rgba(230, 255, 30, 0.22);
+  --table-row: rgba(39, 16, 103, 0.8);
+  --plot-bg: #2b0a78;
+  --header-grad: linear-gradient(120deg, rgba(230, 255, 30, 0.22), rgba(255, 255, 255, 0.08));
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 html[data-theme="dark"] {
-  --bg: #0d111a;
-  --bg-accent-a: rgba(123, 75, 255, 0.3);
-  --bg-accent-b: rgba(230, 255, 30, 0.2);
-  --text: #e6edf8;
-  --muted: #a6b5cf;
-  --card: rgba(24, 31, 45, 0.86);
-  --card-solid: #171f2e;
-  --panel: rgba(22, 29, 42, 0.86);
-  --border: rgba(179, 198, 232, 0.2);
-  --border-strong: rgba(179, 198, 232, 0.3);
-  --tab-idle: #cad6ea;
-  --shadow: 0 22px 55px rgba(1, 4, 10, 0.46);
-  --shadow-soft: 0 10px 28px rgba(1, 6, 14, 0.35);
-  --ring: rgba(163, 134, 255, 0.4);
+  --bg: #2d007f;
+  --bg-accent-a: rgba(230, 255, 30, 0.24);
+  --bg-accent-b: rgba(255, 255, 255, 0.1);
+  --text: #f4efff;
+  --muted: #d5c9ff;
+  --card: rgba(21, 8, 56, 0.9);
+  --card-solid: #1a0b45;
+  --panel: rgba(23, 9, 62, 0.9);
+  --border: rgba(230, 255, 30, 0.24);
+  --border-strong: rgba(230, 255, 30, 0.44);
+  --tab-idle: #e7dcff;
+  --shadow: 0 22px 55px rgba(8, 2, 24, 0.58);
+  --shadow-soft: 0 10px 28px rgba(7, 2, 18, 0.46);
+  --ring: rgba(230, 255, 30, 0.45);
   --primary: #a783ff;
   --primary-strong: #c2a9ff;
   --accent: #E6FF1E;
-  --accent-strong: #f0ff7a;
-  --cta: linear-gradient(135deg, #7b4bff 0%, #9c77ff 100%);
-  --chip-bg: rgba(29, 37, 52, 0.92);
-  --chip-border: rgba(156, 182, 233, 0.24);
-  --table-row: rgba(26, 34, 48, 0.86);
-  --plot-bg: #151b29;
-  --header-grad: linear-gradient(120deg, rgba(123, 75, 255, 0.3), rgba(230, 255, 30, 0.16));
+  --accent-strong: #f7ff9a;
+  --cta: linear-gradient(135deg, #E6FF1E 0%, #c2db00 100%);
+  --chip-bg: rgba(28, 11, 73, 0.94);
+  --chip-border: rgba(230, 255, 30, 0.25);
+  --table-row: rgba(25, 10, 66, 0.9);
+  --plot-bg: #1f0c52;
+  --header-grad: linear-gradient(120deg, rgba(230, 255, 30, 0.24), rgba(123, 75, 255, 0.16));
 }
 
 * {
@@ -89,11 +89,11 @@ body::before {
 }
 
 a {
-  color: var(--primary);
+  color: var(--accent);
 }
 
 a:hover {
-  color: var(--primary-strong);
+  color: var(--accent-strong);
 }
 
 .main-container {
@@ -139,18 +139,18 @@ div.tocify {
 }
 
 .tocify .list-group-item:hover {
-  background: rgba(80, 0, 220, 0.08) !important;
+  background: rgba(230, 255, 30, 0.12) !important;
   color: var(--text) !important;
-  border-color: rgba(80, 0, 220, 0.18) !important;
+  border-color: rgba(230, 255, 30, 0.34) !important;
 }
 
 .tocify .list-group-item.active,
 .tocify .list-group-item.active:hover,
 .tocify .list-group-item.active:focus {
   color: var(--text) !important;
-  background: linear-gradient(90deg, rgba(80, 0, 220, 0.16), rgba(230, 255, 30, 0.2)) !important;
-  border-color: rgba(80, 0, 220, 0.28) !important;
-  box-shadow: inset 3px 0 0 var(--primary);
+  background: linear-gradient(90deg, rgba(230, 255, 30, 0.2), rgba(123, 75, 255, 0.22)) !important;
+  border-color: rgba(230, 255, 30, 0.38) !important;
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .tocify-subheader .list-group-item {
@@ -233,7 +233,7 @@ div.tocify {
   padding: 16px 16px 14px;
   margin: 6px 0 18px;
   background:
-    linear-gradient(135deg, rgba(80, 0, 220, 0.12), rgba(230, 255, 30, 0.12)),
+    linear-gradient(135deg, rgba(230, 255, 30, 0.16), rgba(80, 0, 220, 0.16)),
     var(--panel);
   box-shadow: var(--shadow-soft);
 }
@@ -261,19 +261,20 @@ div.tocify {
 .bg-hero-btn {
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(230, 255, 30, 0.4);
   border-radius: 999px;
   padding: 6px 12px;
   font-size: 0.82rem;
   font-weight: 700;
   text-decoration: none;
-  color: var(--text);
-  background: var(--card-solid);
+  color: #2a2d07;
+  background: var(--accent);
 }
 
 .bg-hero-btn:hover {
   text-decoration: none;
-  border-color: var(--border-strong);
+  border-color: rgba(230, 255, 30, 0.62);
+  background: var(--accent-strong);
 }
 
 .bg-hero-meta {
@@ -320,7 +321,7 @@ div.tocify {
 .bg-kpi .value {
   font-size: 1.2rem;
   font-weight: 700;
-  color: var(--text);
+  color: var(--accent);
 }
 
 .bg-filter-panel {
@@ -388,7 +389,7 @@ div.tocify {
 .bg-theme-btn:focus,
 .bg-reset-btn:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--ring);
 }
 
@@ -433,18 +434,21 @@ div.tocify {
 }
 
 .filter-btn.active {
-  color: #fff;
+  color: #2a2d07;
   border-color: transparent;
-  box-shadow: 0 8px 18px rgba(80, 0, 220, 0.28);
+  box-shadow: 0 8px 18px rgba(230, 255, 30, 0.25);
 }
 
-.filter-btn.active[data-dim="category"] { background: var(--primary); }
+.filter-btn.active[data-dim="category"] { background: var(--accent); }
 .filter-btn.active[data-dim="connection"] {
-  background: var(--accent);
+  background: var(--accent-strong);
   color: #2a2d07;
-  box-shadow: 0 8px 18px rgba(181, 204, 0, 0.3);
+  box-shadow: 0 8px 18px rgba(230, 255, 30, 0.3);
 }
-.filter-btn.active[data-dim="platform"] { background: #3a0ca4; }
+.filter-btn.active[data-dim="platform"] {
+  background: linear-gradient(135deg, var(--accent), var(--primary-strong));
+  color: #f7f7ff;
+}
 
 .bg-counter {
   font-size: 0.9rem;
@@ -512,11 +516,11 @@ div.tocify {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas:
-    "rank name latency"
-    "rank meta latency"
+    "rank title metrics"
+    "rank mode mode"
     "rank meter meter"
-    "rank tags tags"
-    "rank buy buy";
+    "rank buy buy"
+    "rank details details";
   column-gap: 14px;
   row-gap: 10px;
   align-items: center;
@@ -533,7 +537,7 @@ div.tocify {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--primary), var(--accent));
+  background: linear-gradient(90deg, var(--accent), var(--primary-strong));
   opacity: 0.6;
 }
 
@@ -559,50 +563,74 @@ div.tocify {
   align-self: start;
   padding-top: 2px;
   font-family: var(--mono);
-  font-size: 0.96rem;
+  font-size: 1.22rem;
   font-weight: 600;
   color: var(--muted);
 }
 
+.bg-card-title {
+  grid-area: title;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
 .bg-card-name {
-  grid-area: name;
   font-size: 1.36rem;
   font-weight: 700;
   color: var(--text);
   line-height: 1.35;
+  min-width: 0;
 }
 
-.bg-card-make-price {
-  grid-area: meta;
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-size: 1.02rem;
-  color: var(--muted);
-  gap: 8px;
-}
-
-.bg-card-price {
-  font-weight: 700;
-  color: var(--text);
+.bg-card-connection-badge {
+  flex: 0 0 auto;
   white-space: nowrap;
+  color: var(--accent) !important;
 }
 
-.bg-card-latency {
-  grid-area: latency;
+.bg-card-metrics {
+  grid-area: metrics;
   text-align: right;
   white-space: nowrap;
-  font-size: 2.08rem;
-  font-weight: 800;
+  font-size: 1.34rem;
+  font-weight: 700;
   margin: 0;
+  color: var(--accent);
 }
 
-.bg-card-tags {
-  grid-area: tags;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 0;
+.bg-card-mode {
+  grid-area: mode;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-top: -3px;
+}
+
+.bg-metric-sep {
+  color: var(--muted);
+  margin: 0 0.28em;
+}
+
+.bg-card-probability {
+  grid-area: meter;
+  margin-top: 2px;
+}
+
+.bg-prob-track {
+  position: relative;
+  overflow: hidden;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(230, 255, 30, 0.16);
+}
+
+.bg-prob-fill {
+  height: 100%;
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 0 10px rgba(0, 0, 0, 0.08);
 }
 
 .bg-tag {
@@ -618,112 +646,152 @@ div.tocify {
 .bg-tag-tier-a { background: rgba(35, 167, 102, 0.16); color: #0a7d49; border-color: rgba(35, 167, 102, 0.35); }
 .bg-tag-tier-b { background: rgba(235, 167, 42, 0.16); color: #9b6200; border-color: rgba(235, 167, 42, 0.35); }
 .bg-tag-tier-c { background: rgba(231, 84, 84, 0.16); color: #b23a3a; border-color: rgba(231, 84, 84, 0.35); }
-.bg-tag-category { background: rgba(80, 0, 220, 0.16); color: #5000dc; border-color: rgba(80, 0, 220, 0.35); }
-.bg-tag-connection { background: rgba(80, 0, 220, 0.16); color: #4300b8; border-color: rgba(80, 0, 220, 0.35); }
+.bg-tag-category { background: rgba(230, 255, 30, 0.2); color: #2a2d07; border-color: rgba(230, 255, 30, 0.46); }
+.bg-tag-connection { background: rgba(230, 255, 30, 0.2); color: #2a2d07; border-color: rgba(230, 255, 30, 0.46); }
 .bg-tag-platform { background: rgba(99, 117, 146, 0.14); color: #2f3b4f; border-color: rgba(99, 117, 146, 0.3); font-weight: 600; }
 
 html[data-theme="dark"] .bg-tag-tier-a { color: #8be5bc; }
 html[data-theme="dark"] .bg-tag-tier-b { color: #f2d28a; }
 html[data-theme="dark"] .bg-tag-tier-c { color: #ffb6b6; }
-html[data-theme="dark"] .bg-tag-category { color: #93b6ff; }
-html[data-theme="dark"] .bg-tag-connection { color: #bca7ff; }
+html[data-theme="dark"] .bg-tag-category { color: #2a2d07; }
+html[data-theme="dark"] .bg-tag-connection { color: #2a2d07; }
 html[data-theme="dark"] .bg-tag-platform { color: #c5d1e8; }
 
-.bg-card-buy {
+.bg-card-actions {
   grid-area: buy;
-  margin-top: 0;
-  padding-top: 0;
+  margin-top: 2px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.bg-card-details-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: var(--card-solid);
+  color: var(--text);
+  border-radius: 10px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.bg-card-details-toggle:hover {
+  border-color: var(--border-strong);
+}
+
+.bg-card-actions .bg-card-buy {
+  margin: 0;
+  padding: 0;
 }
 
 .bg-card-buy a {
   display: inline-block;
   padding: 9px 14px;
   background: var(--cta);
-  color: #fff;
+  color: #2a2d07;
   border-radius: 10px;
   font-size: 0.88rem;
   font-weight: 700;
   text-decoration: none;
   letter-spacing: 0.01em;
-  box-shadow: 0 8px 20px rgba(80, 0, 220, 0.3);
+  box-shadow: 0 8px 20px rgba(230, 255, 30, 0.28);
 }
 
 .bg-card-buy a:hover {
-  color: #fff;
+  color: #2a2d07;
   text-decoration: none;
   transform: translateY(-1px);
 }
 
-.bg-card-latency-meter {
-  grid-area: meter;
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
+.bg-card-details {
+  grid-area: details;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  padding: 10px 10px 8px;
   margin-top: 2px;
 }
 
-.bg-meter-title {
+.bg-card-details-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
-  font-size: 0.97rem;
-  font-weight: 700;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 0.84rem;
   color: var(--muted);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
-.bg-meter-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 11px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  font-size: 0.9rem;
-  font-family: var(--mono);
+.bg-card-detail-link {
+  font-size: 0.78rem;
   font-weight: 600;
-  color: var(--text);
-  background: var(--card-solid);
-  letter-spacing: 0;
+  text-transform: none;
 }
 
-.bg-meter-track {
+.bg-variant-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bg-variant-row {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bg-variant-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bg-variant-mode {
+  font-size: 0.9rem;
+  color: var(--text);
+  font-weight: 700;
+}
+
+.bg-variant-values {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.bg-variant-bar-track {
   position: relative;
   overflow: hidden;
-  height: 14px;
+  height: 10px;
   border-radius: 999px;
   border: 1px solid var(--border);
-  background: rgba(99, 117, 146, 0.18);
+  background: rgba(99, 117, 146, 0.14);
 }
 
-.bg-meter-fill {
+.bg-variant-bar-fill {
   height: 100%;
   border-radius: 999px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 0 10px rgba(0, 0, 0, 0.08);
+  min-width: 4px;
 }
 
-.bg-meter-scale {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 4px;
-  font-family: var(--mono);
-  font-size: 0.78rem;
-  color: var(--muted);
-}
-
-.bg-meter-scale span {
-  text-align: center;
-}
-
-.bg-meter-scale span:first-child {
-  text-align: left;
-}
-
-.bg-meter-scale span:last-child {
-  text-align: right;
-}
-
-.bg-meter-note {
-  font-size: 0.95rem;
+.bg-variant-meta {
+  font-size: 0.82rem;
   color: var(--muted);
 }
 
@@ -814,20 +882,12 @@ html[data-density="compact"] .bg-card-name {
   font-size: 1.14rem;
 }
 
-html[data-density="compact"] .bg-card-latency {
-  font-size: 1.68rem;
+html[data-density="compact"] .bg-card-metrics {
+  font-size: 1.16rem;
 }
 
 html[data-density="compact"] .bg-tag {
   padding: 4px 10px;
-  font-size: 0.82rem;
-}
-
-html[data-density="compact"] .bg-meter-title {
-  font-size: 0.9rem;
-}
-
-html[data-density="compact"] .bg-meter-chip {
   font-size: 0.82rem;
 }
 
@@ -869,29 +929,22 @@ html[data-density="compact"] .bg-meter-chip {
     font-size: 1.22rem;
   }
 
-  .bg-card-latency {
-    text-align: left;
-    font-size: 1.78rem;
+  .bg-card-title {
+    align-items: flex-start;
+    flex-wrap: wrap;
   }
 
-  .bg-card-make-price {
-    flex-wrap: wrap;
+  .bg-card-metrics {
+    text-align: left;
+    font-size: 1.2rem;
+  }
+
+  .bg-card-actions {
+    gap: 6px;
   }
 
   .bg-tag {
     font-size: 0.84rem;
-  }
-
-  .bg-meter-title {
-    font-size: 0.9rem;
-  }
-
-  .bg-meter-chip {
-    font-size: 0.84rem;
-  }
-
-  .bg-meter-note {
-    font-size: 0.86rem;
   }
 
   .bg-filter-panel {
@@ -1265,7 +1318,7 @@ dat$BinC <- pmax(dat$BinC, 0)
 dat <- dat %>%
   mutate(
     HasRawCapture = !is.na(N),
-    MetricSource = ifelse(HasRawCapture, "Measured (raw capture)", "Estimated (normal model)")
+    MetricSource = "Direct measurement"
   )
 
 raw_unmatched <- raw_stats_by_norm %>%
@@ -1335,17 +1388,27 @@ cat(sprintf(
 
 ```{r hero-summary, echo=FALSE}
 source_short <- ifelse(data_source == "live", "Live Sheet", "Cache Fallback")
+buyers_guide_group_count <- dat %>%
+  mutate(
+    GroupName = stringr::str_squish(paste(Make, Model)),
+    GroupName = if_else(is.na(GroupName) | GroupName == "", DeviceClean, GroupName),
+    GroupKey = normalize_device_name(paste(GroupName, `Wired/Wireless`, Category))
+  ) %>%
+  distinct(GroupKey) %>%
+  nrow()
+
 h <- c(
   '<section class="bg-hero">',
   '<div class="bg-hero-title">Fast, searchable controller latency intelligence</div>',
   '<p class="bg-hero-sub">Filter by platform and connection, compare on-time behavior, and drill into raw-capture quality in one workflow.</p>',
   '<div class="bg-hero-actions">',
-  "<a class=\"bg-hero-btn\" href=\"#buyers-guide\">Buyer's Guide</a>",
-  '<a class="bg-hero-btn" href="#detailed-analysis">Detailed Analysis</a>',
-  '<a class="bg-hero-btn" href="#raw-data-deep-dive">Raw Data Deep Dive</a>',
+  "<a class=\"bg-hero-btn\" href=\"#buyers-guide\" onclick=\"return openTabSection('buyers-guide');\">Buyer's Guide</a>",
+  '<a class="bg-hero-btn" href="#detailed-analysis" onclick="return openTabSection(\'detailed-analysis\');">Detailed Analysis</a>',
+  '<a class="bg-hero-btn" href="#raw-data-deep-dive" onclick="return openTabSection(\'raw-data-deep-dive\');">Raw Data Deep Dive</a>',
   '</div>',
   '<div class="bg-hero-meta">',
-  sprintf('<span>%d devices tracked</span>', nrow(dat)),
+  sprintf('<span>%d device groups in buyer view</span>', buyers_guide_group_count),
+  sprintf('<span>%d mode results tracked</span>', nrow(dat)),
   sprintf('<span>%.1f%% raw capture coverage</span>', raw_coverage_pct),
   sprintf('<span>Data source: %s</span>', source_short),
   '</div>',
@@ -1364,7 +1427,7 @@ wireless_count <- sum(dat$`Wired/Wireless` == "Wireless", na.rm = TRUE)
 
 h <- c(
   '<div class="bg-kpi-grid">',
-  sprintf('<div class="bg-kpi"><div class="label">Devices</div><div class="value">%d</div></div>', nrow(dat)),
+  sprintf('<div class="bg-kpi"><div class="label">Device Groups</div><div class="value">%d</div></div>', buyers_guide_group_count),
   sprintf('<div class="bg-kpi"><div class="label">Under 1 Frame</div><div class="value">%d</div></div>', under_one_frame),
   sprintf('<div class="bg-kpi"><div class="label">Wireless Tested</div><div class="value">%d</div></div>', wireless_count),
   sprintf('<div class="bg-kpi"><div class="label">Raw Capture Coverage</div><div class="value">%.1f%%</div></div>', raw_coverage_pct),
@@ -1462,99 +1525,236 @@ htmltools::HTML(paste(h, collapse = "\n"))
 ```
 
 ```{r buyers-guide-cards, echo=FALSE, warning=FALSE}
-# ── Result cards ──────────────────────────────────────────
-card_data <- dat %>%
-  arrange(`Latency (in ms)`)
+# ── Result cards (grouped by controller mode) ───────────────────────────────
+frame_ms <- 100 / 6
+
+fmt_pct_label <- function(pct) {
+  if (abs(pct - round(pct)) < 0.05) sprintf("%.0f%%", round(pct)) else sprintf("%.1f%%", pct)
+}
+
+extract_mode_from_name <- function(x) {
+  m <- stringr::str_match(x, "\\[(.+?)\\]")[, 2]
+  ifelse(is.na(m), "", m)
+}
+
+is_generic_mode <- function(x) {
+  x <- tolower(stringr::str_squish(as.character(x)))
+  if (!nzchar(x) || x %in% c("-", "?", "n/a", "na", "none", "default")) {
+    return(TRUE)
+  }
+
+  generic_patterns <- c(
+    "^wired$",
+    "^wireless$",
+    "^wired usb$",
+    "^wired usb c$",
+    "^wired usb a$",
+    "^wireless usb$",
+    "^usb$",
+    "^usb c$",
+    "^usb a$",
+    "^wired connection$",
+    "^wireless connection$"
+  )
+
+  any(stringr::str_detect(x, generic_patterns))
+}
+
+pick_mode_label <- function(mode_from_name, connection, wireless_connection) {
+  candidates <- c(mode_from_name, connection, wireless_connection)
+  candidates <- stringr::str_squish(as.character(candidates))
+  candidates <- candidates[!is.na(candidates) & nzchar(candidates)]
+  if (length(candidates) == 0) return("")
+
+  non_generic <- candidates[!vapply(candidates, is_generic_mode, logical(1))]
+  if (length(non_generic) == 0) "" else non_generic[[1]]
+}
+
+collapse_platforms <- function(x) {
+  raw <- paste(x[!is.na(x) & nzchar(trimws(x))], collapse = ",")
+  if (!nzchar(raw)) return("")
+  vals <- trimws(unlist(strsplit(raw, ",")))
+  vals <- vals[nzchar(vals)]
+  paste(sort(unique(vals)), collapse = ",")
+}
+
+safe_text <- function(x, fallback = "") {
+  v <- as.character(x)
+  v <- v[!is.na(v) & nzchar(trimws(v))]
+  if (length(v) == 0) fallback else trimws(v[[1]])
+}
+
+card_variants <- dat %>%
+  mutate(
+    GroupName = stringr::str_squish(paste(Make, Model)),
+    GroupName = if_else(is.na(GroupName) | GroupName == "", DeviceClean, GroupName),
+    ModeFromName = extract_mode_from_name(DeviceClean),
+    ModeLabel = purrr::pmap_chr(
+      list(ModeFromName, Connection, WirelessConnection),
+      pick_mode_label
+    ),
+    GroupKey = normalize_device_name(paste(GroupName, `Wired/Wireless`, Category)),
+    PctOnTimeSafe = pmax(
+      0,
+      pmin(
+        ifelse(
+          is.na(PctOnTime),
+          pmax(0, (1 - (`Latency (in ms)` / frame_ms)) * 100),
+          PctOnTime
+        ),
+        99.9
+      )
+    )
+  )
+
+group_splits <- split(card_variants, card_variants$GroupKey)
+group_order <- names(sort(vapply(
+  group_splits,
+  function(g) min(g$`Latency (in ms)`, na.rm = TRUE),
+  numeric(1)
+)))
 
 h <- c('<div class="bg-card-grid" id="bg-card-grid">')
 
-for (i in seq_len(nrow(card_data))) {
-  d <- card_data[i, ]
+for (rank_idx in seq_along(group_order)) {
+  key <- group_order[[rank_idx]]
+  g <- group_splits[[key]] %>%
+    arrange(`Latency (in ms)`, DeviceClean)
+  d <- g[1, ]
+
   lat <- round(d$`Latency (in ms)`, 2)
+  pct_ontime <- max(min(d$PctOnTimeSafe, 99.9), 0)
+  ontime_label <- fmt_pct_label(pct_ontime)
+  meter_color <- if (pct_ontime >= 90) "#24a86b" else if (pct_ontime >= 75) "#A8BE00" else if (pct_ontime >= 50) "#d98d2b" else "#d95656"
 
-  # Tier badge (latency-based)
-  if (lat < 100/6) {
-    tier_class <- "bg-tag-tier-a"; tier_label <- "&lt; 1 frame"
-  } else if (lat < 200/6) {
-    tier_class <- "bg-tag-tier-b"; tier_label <- "1-2 frames"
+  cat_val <- safe_text(d$Category)
+  conn_val <- safe_text(d$`Wired/Wireless`)
+  platforms_str <- collapse_platforms(g$Platforms)
+  group_name <- safe_text(d$GroupName, d$DeviceClean)
+  best_mode <- safe_text(d$ModeLabel, "")
+  mode_values <- as.character(g$ModeLabel)
+  mode_values <- mode_values[!is.na(mode_values)]
+  mode_values <- unique(stringr::str_squish(mode_values))
+  mode_values <- mode_values[nzchar(mode_values)]
+  mode_count <- length(mode_values)
+  mode_line <- if (mode_count > 1 && nzchar(best_mode)) {
+    sprintf("Best mode: %s (%d modes tested)", best_mode, mode_count)
+  } else if (mode_count > 1) {
+    sprintf("%d modes tested", mode_count)
+  } else if (mode_count == 1) {
+    sprintf("Mode: %s", mode_values[[1]])
   } else {
-    tier_class <- "bg-tag-tier-c"; tier_label <- "&gt; 2 frames"
+    ""
   }
 
-  # Category
-  cat_val <- if (!is.na(d$Category)) d$Category else ""
-  conn_val <- if (!is.na(d$`Wired/Wireless`)) d$`Wired/Wireless` else ""
-  platforms_str <- if (!is.na(d$Platforms)) d$Platforms else ""
-  make_raw <- if (!is.na(d$Make)) d$Make else ""
-
-  # Price
-  price_html <- ""
-  price_num <- NA_real_
-  if (!is.na(d$PriceNum) && d$PriceNum > 0) {
-    price_num <- d$PriceNum
-    price_html <- sprintf("$%.0f", d$PriceNum)
-  }
-
-  # Buy link: prefer Amazon, fall back to Link
+  # Pick first available buy link among fastest variants.
   buy_url <- NA_character_
-  if (!is.na(d$Amazon) && nchar(trimws(d$Amazon)) > 0) {
-    buy_url <- trimws(d$Amazon)
-  } else if (!is.na(d$Link) && nchar(trimws(d$Link)) > 0) {
-    buy_url <- trimws(d$Link)
+  for (j in seq_len(nrow(g))) {
+    amazon_j <- safe_text(g$Amazon[j], "")
+    link_j <- safe_text(g$Link[j], "")
+    candidate <- if (nzchar(amazon_j)) amazon_j else if (nzchar(link_j)) link_j else ""
+    if (nzchar(candidate)) {
+      buy_url <- candidate
+      break
+    }
   }
 
-  lat_color <- if (lat < 100/6) "#155724" else if (lat < 200/6) "#856404" else "#721c24"
-  make_val <- if (!is.na(d$Make)) htmltools::htmlEscape(d$Make) else ""
-  search_blob <- tolower(paste(d$DeviceClean, make_raw, cat_val, conn_val, platforms_str))
+  valid_prices <- suppressWarnings(as.numeric(g$PriceNum))
+  valid_prices <- valid_prices[is.finite(valid_prices) & valid_prices > 0]
+  price_num <- if (length(valid_prices) > 0) min(valid_prices) else NA_real_
+  price_attr <- ifelse(is.na(price_num), "", sprintf("%.2f", price_num))
 
-  # Build tag spans
-  tags <- sprintf('<span class="bg-tag %s">%s</span>', tier_class, tier_label)
-  if (nchar(conn_val) > 0) {
-    tags <- c(tags, sprintf('<span class="bg-tag bg-tag-connection">%s</span>', htmltools::htmlEscape(conn_val)))
+  search_parts <- unique(c(
+    g$DeviceClean, g$ModeLabel, g$Connection, g$WirelessConnection,
+    g$Category, g$`Wired/Wireless`, g$Platforms, g$Make, g$Model
+  ))
+  search_parts <- search_parts[!is.na(search_parts) & nzchar(trimws(search_parts))]
+  search_blob <- tolower(paste(search_parts, collapse = " "))
+
+  conn_badge_html <- if (nzchar(conn_val)) {
+    sprintf(
+      '<span class="bg-tag bg-tag-connection bg-card-connection-badge">%s</span>',
+      htmltools::htmlEscape(conn_val)
+    )
+  } else {
+    ""
   }
 
-  buy_html <- ""
-  if (!is.na(buy_url)) {
-    buy_html <- sprintf('<div class="bg-card-buy"><a href="%s" target="_blank">Buy &rarr;</a></div>',
-                        htmltools::htmlEscape(buy_url))
+  buy_html <- if (!is.na(buy_url) && nzchar(trimws(buy_url))) {
+    sprintf('<div class="bg-card-buy"><a href="%s" target="_blank">Buy &rarr;</a></div>',
+            htmltools::htmlEscape(buy_url))
+  } else {
+    ""
   }
 
-  # Correct same-frame probability:
-  # P(same frame) = E[max(0, 1 - delay / frame_ms)]
-  frame_ms <- 100 / 6
-  meter_pct <- if (!is.na(d$PctOnTime)) d$PctOnTime else pmax(0, (1 - lat / frame_ms) * 100)
-  meter_pct <- max(min(meter_pct, 100), 0)
-  if (lat > 0) {
-    meter_pct <- min(meter_pct, 99.9)
-  }
-  meter_color <- if (meter_pct >= 90) "#24a86b" else if (meter_pct >= 75) "#A8BE00" else if (meter_pct >= 50) "#d98d2b" else "#d95656"
-  pct_ontime <- meter_pct
-  ontime_label <- if (abs(meter_pct - round(meter_pct)) < 0.05) sprintf("%.0f%%", round(meter_pct)) else sprintf("%.1f%%", meter_pct)
-
-  meter_html <- sprintf(
-    '<div class="bg-card-latency-meter">
-  <div class="bg-meter-title">
-    <span>Same-Frame</span>
-    <span class="bg-meter-chip">%s</span>
-  </div>
-  <div class="bg-meter-track">
-    <div class="bg-meter-fill" style="width:%.1f%%;background:%s;"></div>
-  </div>
-  <div class="bg-meter-note">Random press same-frame probability</div>
-</div>',
-    ontime_label,
-    meter_pct, meter_color
+  details_id <- sprintf("bg-card-details-%d", rank_idx)
+  actions_html <- sprintf(
+    '<div class="bg-card-actions"><button class="bg-card-details-toggle" type="button" aria-expanded="false" aria-controls="%s" onclick="toggleCardDetails(this)">Details</button>%s</div>',
+    details_id,
+    buy_html
   )
 
-  price_attr <- ifelse(is.na(price_num), "", sprintf("%.2f", price_num))
+  detail_rows <- c(
+    sprintf('<div class="bg-card-details" id="%s" hidden>', details_id),
+    '<div class="bg-card-details-header"><span>Mode-By-Mode Results</span>',
+    if (any(g$HasRawCapture %in% TRUE)) {
+      '<a class="bg-card-detail-link" href="#latency-distribution-by-device" onclick="return openTabSection(\'latency-distribution-by-device\');">Open raw histogram viewer</a>'
+    } else {
+      '<a class="bg-card-detail-link" href="#detailed-analysis" onclick="return openTabSection(\'detailed-analysis\');">Open detailed table</a>'
+    },
+    '</div>',
+    '<div class="bg-variant-list">'
+  )
+
+  for (j in seq_len(nrow(g))) {
+    v <- g[j, ]
+    v_mode <- safe_text(v$ModeLabel, "")
+    if (!nzchar(v_mode)) {
+      v_wireless <- safe_text(v$WirelessConnection, "")
+      v_mode <- if (nzchar(v_wireless) && !is_generic_mode(v_wireless)) v_wireless else "Measured result"
+    }
+    v_lat <- round(v$`Latency (in ms)`, 2)
+    v_pct <- max(min(v$PctOnTimeSafe, 99.9), 0)
+    v_sd <- if (!is.na(v$SD)) sprintf("SD %.2f", as.numeric(v$SD)) else "SD n/a"
+    v_conn <- safe_text(v$Connection)
+    if (tolower(v_conn) == tolower(v_mode) || is_generic_mode(v_conn)) {
+      v_conn <- ""
+    }
+    v_platform <- safe_text(v$Platforms)
+    meta_parts <- unique(c(v_conn, v_platform, v_sd))
+    meta_parts <- meta_parts[nzchar(meta_parts)]
+    v_meta <- paste(meta_parts, collapse = " | ")
+    bar_width <- max(0, min(100, v_pct))
+    bar_color <- if (v_pct >= 90) "#24a86b" else if (v_pct >= 75) "#A8BE00" else if (v_pct >= 50) "#d98d2b" else "#d95656"
+
+    detail_rows <- c(detail_rows, sprintf(
+      '<div class="bg-variant-row"><div class="bg-variant-head"><div class="bg-variant-mode">%s</div><div class="bg-variant-values">%.2fms<span class="bg-metric-sep">|</span>%s Same-Frame</div></div><div class="bg-variant-bar-track"><div class="bg-variant-bar-fill" style="width:%.1f%%;background:%s;"></div></div><div class="bg-variant-meta">%s</div></div>',
+      htmltools::htmlEscape(v_mode),
+      v_lat,
+      fmt_pct_label(v_pct),
+      bar_width,
+      bar_color,
+      htmltools::htmlEscape(v_meta)
+    ))
+  }
+
+  detail_rows <- c(detail_rows, '</div></div>')
+  details_html <- paste(detail_rows, collapse = "")
+
+  meter_html <- sprintf(
+    '<div class="bg-card-probability"><div class="bg-prob-track"><div class="bg-prob-fill" style="width:%.1f%%;background:%s;"></div></div></div>',
+    pct_ontime,
+    meter_color
+  )
+
   h <- c(h, sprintf(
     '<div class="bg-card" data-category="%s" data-connection="%s" data-platforms="%s" data-search="%s" data-latency="%.3f" data-ontime="%.3f" data-price="%s">
 <div class="bg-card-rank">#%d</div>
-<div class="bg-card-name">%s</div>
-<div class="bg-card-make-price"><span>%s</span><span class="bg-card-price">%s</span></div>
-<div class="bg-card-latency" style="color:%s;">%.2f ms</div>
+<div class="bg-card-title"><div class="bg-card-name">%s</div>%s</div>
+<div class="bg-card-metrics">%.2fms<span class="bg-metric-sep">|</span>%s Same-Frame</div>
 %s
-<div class="bg-card-tags">%s</div>
+%s
+%s
 %s
 </div>',
     htmltools::htmlEscape(cat_val),
@@ -1564,13 +1764,15 @@ for (i in seq_len(nrow(card_data))) {
     lat,
     pct_ontime,
     price_attr,
-    i,
-    htmltools::htmlEscape(d$DeviceClean),
-    make_val, price_html,
-    lat_color, lat,
+    rank_idx,
+    htmltools::htmlEscape(group_name),
+    conn_badge_html,
+    lat,
+    ontime_label,
+    if (nzchar(mode_line)) sprintf('<div class="bg-card-mode">%s</div>', htmltools::htmlEscape(mode_line)) else "",
     meter_html,
-    paste(tags, collapse = "\n"),
-    buy_html
+    actions_html,
+    details_html
   ))
 }
 
@@ -1579,7 +1781,7 @@ h <- c(h, '</div>')  # close card grid
 htmltools::HTML(paste(h, collapse = "\n"))
 ```
 
-<p class="bg-inline-note">Prefer a table? See the <strong>Detailed Analysis</strong> tab for the full filterable data table.</p>
+<p class="bg-inline-note">Use <strong>Details</strong> on any card to view mode-by-mode results. Prefer a table? See the <strong>Detailed Analysis</strong> tab for the full filterable dataset.</p>
 
 ```{r buyers-guide-js, echo=FALSE}
 htmltools::HTML('
@@ -1700,6 +1902,75 @@ htmltools::HTML('
     applyDensity(next, true);
   };
 
+  window.toggleCardDetails = function(btn) {
+    if (!btn) return;
+    var card = btn.closest ? btn.closest(".bg-card") : null;
+    if (!card) return;
+
+    var panelId = btn.getAttribute("aria-controls");
+    var panel = panelId ? document.getElementById(panelId) : card.querySelector(".bg-card-details");
+    if (!panel) return;
+
+    var expanded = btn.getAttribute("aria-expanded") === "true";
+    if (expanded) {
+      btn.setAttribute("aria-expanded", "false");
+      btn.textContent = "Details";
+      panel.hidden = true;
+      card.classList.remove("is-open");
+    } else {
+      btn.setAttribute("aria-expanded", "true");
+      btn.textContent = "Hide";
+      panel.hidden = false;
+      card.classList.add("is-open");
+    }
+  };
+
+  function showTabById(id) {
+    var links = document.querySelectorAll(".nav-tabs a");
+    var link = null;
+    for (var i = 0; i < links.length; i++) {
+      if (links[i].getAttribute("href") === "#" + id) {
+        link = links[i];
+        break;
+      }
+    }
+    if (!link) return;
+    if (window.jQuery && typeof window.jQuery(link).tab === "function") {
+      window.jQuery(link).tab("show");
+    } else if (typeof link.click === "function") {
+      link.click();
+    }
+  }
+
+  window.openTabSection = function(targetId) {
+    var id = String(targetId || "").replace(/^#/, "");
+    if (!id) return true;
+
+    var target = document.getElementById(id);
+    if (!target) return true;
+
+    var pane = target.classList.contains("tab-pane") ? target : target.closest(".tab-pane");
+    var panesToOpen = [];
+    while (pane) {
+      panesToOpen.unshift(pane);
+      pane = pane.parentElement ? pane.parentElement.closest(".tab-pane") : null;
+    }
+    panesToOpen.forEach(function(p) {
+      if (p.id) showTabById(p.id);
+    });
+
+    if (window.history && typeof window.history.replaceState === "function") {
+      window.history.replaceState(null, "", "#" + id);
+    } else {
+      window.location.hash = id;
+    }
+
+    if (typeof target.scrollIntoView === "function") {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    return false;
+  };
+
   function sortCards(cards, sortBy) {
     function numAttr(card, key, fallback) {
       var val = parseFloat(card.getAttribute(key));
@@ -1799,6 +2070,16 @@ htmltools::HTML('
       if (catMatch && connMatch && platMatch && searchMatch) {
         visibleCards.push(card);
       } else {
+        var detailPanel = card.querySelector(".bg-card-details");
+        var detailBtn = card.querySelector(".bg-card-details-toggle");
+        if (detailPanel && !detailPanel.hidden) {
+          detailPanel.hidden = true;
+          card.classList.remove("is-open");
+          if (detailBtn) {
+            detailBtn.setAttribute("aria-expanded", "false");
+            detailBtn.textContent = "Details";
+          }
+        }
         card.style.display = "none";
       }
     });
