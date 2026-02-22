@@ -35,6 +35,16 @@ The report in `rpubs/input.Rmd` uses these R packages:
 
 Data source: https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/
 
+**Rendering the report:**
+```
+Sys.setenv(RSTUDIO_PANDOC='C:/Users/Robot/AppData/Local/Pandoc')
+"C:\Program Files\R\R-4.5.2\bin\Rscript.exe" render.R
+```
+- Rscript path: `C:\Program Files\R\R-4.5.2\bin\Rscript.exe`
+- Pandoc path: `C:\Users\Robot\AppData\Local\Pandoc`
+- User R library: set via `Sys.getenv('R_LIBS_USER')` or `C:\Users\Robot\AppData\Local\R\win-library\4.5`
+- Output: `docs/input.html`
+
 ## Arduino Configuration
 
 Key timing parameters in the .ino file:

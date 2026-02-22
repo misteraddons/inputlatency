@@ -12,7 +12,7 @@ output:
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
 
 :root {
-  --bg: #5000DC;
+  --bg: #32008d;
   --bg-accent-a: rgba(230, 255, 30, 0.28);
   --bg-accent-b: rgba(255, 255, 255, 0.12);
   --text: #f3edff;
@@ -40,7 +40,7 @@ output:
 }
 
 html[data-theme="dark"] {
-  --bg: #2d007f;
+  --bg: #3f1e8f;
   --bg-accent-a: rgba(230, 255, 30, 0.24);
   --bg-accent-b: rgba(255, 255, 255, 0.1);
   --text: #f4efff;
@@ -420,7 +420,7 @@ div.tocify {
   border: 1px solid var(--border);
   border-radius: 999px;
   background: var(--card-solid);
-  color: var(--muted);
+  color: var(--text);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -431,11 +431,13 @@ div.tocify {
 .filter-btn:hover {
   border-color: var(--border-strong);
   color: var(--text);
+  background: var(--panel);
 }
 
 .filter-btn.active {
+  background: var(--accent);
   color: #2a2d07;
-  border-color: transparent;
+  border-color: rgba(230, 255, 30, 0.72);
   box-shadow: 0 8px 18px rgba(230, 255, 30, 0.25);
 }
 
@@ -448,6 +450,15 @@ div.tocify {
 .filter-btn.active[data-dim="platform"] {
   background: linear-gradient(135deg, var(--accent), var(--primary-strong));
   color: #f7f7ff;
+}
+.filter-btn.active[data-dim="face"],
+.filter-btn.active[data-dim="home"] {
+  background: linear-gradient(135deg, var(--accent), var(--accent-strong));
+  color: #2a2d07;
+}
+.filter-btn.active[data-dim="analog"] {
+  background: linear-gradient(135deg, var(--accent), #bdf100);
+  color: #2a2d07;
 }
 
 .bg-counter {
@@ -690,6 +701,23 @@ html[data-theme="dark"] .bg-tag-platform { color: #c5d1e8; }
   padding: 0;
 }
 
+.bg-card-link a {
+  display: inline-block;
+  padding: 9px 14px;
+  border: 1px solid var(--border);
+  background: var(--card-solid);
+  color: var(--text);
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.bg-card-link a:hover {
+  text-decoration: none;
+  border-color: var(--border-strong);
+}
+
 .bg-card-buy a {
   display: inline-block;
   padding: 9px 14px;
@@ -848,6 +876,84 @@ table.dataTable tfoot th {
   margin-top: 18px;
   color: var(--muted);
   font-size: 0.93rem;
+}
+
+.bg-controller-detail {
+  margin: 12px 0 16px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--card) 0%, var(--panel) 100%);
+}
+
+.bg-controller-detail-head {
+  display: grid;
+  gap: 8px;
+  align-items: center;
+}
+
+.bg-controller-detail-close {
+  justify-self: start;
+  min-height: 34px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card-solid);
+  color: var(--text);
+  font-weight: 700;
+}
+
+.bg-controller-detail-title {
+  font-size: 1.35rem;
+  line-height: 1.2;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.bg-controller-detail-meta {
+  font-size: 0.96rem;
+  color: var(--muted);
+}
+
+.bg-controller-detail-actions {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bg-controller-detail-actions a {
+  display: inline-block;
+  padding: 9px 13px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--card-solid);
+}
+
+.bg-controller-detail-actions a.bg-detail-raw {
+  background: var(--cta);
+  color: #2a2d07;
+  border-color: rgba(230, 255, 30, 0.35);
+}
+
+.bg-controller-detail-body {
+  margin-top: 12px;
+}
+
+.bg-compare-note {
+  margin: 16px 0 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.bg-visual-compare-wrap {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 10px;
+  background: var(--panel);
 }
 
 small {
@@ -1027,6 +1133,11 @@ normalize_device_name <- function(x) {
     stringr::str_replace_all("&", " and ") %>%
     stringr::str_replace_all("[^a-z0-9]+", " ") %>%
     stringr::str_squish()
+}
+
+make_device_slug <- function(x) {
+  normalize_device_name(x) %>%
+    stringr::str_replace_all(" ", "-")
 }
 
 # Color palettes for consistent styling
@@ -1259,6 +1370,25 @@ raw_stats <- raw_data %>%
   ) %>%
   mutate(Consistency = round(100 * (1 - RawSD / RawMean), 1))
 
+if (nrow(raw_stats) > 0) {
+  raw_device_index <- raw_stats %>%
+    distinct(Device, RawMean) %>%
+    arrange(RawMean, Device) %>%
+    transmute(
+      Device,
+      DeviceNorm = normalize_device_name(Device)
+    )
+  raw_device_index$DeviceSlug <- make.unique(make_device_slug(raw_device_index$Device), sep = "-")
+  raw_device_index$Tokens <- strsplit(raw_device_index$DeviceNorm, " ", fixed = TRUE)
+} else {
+  raw_device_index <- tibble::tibble(
+    Device = character(0),
+    DeviceNorm = character(0),
+    DeviceSlug = character(0),
+    Tokens = list()
+  )
+}
+
 raw_stats_by_norm <- raw_data %>%
   group_by(DeviceNorm) %>%
   summarise(
@@ -1464,6 +1594,74 @@ if (nrow(recent) > 0) {
 # ── Filter panel ──────────────────────────────────────────
 categories <- sort(unique(na.omit(dat$Category)))
 connections <- sort(unique(na.omit(dat$`Wired/Wireless`)))
+unique_non_empty <- function(x) {
+  v <- as.character(x)
+  v <- stringr::str_squish(v)
+  v <- v[!is.na(v) & nzchar(v) & v != "-" & tolower(v) != "na" & tolower(v) != "n/a"]
+  sort(unique(v))
+}
+normalize_face_buttons_value <- function(x) {
+  v <- stringr::str_squish(as.character(x))
+  num <- suppressWarnings(as.numeric(v))
+  whole <- !is.na(num) & abs(num - round(num)) < 1e-9
+  v[whole] <- as.character(as.integer(round(num[whole])))
+  v
+}
+face_button_values <- unique_non_empty(dat$`Face Buttons`)
+face_button_values <- sort(unique(normalize_face_buttons_value(face_button_values)))
+home_button_values <- unique_non_empty(dat$`Home Button`)
+
+infer_analog_capability <- function(make, model, device_clean, category) {
+  category_txt <- tolower(stringr::str_squish(as.character(category)))
+  if (category_txt == "controller adapter") return("Depends on controller")
+  if (category_txt %in% c("joystick", "joystick encoder")) return("No analog sticks")
+
+  text <- tolower(stringr::str_squish(paste(make, model, device_clean, category)))
+  yes_rx <- paste(
+    "dualsense", "dualshock", "xbox", "switch\\s*pro", "wii\\s*u\\s*pro",
+    "pro\\s*2", "elite", "pro\\s*controller", "f310", "f710",
+    "wireless\\s+controller", "horipad", "brawlergen", sep = "|"
+  )
+  no_rx <- paste(
+    "fighting\\s+commander", "fightpad", "fighting\\s+stick", "arcade\\s+stick",
+    "classic", "nes", "snes", "genesis", "saturn", "neo-?geo", "pc\\s*engine",
+    "6\\s*button", "astro\\s*city", "wii\\s*classic", sep = "|"
+  )
+
+  if (grepl(yes_rx, text, perl = TRUE)) return("Has analog sticks")
+  if (grepl(no_rx, text, perl = TRUE)) return("No analog sticks")
+  "Unknown"
+}
+
+preferred_analog_cols <- c(
+  "Analog Axes", "Analog Axis", "Analog Sticks", "Analog Sticks Count",
+  "Analog", "Analog Joysticks", "Analog Sticks?"
+)
+dat_col_names <- names(dat)
+dat_col_names_lc <- tolower(dat_col_names)
+preferred_hits <- match(tolower(preferred_analog_cols), dat_col_names_lc, nomatch = 0)
+preferred_hits <- preferred_hits[preferred_hits > 0]
+regex_hits <- which(grepl("analog|thumb\\s*stick|sticks?\\b|axes?\\b", dat_col_names_lc))
+analog_axis_hits <- unique(c(preferred_hits, regex_hits))
+analog_axis_col <- if (length(analog_axis_hits) > 0) dat_col_names[analog_axis_hits[[1]]] else NA_character_
+
+if (is.na(analog_axis_col)) {
+  dat$`Analog Joysticks` <- mapply(
+    infer_analog_capability,
+    dat$Make,
+    dat$Model,
+    dat$DeviceClean,
+    dat$Category,
+    USE.NAMES = FALSE
+  )
+  analog_axis_col <- "Analog Joysticks"
+}
+
+analog_axis_values <- if (!is.na(analog_axis_col)) unique_non_empty(dat[[analog_axis_col]]) else character(0)
+if (identical(analog_axis_col, "Analog Joysticks") && length(analog_axis_values) > 0) {
+  analog_pref <- c("Has analog sticks", "No analog sticks", "Depends on controller", "Unknown")
+  analog_axis_values <- analog_axis_values[order(match(analog_axis_values, analog_pref), analog_axis_values, na.last = TRUE)]
+}
 
 # Derive available platforms
 all_platforms <- c("MiSTer / PC", "Switch", "PS4", "PS5", "Xbox One", "Xbox Series")
@@ -1472,7 +1670,7 @@ avail_platforms <- intersect(all_platforms, platform_cols)
 h <- c(
   '<div class="bg-filter-panel">',
   '<div class="bg-filter-controls">',
-  '<div class="bg-filter-search"><input type="search" id="bg-search" placeholder="Search device, brand, category, platform..." aria-label="Search devices"></div>',
+  '<div class="bg-filter-search"><input type="search" id="bg-search" placeholder="Search device, brand, category..." aria-label="Search devices"></div>',
   '<div class="bg-filter-sort"><select id="bg-sort" aria-label="Sort devices">',
   '<option value="latency_asc">Sort: Lowest latency</option>',
   '<option value="latency_desc">Sort: Highest latency</option>',
@@ -1485,37 +1683,45 @@ h <- c(
   '</div>'
 )
 
+# Wired/Wireless row
+h <- c(h, '<div class="bg-filter-group"><h4>Wired/Wireless</h4>',
+       '<button class="filter-btn active" data-dim="connection" data-val="all" onclick="toggleFilter(\'connection\',\'all\',this)">All</button>')
+for (conn in connections) {
+  esc <- htmltools::htmlEscape(conn)
+  h <- c(h, sprintf('<button class="filter-btn" data-dim="connection" data-val="%s" onclick="toggleFilter(\'connection\',\'%s\',this)">%s</button>',
+                    esc, esc, esc))
+}
+h <- c(h, '</div>')
+
+# Home button row
+h <- c(h, '<div class="bg-filter-group"><h4>Home Button</h4>',
+       '<button class="filter-btn active" data-dim="home" data-val="all" onclick="toggleFilter(\'home\',\'all\',this)">All</button>')
+for (val in home_button_values) {
+  esc <- htmltools::htmlEscape(val)
+  h <- c(h, sprintf('<button class="filter-btn" data-dim="home" data-val="%s" onclick="toggleFilter(\'home\',\'%s\',this)">%s</button>',
+                    esc, esc, esc))
+}
+h <- c(h, '</div>')
+
+# Face button row
+h <- c(h, '<div class="bg-filter-group"><h4>Face Buttons</h4>',
+       '<button class="filter-btn active" data-dim="face" data-val="all" onclick="toggleFilter(\'face\',\'all\',this)">All</button>')
+for (val in face_button_values) {
+  esc <- htmltools::htmlEscape(val)
+  h <- c(h, sprintf('<button class="filter-btn" data-dim="face" data-val="%s" onclick="toggleFilter(\'face\',\'%s\',this)">%s</button>',
+                    esc, esc, esc))
+}
+h <- c(h, '</div>')
+
 # Category row
 h <- c(h, '<div class="bg-filter-group"><h4>Category</h4>',
        '<button class="filter-btn active" data-dim="category" data-val="all" onclick="toggleFilter(\'category\',\'all\',this)">All</button>')
 for (cat_name in categories) {
   esc <- htmltools::htmlEscape(cat_name)
   h <- c(h, sprintf('<button class="filter-btn" data-dim="category" data-val="%s" onclick="toggleFilter(\'category\',\'%s\',this)">%s</button>',
-                     esc, esc, esc))
+                    esc, esc, esc))
 }
 h <- c(h, '</div>')
-
-# Connection row
-h <- c(h, '<div class="bg-filter-group"><h4>Connection</h4>',
-       '<button class="filter-btn active" data-dim="connection" data-val="all" onclick="toggleFilter(\'connection\',\'all\',this)">All</button>')
-for (conn in connections) {
-  esc <- htmltools::htmlEscape(conn)
-  h <- c(h, sprintf('<button class="filter-btn" data-dim="connection" data-val="%s" onclick="toggleFilter(\'connection\',\'%s\',this)">%s</button>',
-                     esc, esc, esc))
-}
-h <- c(h, '</div>')
-
-# Platform row (only if platform columns exist)
-if (length(avail_platforms) > 0) {
-  h <- c(h, '<div class="bg-filter-group"><h4>Works With</h4>',
-         '<button class="filter-btn active" data-dim="platform" data-val="all" onclick="toggleFilter(\'platform\',\'all\',this)">All</button>')
-  for (plat in avail_platforms) {
-    esc <- htmltools::htmlEscape(plat)
-    h <- c(h, sprintf('<button class="filter-btn" data-dim="platform" data-val="%s" onclick="toggleFilter(\'platform\',\'%s\',this)">%s</button>',
-                       esc, esc, esc))
-  }
-  h <- c(h, '</div>')
-}
 
 h <- c(h, '</div>',  # close filter panel
        '<div class="bg-counter" id="bg-counter"></div>',
@@ -1584,6 +1790,88 @@ safe_text <- function(x, fallback = "") {
   if (length(v) == 0) fallback else trimws(v[[1]])
 }
 
+collapse_distinct_values <- function(x) {
+  vals <- stringr::str_squish(as.character(x))
+  vals <- vals[!is.na(vals) & nzchar(vals) & vals != "-" & tolower(vals) != "na" & tolower(vals) != "n/a"]
+  unique(vals)
+}
+if (!exists("analog_axis_col")) {
+  analog_axis_col <- NA_character_
+}
+
+tokenize_for_match <- function(x) {
+  out <- unlist(strsplit(normalize_device_name(x), " ", fixed = TRUE))
+  out <- out[nzchar(out)]
+  unique(out)
+}
+
+match_drop_tokens <- c(
+  "controller", "gamepad", "adapter", "converter", "cable",
+  "for", "the", "and", "to", "wired", "wireless", "usb",
+  "mode", "input", "xinput", "dinput", "windows", "switch",
+  "playstation", "xbox", "pc", "series", "model"
+)
+
+find_raw_device_for_group <- function(group_df) {
+  if (!exists("raw_device_index") || nrow(raw_device_index) == 0) {
+    return(list(Device = NA_character_, Slug = NA_character_))
+  }
+
+  group_norms <- unique(group_df$DeviceNorm)
+  group_norms <- group_norms[!is.na(group_norms) & nzchar(trimws(group_norms))]
+  exact_hits <- raw_device_index %>% filter(DeviceNorm %in% group_norms)
+  if (nrow(exact_hits) > 0) {
+    return(list(Device = exact_hits$Device[[1]], Slug = exact_hits$DeviceSlug[[1]]))
+  }
+
+  group_make <- safe_text(group_df$Make, "")
+  group_model <- safe_text(group_df$Model, "")
+  group_name <- safe_text(group_df$GroupName, safe_text(group_df$DeviceClean, ""))
+  group_category <- tolower(safe_text(group_df$Category, ""))
+
+  make_tokens <- tokenize_for_match(group_make)
+  model_source <- if (nzchar(group_model)) group_model else group_name
+  model_tokens <- tokenize_for_match(model_source)
+  if (length(make_tokens) > 0) {
+    model_tokens <- setdiff(model_tokens, make_tokens)
+  }
+  model_tokens <- setdiff(model_tokens, match_drop_tokens)
+  if (length(model_tokens) == 0) {
+    model_tokens <- setdiff(tokenize_for_match(group_name), c(make_tokens, match_drop_tokens))
+  }
+  if (length(model_tokens) == 0) {
+    return(list(Device = NA_character_, Slug = NA_character_))
+  }
+
+  raw_tokens <- raw_device_index$Tokens
+  make_match <- if (length(make_tokens) == 0) {
+    rep(TRUE, nrow(raw_device_index))
+  } else {
+    vapply(raw_tokens, function(tok) any(tok %in% make_tokens), logical(1))
+  }
+  overlap <- vapply(raw_tokens, function(tok) sum(model_tokens %in% tok), integer(1))
+  denom <- max(length(unique(model_tokens)), 1L)
+  score <- overlap / denom
+
+  # Avoid mapping controller rows to obvious adapter/encoder captures.
+  raw_is_adapter <- stringr::str_detect(raw_device_index$DeviceNorm, "\\b(adapter|converter|encoder)\\b")
+  group_is_adapter <- stringr::str_detect(group_category, "adapter|encoder")
+  if (!group_is_adapter) {
+    score[raw_is_adapter] <- pmax(score[raw_is_adapter] - 0.35, 0)
+  }
+
+  score[!make_match] <- 0
+  best_idx <- which.max(score)
+  if (!length(best_idx) || score[[best_idx]] < 0.7 || overlap[[best_idx]] < 2) {
+    return(list(Device = NA_character_, Slug = NA_character_))
+  }
+
+  list(
+    Device = raw_device_index$Device[[best_idx]],
+    Slug = raw_device_index$DeviceSlug[[best_idx]]
+  )
+}
+
 card_variants <- dat %>%
   mutate(
     GroupName = stringr::str_squish(paste(Make, Model)),
@@ -1613,11 +1901,25 @@ group_order <- names(sort(vapply(
   function(g) min(g$`Latency (in ms)`, na.rm = TRUE),
   numeric(1)
 )))
+group_slug_map <- stats::setNames(make.unique(make_device_slug(group_order), sep = "-"), group_order)
+scatter_rows <- list()
 
-h <- c('<div class="bg-card-grid" id="bg-card-grid">')
+h <- c(
+  '<section class="bg-controller-detail" id="bg-controller-detail" hidden>',
+  '<div class="bg-controller-detail-head">',
+  '<button class="bg-controller-detail-close" type="button" onclick="closeControllerPage()">Back to list</button>',
+  '<div class="bg-controller-detail-title" id="bg-controller-detail-title"></div>',
+  '<div class="bg-controller-detail-meta" id="bg-controller-detail-meta"></div>',
+  '</div>',
+  '<div class="bg-controller-detail-actions" id="bg-controller-detail-actions"></div>',
+  '<div class="bg-controller-detail-body" id="bg-controller-detail-body"></div>',
+  '</section>',
+  '<div class="bg-card-grid" id="bg-card-grid">'
+)
 
 for (rank_idx in seq_along(group_order)) {
   key <- group_order[[rank_idx]]
+  controller_slug <- group_slug_map[[key]]
   g <- group_splits[[key]] %>%
     arrange(`Latency (in ms)`, DeviceClean)
   d <- g[1, ]
@@ -1647,15 +1949,45 @@ for (rank_idx in seq_along(group_order)) {
     ""
   }
 
+  face_values <- collapse_distinct_values(g$`Face Buttons`)
+  if (length(face_values) > 0) {
+    face_values <- unique(normalize_face_buttons_value(face_values))
+  }
+  home_values <- collapse_distinct_values(g$`Home Button`)
+  analog_values <- if (!is.na(analog_axis_col) && analog_axis_col %in% names(g)) {
+    collapse_distinct_values(g[[analog_axis_col]])
+  } else {
+    character(0)
+  }
+  face_attr <- paste(face_values, collapse = "|")
+  home_attr <- paste(home_values, collapse = "|")
+  analog_attr <- paste(analog_values, collapse = "|")
+  face_label <- if (length(face_values) > 0) face_values[[1]] else ""
+  home_label <- if (length(home_values) > 0) home_values[[1]] else ""
+  analog_label <- if (length(analog_values) > 0) analog_values[[1]] else ""
+
   # Pick first available buy link among fastest variants.
   buy_url <- NA_character_
+  controller_url <- NA_character_
   for (j in seq_len(nrow(g))) {
     amazon_j <- safe_text(g$Amazon[j], "")
     link_j <- safe_text(g$Link[j], "")
+    if (is.na(controller_url) && nzchar(link_j)) {
+      controller_url <- link_j
+    }
     candidate <- if (nzchar(amazon_j)) amazon_j else if (nzchar(link_j)) link_j else ""
     if (nzchar(candidate)) {
       buy_url <- candidate
       break
+    }
+  }
+  if (is.na(controller_url) && !is.na(buy_url) && nzchar(trimws(buy_url))) {
+    controller_url <- buy_url
+  }
+  if (is.na(controller_url) || !nzchar(trimws(controller_url))) {
+    query <- stringr::str_squish(paste(group_name, "controller"))
+    if (nzchar(query)) {
+      controller_url <- paste0("https://duckduckgo.com/?q=", utils::URLencode(query, reserved = TRUE))
     }
   }
 
@@ -1666,7 +1998,8 @@ for (rank_idx in seq_along(group_order)) {
 
   search_parts <- unique(c(
     g$DeviceClean, g$ModeLabel, g$Connection, g$WirelessConnection,
-    g$Category, g$`Wired/Wireless`, g$Platforms, g$Make, g$Model
+    g$Category, g$`Wired/Wireless`, g$Platforms, g$Make, g$Model,
+    face_values, home_values, analog_values
   ))
   search_parts <- search_parts[!is.na(search_parts) & nzchar(trimws(search_parts))]
   search_blob <- tolower(paste(search_parts, collapse = " "))
@@ -1687,22 +2020,42 @@ for (rank_idx in seq_along(group_order)) {
     ""
   }
 
-  details_id <- sprintf("bg-card-details-%d", rank_idx)
+  controller_html <- if (!is.na(controller_url) && nzchar(trimws(controller_url))) {
+    sprintf('<div class="bg-card-link"><a href="%s" target="_blank">Controller &uarr;</a></div>',
+            htmltools::htmlEscape(controller_url))
+  } else {
+    ""
+  }
+
+  raw_match <- find_raw_device_for_group(g)
+  raw_device_slug <- safe_text(raw_match$Slug, "")
+  has_distribution <- nzchar(raw_device_slug)
+  raw_target_text <- if (has_distribution) "Open Raw Distribution" else "Open Raw Deep Dive"
+  raw_target_href <- if (has_distribution) {
+    sprintf("#raw-dist-%s", raw_device_slug)
+  } else {
+    "#raw-data-deep-dive"
+  }
+  raw_target_onclick <- if (has_distribution) {
+    sprintf("return openRawDistribution('%s');", raw_device_slug)
+  } else {
+    "return openTabSection('raw-data-deep-dive');"
+  }
+
+  open_page_btn <- sprintf(
+    '<button class="bg-card-details-toggle" type="button" onclick="return openControllerPage(\'%s\');">Open page</button>',
+    controller_slug
+  )
   actions_html <- sprintf(
-    '<div class="bg-card-actions"><button class="bg-card-details-toggle" type="button" aria-expanded="false" aria-controls="%s" onclick="toggleCardDetails(this)">Details</button>%s</div>',
-    details_id,
+    '<div class="bg-card-actions">%s%s%s</div>',
+    open_page_btn,
+    controller_html,
     buy_html
   )
 
   detail_rows <- c(
-    sprintf('<div class="bg-card-details" id="%s" hidden>', details_id),
-    '<div class="bg-card-details-header"><span>Mode-By-Mode Results</span>',
-    if (any(g$HasRawCapture %in% TRUE)) {
-      '<a class="bg-card-detail-link" href="#latency-distribution-by-device" onclick="return openTabSection(\'latency-distribution-by-device\');">Open raw histogram viewer</a>'
-    } else {
-      '<a class="bg-card-detail-link" href="#detailed-analysis" onclick="return openTabSection(\'detailed-analysis\');">Open detailed table</a>'
-    },
-    '</div>',
+    '<div class="bg-card-details">',
+    '<div class="bg-card-details-header"><span>Mode-By-Mode Results</span></div>',
     '<div class="bg-variant-list">'
   )
 
@@ -1740,6 +2093,12 @@ for (rank_idx in seq_along(group_order)) {
 
   detail_rows <- c(detail_rows, '</div></div>')
   details_html <- paste(detail_rows, collapse = "")
+  details_template_html <- sprintf(
+    '<template id="bg-controller-template-%s">%s</template>',
+    controller_slug,
+    details_html
+  )
+  card_anchor_html <- sprintf('<span class="bg-controller-anchor" id="controller-%s" hidden></span>', controller_slug)
 
   meter_html <- sprintf(
     '<div class="bg-card-probability"><div class="bg-prob-track"><div class="bg-prob-fill" style="width:%.1f%%;background:%s;"></div></div></div>',
@@ -1747,8 +2106,19 @@ for (rank_idx in seq_along(group_order)) {
     meter_color
   )
 
+  scatter_rows[[length(scatter_rows) + 1]] <- tibble::tibble(
+    Slug = controller_slug,
+    Device = group_name,
+    Connection = conn_val,
+    Category = cat_val,
+    Latency = lat,
+    SameFrame = pct_ontime,
+    SD = suppressWarnings(as.numeric(d$SD)),
+    RawSlug = raw_device_slug
+  )
+
   h <- c(h, sprintf(
-    '<div class="bg-card" data-category="%s" data-connection="%s" data-platforms="%s" data-search="%s" data-latency="%.3f" data-ontime="%.3f" data-price="%s">
+    '<div class="bg-card" data-controller-slug="%s" data-category="%s" data-connection="%s" data-platforms="%s" data-search="%s" data-latency="%.3f" data-ontime="%.3f" data-price="%s" data-face="%s" data-home="%s" data-analog="%s" data-controller-url="%s" data-buy-url="%s" data-raw-slug="%s" data-raw-target-href="%s" data-raw-target-onclick="%s" data-raw-target-text="%s">
 <div class="bg-card-rank">#%d</div>
 <div class="bg-card-title"><div class="bg-card-name">%s</div>%s</div>
 <div class="bg-card-metrics">%.2fms<span class="bg-metric-sep">|</span>%s Same-Frame</div>
@@ -1756,7 +2126,10 @@ for (rank_idx in seq_along(group_order)) {
 %s
 %s
 %s
+%s
+%s%s%s
 </div>',
+    htmltools::htmlEscape(controller_slug),
     htmltools::htmlEscape(cat_val),
     htmltools::htmlEscape(conn_val),
     htmltools::htmlEscape(platforms_str),
@@ -1764,24 +2137,106 @@ for (rank_idx in seq_along(group_order)) {
     lat,
     pct_ontime,
     price_attr,
+    htmltools::htmlEscape(face_attr),
+    htmltools::htmlEscape(home_attr),
+    htmltools::htmlEscape(analog_attr),
+    htmltools::htmlEscape(safe_text(controller_url, "")),
+    htmltools::htmlEscape(safe_text(buy_url, "")),
+    htmltools::htmlEscape(raw_device_slug),
+    htmltools::htmlEscape(raw_target_href),
+    htmltools::htmlEscape(raw_target_onclick),
+    htmltools::htmlEscape(raw_target_text),
     rank_idx,
     htmltools::htmlEscape(group_name),
     conn_badge_html,
     lat,
     ontime_label,
+    if (nzchar(face_label)) sprintf('<div class="bg-card-mode">Face Buttons: %s</div>', htmltools::htmlEscape(face_label)) else "",
+    if (nzchar(home_label)) sprintf('<div class="bg-card-mode">Home Button: %s</div>', htmltools::htmlEscape(home_label)) else "",
+    if (nzchar(analog_label) && !is.na(analog_axis_col)) sprintf('<div class="bg-card-mode">%s: %s</div>', htmltools::htmlEscape(analog_axis_col), htmltools::htmlEscape(analog_label)) else "",
     if (nzchar(mode_line)) sprintf('<div class="bg-card-mode">%s</div>', htmltools::htmlEscape(mode_line)) else "",
     meter_html,
     actions_html,
-    details_html
+    card_anchor_html,
+    details_template_html
   ))
 }
 
 h <- c(h, '</div>')  # close card grid
+buyers_scatter_dat <- dplyr::bind_rows(scatter_rows)
 
 htmltools::HTML(paste(h, collapse = "\n"))
 ```
 
-<p class="bg-inline-note">Use <strong>Details</strong> on any card to view mode-by-mode results. Prefer a table? See the <strong>Detailed Analysis</strong> tab for the full filterable dataset.</p>
+<p class="bg-inline-note">Use <strong>Open page</strong> on any card for a shopper-focused controller profile, then jump directly to raw distribution when available.</p>
+
+```{r buyers-guide-scatter, echo=FALSE, warning=FALSE}
+if (exists("buyers_scatter_dat") && nrow(buyers_scatter_dat) > 0) {
+  scatter_df <- buyers_scatter_dat %>%
+    mutate(
+      SD = ifelse(is.na(SD), median(SD, na.rm = TRUE), SD),
+      SD = ifelse(is.finite(SD), SD, 0.1),
+      SameFrameLabel = ifelse(
+        abs(SameFrame - round(SameFrame)) < 0.05,
+        sprintf("%.0f%%", round(SameFrame)),
+        sprintf("%.1f%%", SameFrame)
+      ),
+      HoverText = paste0(
+        Device, "<br>",
+        sprintf("Latency: %.2f ms", Latency), "<br>",
+        sprintf("Same-frame: %s", SameFrameLabel), "<br>",
+        "Connection: ", Connection, "<br>",
+        "Category: ", Category
+      )
+    )
+
+  p_buyer_scatter <- plot_ly(
+    data = scatter_df,
+    x = ~Latency,
+    y = ~SameFrame,
+    type = "scatter",
+    mode = "markers",
+    customdata = ~Slug,
+    text = ~HoverText,
+    hoverinfo = "text",
+    color = ~Connection,
+    colors = c("Wired" = "#A8BE00", "Wireless" = "#5000DC"),
+    symbol = ~Category,
+    symbols = c("circle", "diamond", "square", "triangle-up"),
+    marker = list(
+      sizemode = "diameter",
+      sizeref = 0.4,
+      line = list(width = 1, color = "rgba(16,22,34,0.35)")
+    ),
+    size = ~pmax(SD, 0.1)
+  ) %>%
+    layout(
+      title = list(text = "Visual Compare: Wired vs Wireless", x = 0.02),
+      xaxis = list(title = "Average Latency (ms)"),
+      yaxis = list(title = "Same-Frame Probability (%)", range = c(0, 100)),
+      legend = list(orientation = "h", x = 0, y = 1.1),
+      margin = list(t = 70, r = 20, b = 55, l = 70),
+      hovermode = "closest",
+      height = 460
+    ) %>%
+    htmlwidgets::onRender(
+      "function(el, x) {
+        el.on('plotly_click', function(evt) {
+          if (!evt || !evt.points || !evt.points.length) return;
+          var slug = evt.points[0].customdata;
+          if (slug && window.openControllerPage) {
+            window.openControllerPage(slug);
+          }
+        });
+      }"
+    )
+
+  htmltools::tagList(
+    htmltools::tags$div(class = "bg-compare-note", "Scatter size reflects SD. Click a point to open that controller page."),
+    htmltools::tags$div(id = "bg-visual-compare", class = "bg-visual-compare-wrap", p_buyer_scatter)
+  )
+}
+```
 
 ```{r buyers-guide-js, echo=FALSE}
 htmltools::HTML('
@@ -1789,8 +2244,9 @@ htmltools::HTML('
 (function() {
   var THEME_KEY = "inputlatency-theme";
   var DENSITY_KEY = "inputlatency-density";
-  var defaultState = { category: ["all"], connection: ["all"], platform: ["all"] };
-  var state = { category: ["all"], connection: ["all"], platform: ["all"] };
+  var defaultState = { category: ["all"], connection: ["all"], platform: ["all"], face: ["all"], home: ["all"], analog: ["all"] };
+  var state = { category: ["all"], connection: ["all"], platform: ["all"], face: ["all"], home: ["all"], analog: ["all"] };
+  var activeControllerSlug = "";
 
   function normalize(x) {
     return (x || "").toLowerCase().trim();
@@ -1902,27 +2358,148 @@ htmltools::HTML('
     applyDensity(next, true);
   };
 
-  window.toggleCardDetails = function(btn) {
-    if (!btn) return;
-    var card = btn.closest ? btn.closest(".bg-card") : null;
-    if (!card) return;
+  function splitAttrValues(raw) {
+    return String(raw || "")
+      .split("|")
+      .map(function(v) { return v.trim(); })
+      .filter(function(v) { return v.length > 0; });
+  }
 
-    var panelId = btn.getAttribute("aria-controls");
-    var panel = panelId ? document.getElementById(panelId) : card.querySelector(".bg-card-details");
-    if (!panel) return;
+  function matchesState(dim, values) {
+    if (!state[dim] || state[dim].indexOf("all") >= 0) return true;
+    if (!values || values.length === 0) return false;
+    return state[dim].some(function(v) { return values.indexOf(v) >= 0; });
+  }
 
-    var expanded = btn.getAttribute("aria-expanded") === "true";
-    if (expanded) {
-      btn.setAttribute("aria-expanded", "false");
-      btn.textContent = "Details";
-      panel.hidden = true;
-      card.classList.remove("is-open");
-    } else {
-      btn.setAttribute("aria-expanded", "true");
-      btn.textContent = "Hide";
-      panel.hidden = false;
-      card.classList.add("is-open");
+  function getCardBySlug(slug) {
+    if (!slug) return null;
+    return document.querySelector(".bg-card[data-controller-slug=\\\"" + slug + "\\\"]");
+  }
+
+  function getBuyerScatterPlot() {
+    var wrap = document.getElementById("bg-visual-compare");
+    if (!wrap) return null;
+    return wrap.querySelector(".plotly-graph-div");
+  }
+
+  function syncScatterToVisibleCards(visibleCards) {
+    if (typeof Plotly === "undefined") return;
+    var plot = getBuyerScatterPlot();
+    if (!plot || !plot.data || !plot.data.length) return;
+    var trace = plot.data[0];
+    if (!trace || !Array.isArray(trace.customdata)) return;
+
+    var visibleMap = {};
+    visibleCards.forEach(function(card) {
+      visibleMap[String(card.getAttribute("data-controller-slug") || "")] = true;
+    });
+
+    var opacity = trace.customdata.map(function(slug) {
+      return visibleMap[String(slug)] ? 0.95 : 0.15;
+    });
+    Plotly.restyle(plot, { "marker.opacity": [opacity] }, [0]);
+  }
+
+  function buildDetailActions(card) {
+    if (!card) return "";
+    var rawHref = card.getAttribute("data-raw-target-href") || "#raw-data-deep-dive";
+    var rawClick = card.getAttribute("data-raw-target-onclick") || "return openTabSection(\\\"raw-data-deep-dive\\\");";
+    var rawText = card.getAttribute("data-raw-target-text") || "Open Raw Deep Dive";
+    var controllerUrl = card.getAttribute("data-controller-url") || "";
+    var buyUrl = card.getAttribute("data-buy-url") || "";
+
+    var parts = [];
+    parts.push("<a class=\\\"bg-detail-raw\\\" href=\\\"" + rawHref + "\\\" onclick=\\\"" + rawClick + "\\\">" + rawText + "</a>");
+    if (controllerUrl) {
+      parts.push("<a href=\\\"" + controllerUrl + "\\\" target=\\\"_blank\\\">Controller Link</a>");
     }
+    if (buyUrl && buyUrl !== controllerUrl) {
+      parts.push("<a href=\\\"" + buyUrl + "\\\" target=\\\"_blank\\\">Buy Link</a>");
+    }
+    return parts.join("");
+  }
+
+  function parseControllerSlug(id) {
+    var m = String(id || "").match(/^controller-([a-z0-9][a-z0-9-]*)$/);
+    return m ? m[1] : "";
+  }
+
+  window.openControllerPage = function(slug, opts) {
+    opts = opts || {};
+    var clean = String(slug || "").toLowerCase().replace(/[^a-z0-9-]+/g, "");
+    if (!clean) return false;
+
+    var card = getCardBySlug(clean);
+    if (!card) return false;
+
+    showTabById("buyers-guide");
+    activeControllerSlug = clean;
+
+    var detailRoot = getControl("bg-controller-detail");
+    var titleEl = getControl("bg-controller-detail-title");
+    var metaEl = getControl("bg-controller-detail-meta");
+    var actionsEl = getControl("bg-controller-detail-actions");
+    var bodyEl = getControl("bg-controller-detail-body");
+    var template = getControl("bg-controller-template-" + clean);
+    if (!detailRoot || !titleEl || !metaEl || !actionsEl || !bodyEl || !template) return false;
+
+    var nameEl = card.querySelector(".bg-card-name");
+    var metricsEl = card.querySelector(".bg-card-metrics");
+    var modeEl = card.querySelector(".bg-card-mode");
+    var cat = card.getAttribute("data-category") || "";
+    var conn = card.getAttribute("data-connection") || "";
+    var face = splitAttrValues(card.getAttribute("data-face"));
+    var home = splitAttrValues(card.getAttribute("data-home"));
+    var analog = splitAttrValues(card.getAttribute("data-analog"));
+
+    titleEl.textContent = nameEl ? nameEl.textContent : "Controller";
+    var metaParts = [];
+    if (metricsEl && metricsEl.textContent) metaParts.push(metricsEl.textContent);
+    if (cat) metaParts.push(cat);
+    if (conn) metaParts.push(conn);
+    if (face.length > 0) metaParts.push("Face Buttons: " + face[0]);
+    if (home.length > 0) metaParts.push("Home Button: " + home[0]);
+    if (analog.length > 0) metaParts.push("Analog: " + analog[0]);
+    if (modeEl && modeEl.textContent) metaParts.push(modeEl.textContent);
+    metaEl.textContent = metaParts.join(" | ");
+
+    actionsEl.innerHTML = buildDetailActions(card);
+    bodyEl.innerHTML = template.innerHTML;
+    detailRoot.hidden = false;
+
+    if (window.history && typeof window.history.replaceState === "function" && opts.updateHash !== false) {
+      try {
+        window.history.replaceState(null, "", "#controller-" + clean);
+      } catch (e) {}
+    }
+
+    window.setTimeout(function() {
+      if (typeof detailRoot.scrollIntoView === "function") {
+        detailRoot.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 90);
+
+    return false;
+  };
+
+  window.closeControllerPage = function() {
+    activeControllerSlug = "";
+    var detailRoot = getControl("bg-controller-detail");
+    var titleEl = getControl("bg-controller-detail-title");
+    var metaEl = getControl("bg-controller-detail-meta");
+    var actionsEl = getControl("bg-controller-detail-actions");
+    var bodyEl = getControl("bg-controller-detail-body");
+    if (detailRoot) detailRoot.hidden = true;
+    if (titleEl) titleEl.textContent = "";
+    if (metaEl) metaEl.textContent = "";
+    if (actionsEl) actionsEl.innerHTML = "";
+    if (bodyEl) bodyEl.innerHTML = "";
+    if (window.history && typeof window.history.replaceState === "function") {
+      try {
+        window.history.replaceState(null, "", "#buyers-guide");
+      } catch (e) {}
+    }
+    return false;
   };
 
   function showTabById(id) {
@@ -1942,31 +2519,130 @@ htmltools::HTML('
     }
   }
 
+  function parseRawDistributionSlug(id) {
+    var m = String(id || "").match(/^raw-dist-([a-z0-9][a-z0-9-]*)$/);
+    return m ? m[1] : "";
+  }
+
+  function getRawDistributionDeviceName(slug) {
+    if (!slug) return "";
+    var anchor = document.getElementById("raw-dist-" + slug);
+    if (!anchor) return "";
+    return String(anchor.getAttribute("data-raw-device") || "").trim();
+  }
+
+  function getRawDistributionPlot() {
+    var section = document.getElementById("latency-distribution-by-device");
+    if (!section) return null;
+    return section.querySelector(".plotly-graph-div");
+  }
+
+  function setRawDistributionDevice(deviceName) {
+    if (!deviceName || typeof Plotly === "undefined") return false;
+    var plot = getRawDistributionPlot();
+    if (!plot || !Array.isArray(plot.data) || plot.data.length === 0) return false;
+
+    var idx = -1;
+    for (var i = 0; i < plot.data.length; i++) {
+      if (plot.data[i] && plot.data[i].name === deviceName) {
+        idx = i;
+        break;
+      }
+    }
+    if (idx < 0) return false;
+
+    var visibility = plot.data.map(function(_, traceIdx) {
+      return traceIdx === idx;
+    });
+    Plotly.restyle(plot, "visible", visibility);
+
+    if (plot.layout && Array.isArray(plot.layout.updatemenus) && plot.layout.updatemenus.length > 0) {
+      var update = {};
+      update["updatemenus[0].active"] = idx;
+      Plotly.relayout(plot, update);
+    }
+
+    return true;
+  }
+
+  function scheduleRawDistributionFocus(slug) {
+    if (!slug) return;
+    var tries = 0;
+    function attempt() {
+      tries += 1;
+      var deviceName = getRawDistributionDeviceName(slug);
+      if (setRawDistributionDevice(deviceName)) return;
+      if (tries < 12) {
+        window.setTimeout(attempt, 160);
+      }
+    }
+    window.setTimeout(attempt, 120);
+  }
+
+  window.openRawDistribution = function(slug) {
+    var clean = String(slug || "").toLowerCase().replace(/[^a-z0-9-]+/g, "");
+    if (!clean) {
+      return window.openTabSection("latency-distribution-by-device");
+    }
+    window.openTabSection("raw-dist-" + clean);
+    scheduleRawDistributionFocus(clean);
+    return false;
+  };
+
   window.openTabSection = function(targetId) {
     var id = String(targetId || "").replace(/^#/, "");
     if (!id) return true;
 
+    var controllerSlug = parseControllerSlug(id);
+    if (controllerSlug) {
+      showTabById("buyers-guide");
+      window.openControllerPage(controllerSlug, { updateHash: false });
+      if (window.history && typeof window.history.replaceState === "function") {
+        try {
+          window.history.replaceState(null, "", "#controller-" + controllerSlug);
+        } catch (e) {
+          window.location.hash = "controller-" + controllerSlug;
+        }
+      } else {
+        window.location.hash = "controller-" + controllerSlug;
+      }
+      return false;
+    }
+
+    var rawSlug = parseRawDistributionSlug(id);
     var target = document.getElementById(id);
+    if (rawSlug) {
+      target = document.getElementById("latency-distribution-by-device") || target;
+    }
     if (!target) return true;
 
-    var pane = target.classList.contains("tab-pane") ? target : target.closest(".tab-pane");
-    var panesToOpen = [];
-    while (pane) {
-      panesToOpen.unshift(pane);
-      pane = pane.parentElement ? pane.parentElement.closest(".tab-pane") : null;
+    var ancestorIds = [];
+    var node = target;
+    while (node) {
+      if (node.id) ancestorIds.unshift(node.id);
+      node = node.parentElement;
     }
-    panesToOpen.forEach(function(p) {
-      if (p.id) showTabById(p.id);
+    ancestorIds.forEach(function(ancestorId) {
+      showTabById(ancestorId);
     });
 
     if (window.history && typeof window.history.replaceState === "function") {
-      window.history.replaceState(null, "", "#" + id);
+      try {
+        window.history.replaceState(null, "", "#" + id);
+      } catch (e) {
+        window.location.hash = id;
+      }
     } else {
       window.location.hash = id;
     }
 
-    if (typeof target.scrollIntoView === "function") {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.setTimeout(function() {
+      if (typeof target.scrollIntoView === "function") {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 140);
+    if (rawSlug) {
+      scheduleRawDistributionFocus(rawSlug);
     }
     return false;
   };
@@ -1993,27 +2669,9 @@ htmltools::HTML('
 
   window.toggleFilter = function(dim, val, btn) {
     var btns = document.querySelectorAll(".filter-btn[data-dim=\'" + dim + "\']");
-    if (val === "all") {
-      state[dim] = ["all"];
-      btns.forEach(function(b) { b.classList.remove("active"); });
-      btn.classList.add("active");
-    } else {
-      state[dim] = state[dim].filter(function(v) { return v !== "all"; });
-      var allBtn = document.querySelector(".filter-btn[data-dim=\'" + dim + "\'][data-val=\'all\']");
-      if (allBtn) allBtn.classList.remove("active");
-
-      if (btn.classList.contains("active")) {
-        btn.classList.remove("active");
-        state[dim] = state[dim].filter(function(v) { return v !== val; });
-        if (state[dim].length === 0) {
-          state[dim] = ["all"];
-          if (allBtn) allBtn.classList.add("active");
-        }
-      } else {
-        btn.classList.add("active");
-        state[dim].push(val);
-      }
-    }
+    btns.forEach(function(b) { b.classList.remove("active"); });
+    if (btn) btn.classList.add("active");
+    state[dim] = [val];
     applyFilters();
   };
 
@@ -2021,10 +2679,13 @@ htmltools::HTML('
     state = {
       category: defaultState.category.slice(),
       connection: defaultState.connection.slice(),
-      platform: defaultState.platform.slice()
+      platform: defaultState.platform.slice(),
+      face: defaultState.face.slice(),
+      home: defaultState.home.slice(),
+      analog: defaultState.analog.slice()
     };
 
-    ["category", "connection", "platform"].forEach(function(dim) {
+    ["category", "connection", "platform", "face", "home", "analog"].forEach(function(dim) {
       var btns = document.querySelectorAll(".filter-btn[data-dim=\'" + dim + "\']");
       btns.forEach(function(b) {
         b.classList.remove("active");
@@ -2054,32 +2715,23 @@ htmltools::HTML('
     var visibleCards = [];
 
     cards.forEach(function(card) {
-      var catMatch = state.category.indexOf("all") >= 0 ||
-                     state.category.indexOf(card.getAttribute("data-category")) >= 0;
-      var connMatch = state.connection.indexOf("all") >= 0 ||
-                      state.connection.indexOf(card.getAttribute("data-connection")) >= 0;
+      var catMatch = matchesState("category", [String(card.getAttribute("data-category") || "")]);
+      var connMatch = matchesState("connection", [String(card.getAttribute("data-connection") || "")]);
+      var faceMatch = matchesState("face", splitAttrValues(card.getAttribute("data-face")));
+      var homeMatch = matchesState("home", splitAttrValues(card.getAttribute("data-home")));
+      var analogMatch = matchesState("analog", splitAttrValues(card.getAttribute("data-analog")));
       var searchMatch = !searchTerm ||
                         normalize(card.getAttribute("data-search")).indexOf(searchTerm) >= 0;
       var platMatch = true;
       if (state.platform.indexOf("all") < 0) {
         var cardPlats = (card.getAttribute("data-platforms") || "").split(",").map(function(p) {
           return p.trim();
-        });
+        }).filter(function(p) { return p.length > 0; });
         platMatch = state.platform.some(function(p) { return cardPlats.indexOf(p) >= 0; });
       }
-      if (catMatch && connMatch && platMatch && searchMatch) {
+      if (catMatch && connMatch && platMatch && faceMatch && homeMatch && analogMatch && searchMatch) {
         visibleCards.push(card);
       } else {
-        var detailPanel = card.querySelector(".bg-card-details");
-        var detailBtn = card.querySelector(".bg-card-details-toggle");
-        if (detailPanel && !detailPanel.hidden) {
-          detailPanel.hidden = true;
-          card.classList.remove("is-open");
-          if (detailBtn) {
-            detailBtn.setAttribute("aria-expanded", "false");
-            detailBtn.textContent = "Details";
-          }
-        }
         card.style.display = "none";
       }
     });
@@ -2095,6 +2747,14 @@ htmltools::HTML('
       grid.appendChild(card);
       shown++;
     });
+
+    syncScatterToVisibleCards(visibleCards);
+    if (activeControllerSlug) {
+      var activeCard = getCardBySlug(activeControllerSlug);
+      if (!activeCard || activeCard.style.display === "none") {
+        window.closeControllerPage();
+      }
+    }
 
     var counter = document.getElementById("bg-counter");
     if (counter) {
@@ -2128,7 +2788,11 @@ htmltools::HTML('
     }
   }
 
-  document.addEventListener("DOMContentLoaded", function() {
+  var initialized = false;
+  function initializeDashboard() {
+    if (initialized) return;
+    initialized = true;
+
     applyTheme(getPreferredTheme(), false);
     applyDensity(getPreferredDensity(), false);
     bindControls();
@@ -2137,17 +2801,24 @@ htmltools::HTML('
     setTimeout(function() {
       applyPlotlyTheme(document.documentElement.getAttribute("data-theme") || "light");
     }, 200);
+    function openCurrentHash() {
+      if (window.location && window.location.hash) {
+        window.openTabSection(window.location.hash);
+      }
+    }
+    setTimeout(openCurrentHash, 260);
+    setTimeout(openCurrentHash, 700);
+  }
+
+  document.addEventListener("DOMContentLoaded", initializeDashboard);
+  window.addEventListener("hashchange", function() {
+    if (window.location && window.location.hash) {
+      window.openTabSection(window.location.hash);
+    }
   });
 
   if (document.readyState !== "loading") {
-    applyTheme(getPreferredTheme(), false);
-    applyDensity(getPreferredDensity(), false);
-    bindControls();
-    applyFilters();
-    syncSystemThemeWhenUnpinned();
-    setTimeout(function() {
-      applyPlotlyTheme(document.documentElement.getAttribute("data-theme") || "light");
-    }, 200);
+    initializeDashboard();
   }
 })();
 </script>
@@ -2168,16 +2839,16 @@ shared_dat_detail <- SharedData$new(dat, group = "detail_table")
 bscols(widths = c(12),
   list(
     filter_select("MakeDetail", "Make", shared_dat_detail, ~Make),
-    filter_checkbox("ConnectionDetail", "Wired/Wireless", shared_dat_detail, ~`Wired/Wireless`,
-                    inline = TRUE),
-    filter_checkbox("HomeButtonDetail", "Home Button", shared_dat_detail, ~`Home Button`,
-                    inline = TRUE),
-    filter_checkbox("CategoryDetail", "Category", shared_dat_detail, ~Category,
-                    inline = TRUE),
-    filter_checkbox("FaceButtonsDetail", "Face Buttons", shared_dat_detail, ~`Face Buttons`,
-                    inline = TRUE),
-    filter_checkbox("LatencyTierDetail", "Latency Tier", shared_dat_detail, ~`Latency Tier`,
-                    inline = TRUE)
+    filter_select("ConnectionDetail", "Wired/Wireless", shared_dat_detail, ~`Wired/Wireless`,
+                  multiple = TRUE),
+    filter_select("HomeButtonDetail", "Home Button", shared_dat_detail, ~`Home Button`,
+                  multiple = TRUE),
+    filter_select("CategoryDetail", "Category", shared_dat_detail, ~Category,
+                  multiple = TRUE),
+    filter_select("FaceButtonsDetail", "Face Buttons", shared_dat_detail, ~`Face Buttons`,
+                  multiple = TRUE),
+    filter_select("LatencyTierDetail", "Latency Tier", shared_dat_detail, ~`Latency Tier`,
+                  multiple = TRUE)
   )
 )
 
@@ -2369,33 +3040,6 @@ n_readings <- nrow(raw_data)
 
 - Devices in database: `r nrow(dat)`
 - Devices with matched raw captures: `r sum(dat$HasRawCapture, na.rm = TRUE)` (`r raw_coverage_pct`%)
-- Raw capture files that did not map to a database device: `r nrow(raw_unmatched)`
-
-```{r coverage-missing-captures, echo=FALSE}
-if (nrow(raw_unmatched) > 0) {
-  datatable(
-    raw_unmatched %>%
-      select(
-        `Normalized Name` = DeviceNorm,
-        `Capture Files` = MatchedCaptureFiles,
-        `Examples` = CaptureExamples
-      ),
-    options = list(pageLength = 10, scrollX = TRUE),
-    caption = "Capture files not currently mapped to a device row"
-  )
-}
-```
-
-```{r coverage-sheet-without-raw, echo=FALSE}
-if (nrow(sheet_without_raw) > 0) {
-  datatable(
-    sheet_without_raw %>%
-      select(`Database Device` = DeviceClean),
-    options = list(pageLength = 10, scrollX = TRUE),
-    caption = "Database rows without raw capture files"
-  )
-}
-```
 
 #### Percentile Statistics from Raw Captures
 
@@ -2424,6 +3068,25 @@ if (nrow(raw_stats) > 0) {
 #### Latency Distribution by Device
 
 Select a device to view its latency distribution histogram.
+
+```{r raw-device-distribution-anchors, echo=FALSE, results='asis'}
+if (exists("raw_device_index") && nrow(raw_device_index) > 0) {
+  anchors <- vapply(seq_len(nrow(raw_device_index)), function(i) {
+    slug <- raw_device_index$DeviceSlug[[i]]
+    dev <- raw_device_index$Device[[i]]
+    sprintf(
+      '<span id="raw-dist-%s" data-raw-device="%s"></span>',
+      htmltools::htmlEscape(slug),
+      htmltools::htmlEscape(dev)
+    )
+  }, character(1))
+  cat(
+    '<div class="bg-raw-device-anchor-index" aria-hidden="true" style="display:none;">',
+    paste(anchors, collapse = ""),
+    '</div>'
+  )
+}
+```
 
 ```{r raw-histogram-interactive, echo=FALSE, warning=FALSE}
 if (nrow(raw_data) > 0) {
@@ -2458,8 +3121,8 @@ if (nrow(raw_data) > 0) {
     hdat <- hist_cache[[i]]
     p_hist <- p_hist %>%
       add_bars(
-        x = ~hdat$mid,
-        y = ~hdat$count,
+        x = hdat$mid,
+        y = hdat$count,
         name = device_list[i],
         visible = (i == 1),
         marker = list(color = '#3498DB')
@@ -2538,7 +3201,7 @@ if (nrow(raw_data) > 0) {
       downsample_device_series(max_points = 300)
 
     p_ts <- p_ts %>%
-      add_trace(x = ~dev_data$read, y = ~dev_data$delay,
+      add_trace(x = dev_data$read, y = dev_data$delay,
                 type = 'scatter', mode = 'lines+markers',
                 name = devices_with_data[i],
                 visible = (i == 1),
@@ -2626,15 +3289,15 @@ shared_range_dat <- SharedData$new(range_plot_dat, key = ~ID, group = "range_gro
 
 bscols(widths = c(12),
   list(
-    filter_checkbox("ConnectionType", "Wired/Wireless", shared_range_dat, ~`Wired/Wireless`, inline = TRUE),
-    filter_checkbox("DeviceCategory", "Category", shared_range_dat, ~Category, inline = TRUE)
+    filter_select("ConnectionType", "Wired/Wireless", shared_range_dat, ~`Wired/Wireless`, multiple = TRUE),
+    filter_select("DeviceCategory", "Category", shared_range_dat, ~Category, multiple = TRUE)
   )
 )
 ```
 
 ```{r latency-range-plot, echo=FALSE, fig.height=25, fig.width=14, warning=FALSE}
 # Calculate appropriate height
-plot_height <- max(600, nrow(range_plot_dat) * 20)
+plot_height <- min(2000, max(700, nrow(range_plot_dat) * 14))
 
 # Split data by imputation status for separate legend entries
 imputed_data <- range_plot_dat %>% filter(Imputed == TRUE)
@@ -2697,11 +3360,7 @@ p_range <- plot_ly(height = plot_height, width = 1400) %>%
 p_range
 ```
 
-<br><br>
-
 <small>**Note:** Red error bars indicate imputed standard deviation (estimated via linear regression). Blue bars are measured values.</small>
-
-<br><br>
 
 ### Best Performers by Category
 
@@ -2831,10 +3490,6 @@ window.inputLatencyPlotlyStyle = inputLatencyPlotlyStyle;
 $(document).on("shown.bs.tab", "a[data-toggle=\'tab\']", function() {
   var pane = $($(this).attr("href"));
   inputLatencyRepaintPlots(pane.get(0));
-  pane.find(".dataTable").each(function() {
-    var dt = $(this).DataTable();
-    if (dt) dt.columns.adjust();
-  });
 });
 
 // Keep hidden charts synced with theme changes
