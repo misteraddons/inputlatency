@@ -1,0 +1,324 @@
+/*
+  Reflex shared UI layer.
+  Keep this file generic: tokens, base surfaces, forms, buttons, cards, status.
+*/
+
+:root {
+  color-scheme: dark;
+  --brand-primary: #5000dc;
+  --brand-primary-soft: #7b4dff;
+  --brand-primary-bright: #7b4dff;
+  --brand-primary-deep: #0d0820;
+  --brand-accent: #e6ff1e;
+  --brand-secondary: var(--brand-accent);
+  --brand-secondary-soft: #f1ff86;
+  --page-bg: #0d0820;
+  --page-bg-2: #0d0820;
+  --surface: #171033;
+  --surface-strong: #201747;
+  --surface-soft: #120c2a;
+  --line: rgba(230, 255, 30, 0.14);
+  --line-strong: rgba(255, 255, 255, 0.12);
+  --text: #f7f4ff;
+  --muted: #c5baff;
+  --accent: var(--brand-accent);
+  --accent-hover: #f1ff86;
+  --accent-soft: #f1ff86;
+  --accent-contrast: #130b29;
+  --success: #e6ff1e;
+  --warning: #ffd35e;
+  --error: #ff5c8a;
+  --error-hover: #ff7ca3;
+  --warning-bg: rgba(230, 255, 30, 0.12);
+  --warning-border: rgba(230, 255, 30, 0.4);
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 18px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --font-display: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, monospace;
+  --page-max-width: 1120px;
+  --button-font-size: 1rem;
+  --button-font-size-sm: 0.85rem;
+  --button-font-size-xs: 0.8rem;
+
+  /* Compatibility aliases used by existing Reflex pages. */
+  --bg-primary: var(--page-bg);
+  --bg-secondary: var(--surface-soft);
+  --bg-card: var(--surface);
+  --bg-elevated: var(--surface-strong);
+  --text-primary: var(--text);
+  --text-secondary: var(--muted);
+  --border: var(--line);
+  --border-strong: rgba(230, 255, 30, 0.28);
+  --border-color: var(--border);
+  --shadow-card: none;
+  --shadow-accent: none;
+}
+
+:where([data-reflex-ui], .rx-app) {
+  box-sizing: border-box;
+  min-height: 100%;
+  color: var(--text);
+  background: var(--page-bg);
+  font-family: var(--font-body);
+}
+
+:where([data-reflex-ui], .rx-app),
+:where([data-reflex-ui], .rx-app) *,
+:where([data-reflex-ui], .rx-app) *::before,
+:where([data-reflex-ui], .rx-app) *::after {
+  box-sizing: border-box;
+}
+
+body:where([data-reflex-ui], .rx-app) {
+  margin: 0;
+  min-height: 100vh;
+}
+
+:where(.rx-page) {
+  width: min(var(--page-max-width), calc(100vw - 32px));
+  margin: 0 auto;
+  padding: 32px 0 56px;
+}
+
+:where(.rx-stack) {
+  display: grid;
+  gap: var(--space-4);
+}
+
+:where(.rx-row) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+:where(.rx-cluster) {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+:where(.rx-hero, header.rx-hero) {
+  padding: clamp(22px, 4vw, 36px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--surface-strong);
+}
+
+:where(.rx-eyebrow) {
+  margin: 0 0 10px;
+  color: var(--accent-soft);
+  font: 700 0.75rem/1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+:where(.rx-title) {
+  margin: 0;
+  color: var(--text);
+  font: 700 clamp(1.8rem, 4vw, 3.6rem) / 1 var(--font-display);
+  letter-spacing: 0;
+}
+
+:where(.rx-subtitle, .rx-muted) {
+  color: var(--muted);
+}
+
+:where(.rx-card, [data-reflex-ui] .card, .rx-app .card) {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  color: var(--text);
+}
+
+:where(.rx-card) {
+  padding: var(--space-6);
+}
+
+:where(.rx-card-title) {
+  margin: 0 0 var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--line);
+  color: var(--accent-soft);
+  font: 700 1.1rem/1.25 var(--font-display);
+}
+
+:where(.rx-grid) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+
+:where(.rx-field) {
+  display: grid;
+  gap: 6px;
+}
+
+:where(.rx-field label, .rx-label) {
+  color: var(--accent-soft);
+  font: 700 0.72rem/1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+:where(.rx-field input, .rx-field select, .rx-field textarea),
+:where(input.rx-control, select.rx-control, textarea.rx-control) {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface-soft);
+  color: var(--text);
+  font: 600 0.95rem/1.2 var(--font-body);
+  padding: 10px 12px;
+}
+
+:where(.rx-field input:focus, .rx-field select:focus, .rx-field textarea:focus),
+:where(input.rx-control:focus, select.rx-control:focus, textarea.rx-control:focus) {
+  outline: 2px solid rgba(230, 255, 30, 0.35);
+  outline-offset: 2px;
+  border-color: rgba(230, 255, 30, 0.55);
+}
+
+:where(input[type="range"]) {
+  accent-color: var(--brand-accent);
+}
+
+:where(.rx-button, [data-reflex-ui] .btn, .rx-app .btn) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  border: 1px solid rgba(144, 111, 255, 0.35);
+  border-radius: var(--radius-sm);
+  background: var(--brand-primary);
+  color: #fff;
+  cursor: pointer;
+  font: 700 var(--button-font-size) / 1 var(--font-body);
+  padding: 11px 18px;
+  text-decoration: none;
+  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+:where(.rx-button:hover, [data-reflex-ui] .btn:hover, .rx-app .btn:hover):not(:disabled) {
+  background: var(--brand-primary-soft);
+  border-color: rgba(230, 255, 30, 0.35);
+  transform: translateY(-1px);
+}
+
+:where(.rx-button:disabled, [data-reflex-ui] .btn:disabled, .rx-app .btn:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+:where(.rx-button-secondary, [data-reflex-ui] .btn-secondary, .rx-app .btn-secondary) {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+:where(.rx-button-danger, [data-reflex-ui] .btn-danger, .rx-app .btn-danger) {
+  background: var(--error);
+  border-color: rgba(255, 92, 138, 0.45);
+}
+
+:where(.rx-button-sm, [data-reflex-ui] .btn-sm, .rx-app .btn-sm) {
+  min-height: 32px;
+  padding: 7px 12px;
+  font-size: var(--button-font-size-sm);
+}
+
+:where(.rx-status, [data-reflex-ui] .status-banner, [data-reflex-ui] .warning-box, .rx-app .status-banner, .rx-app .warning-box) {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--muted);
+  padding: 12px 14px;
+  line-height: 1.45;
+}
+
+:where(.rx-status-accent) {
+  border-color: var(--warning-border);
+  background: var(--warning-bg);
+  color: var(--accent-soft);
+}
+
+:where(.rx-stat) {
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-soft);
+  padding: 14px 16px;
+}
+
+:where(.rx-stat strong) {
+  display: block;
+  color: var(--text);
+  font: 700 1.45rem/1 var(--font-display);
+}
+
+:where(.rx-stat span) {
+  display: block;
+  margin-top: 6px;
+  color: var(--muted);
+  font: 700 0.72rem/1.2 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+:where(.rx-table) {
+  width: 100%;
+  border-collapse: collapse;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+:where(.rx-table th, .rx-table td) {
+  border-bottom: 1px solid var(--line);
+  padding: 10px 12px;
+  text-align: left;
+}
+
+:where(.rx-table th) {
+  color: var(--accent-soft);
+  font: 700 0.72rem/1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+:where(.rx-pill) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--text);
+  font: 700 0.72rem/1 var(--font-mono);
+  letter-spacing: 0.04em;
+  padding: 7px 10px;
+}
+
+@media (max-width: 720px) {
+  :where(.rx-page) {
+    width: min(100% - 20px, var(--page-max-width));
+    padding-block: 16px 32px;
+  }
+
+  :where(.rx-card) {
+    padding: var(--space-4);
+  }
+}

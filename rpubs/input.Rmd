@@ -1612,7 +1612,9 @@ face_button_values <- sort(unique(normalize_face_buttons_value(face_button_value
 home_button_values <- unique_non_empty(dat$`Home Button`)
 
 infer_analog_capability <- function(make, model, device_clean, category) {
-  category_txt <- tolower(stringr::str_squish(as.character(category)))
+  category_txt <- stringr::str_squish(as.character(category))
+  if (is.na(category_txt) || !nzchar(category_txt)) category_txt <- ""
+  category_txt <- tolower(category_txt)
   if (category_txt == "controller adapter") return("Depends on controller")
   if (category_txt %in% c("joystick", "joystick encoder")) return("No analog sticks")
 

@@ -8,9 +8,30 @@ The purpose of this setup is to measure the latency of a USB controller using an
   * If no response is registered, ensure the button is mapped in the core
     * If this does not fix it, try flipping the + and - leads from the arduino to the button. Some only trigger when wired backwards from normal.
 
-## Latency report site
+## Input Latency Explorer
 
-The website is generated from `rpubs/input.Rmd` and published from `docs/input.html`.
+The current interactive explorer is published from `docs/latency.html`. It uses the generated payload in `docs/data/latency.json` and the static assets in `docs/assets/`.
+
+### Explorer files
+
+- Explorer page: `docs/latency.html`
+- Explorer assets: `docs/assets/`
+- Explorer data: `docs/data/latency.json` and `docs/data/latency.js`
+- Data generator: `scripts/build_latency_catalog.py`
+- Browser behavior tests: `test_latency_explorer.js`
+- Shopify export: `shopify/`
+
+### Build the explorer data
+
+```bash
+python scripts/build_latency_catalog.py
+```
+
+The generator reads this repo's public latency export from `results/latency_cleaned_export.csv`, augments product metadata from the Google Sheet when available, and also includes private capture rows from the sibling `input-latency-private` repo unless `--no-private` is passed.
+
+## R latency report
+
+The older R report is generated from `rpubs/input.Rmd` and published from `docs/input.html`.
 
 ### Where the HTML lives
 
