@@ -57,7 +57,7 @@
   --handheld: #6b32f0;
   --computer: #625879;
   --other: #7f3cc8;
-  --utility: #8c7a00;
+  --utility: #6f6100;
   --arcade: #5000dc;
 }
 
@@ -223,7 +223,7 @@ body::before {
 }
 
 .hero-stat {
-  --hero-accent: rgba(255, 255, 255, 0.82);
+  --hero-accent: var(--accent-soft);
   padding: 15px 16px;
   min-width: 0;
   width: 100%;
@@ -456,6 +456,15 @@ body::before {
 .control-block input::placeholder {
   color: rgba(238, 244, 255, 0.72);
   opacity: 1;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .control-block input,
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .control-block select {
+  color-scheme: light;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .control-block input::placeholder {
+  color: #625879;
 }
 
 .control-block select option,

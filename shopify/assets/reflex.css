@@ -76,7 +76,7 @@
   --brand-primary-deep: #1c1430;
   --brand-accent: #efff1a;
   --brand-secondary: var(--brand-accent);
-  --brand-secondary-soft: #f6ff91;
+  --brand-secondary-soft: var(--brand-primary);
   --page-bg: #f2f1f6;
   --page-bg-2: #f2f1f6;
   --surface: #ffffff;
