@@ -6,15 +6,33 @@
 {% assign latency_data_url = latency_data_asset | asset_url %}
 {% assign latency_css_url = latency_css_asset | asset_url %}
 {% assign latency_js_url = latency_js_asset | asset_url %}
+<script>
+  (function () {
+    try {
+      var theme = localStorage.getItem('reflex-theme');
+      if (theme === 'lab' || theme === 'light') {
+        document.documentElement.setAttribute('data-reflex-theme', 'lab');
+      }
+    } catch (error) {
+    }
+  })();
+</script>
 {{ 'reflex.css' | asset_url | stylesheet_tag }}
 {{ latency_css_url | stylesheet_tag }}
 <script src="{{ latency_data_url }}" defer></script>
 <script src="{{ latency_js_url }}" defer></script>
 
 <!-- Input latency explorer shell revision: latency-assets-20260611-1350 css-20260611-1929. -->
-<section class="input-latency-explorer-app" data-latency-url="{{ section.settings.latency_url | escape }}">
+<section class="input-latency-explorer-app" data-reflex-theme-scope data-latency-url="{{ section.settings.latency_url | escape }}">
   <div class="page-noise" aria-hidden="true"></div>
   <main class="page-shell latency-page">
+    <div class="rx-theme-toolbar">
+      <div class="rx-theme-toggle" role="group" aria-label="Color theme">
+        <button type="button" data-reflex-theme-option="dark" aria-pressed="true">Dark</button>
+        <button type="button" data-reflex-theme-option="lab" aria-pressed="false">Light</button>
+      </div>
+    </div>
+
     <section class="hero">
       <div class="hero-copy">
         <h1>{{ section.settings.title }}</h1>
@@ -196,6 +214,49 @@
     </template>
   </main>
 </section>
+
+<script>
+  (function initReflexThemeToggle() {
+    var storageKey = 'reflex-theme';
+    var root = document.documentElement;
+    var scopes = [root].concat(Array.prototype.slice.call(document.querySelectorAll('[data-reflex-theme-scope]')));
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('[data-reflex-theme-option]'));
+
+    function normalize(theme) {
+      return theme === 'lab' || theme === 'light' ? 'lab' : 'dark';
+    }
+
+    function applyTheme(theme) {
+      var activeTheme = normalize(theme);
+      scopes.forEach(function (scope) {
+        if (activeTheme === 'lab') {
+          scope.setAttribute('data-reflex-theme', 'lab');
+        } else {
+          scope.removeAttribute('data-reflex-theme');
+        }
+      });
+      buttons.forEach(function (button) {
+        button.setAttribute('aria-pressed', String(normalize(button.getAttribute('data-reflex-theme-option')) === activeTheme));
+      });
+      try {
+        localStorage.setItem(storageKey, activeTheme);
+      } catch (error) {
+      }
+    }
+
+    var savedTheme = 'dark';
+    try {
+      savedTheme = localStorage.getItem(storageKey) || 'dark';
+    } catch (error) {
+    }
+    applyTheme(savedTheme);
+    buttons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        applyTheme(button.getAttribute('data-reflex-theme-option'));
+      });
+    });
+  })();
+</script>
 
 {% schema %}
 {

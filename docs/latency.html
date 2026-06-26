@@ -9,13 +9,31 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      try {
+        const theme = localStorage.getItem("reflex-theme");
+        if (theme === "lab" || theme === "light") {
+          document.documentElement.setAttribute("data-reflex-theme", "lab");
+        }
+      } catch (error) {
+      }
+    })();
+  </script>
   <link rel="stylesheet" href="./assets/reflex.css">
   <link rel="stylesheet" href="./assets/mister-explorer.css">
   <link rel="stylesheet" href="./assets/input-latency.css?v=latency-assets-20260611-1350">
 </head>
-<body>
+<body data-reflex-theme-scope>
   <div class="page-noise" aria-hidden="true"></div>
   <main class="page-shell latency-page">
+    <div class="rx-theme-toolbar">
+      <div class="rx-theme-toggle" role="group" aria-label="Color theme">
+        <button type="button" data-reflex-theme-option="dark" aria-pressed="true">Dark</button>
+        <button type="button" data-reflex-theme-option="lab" aria-pressed="false">Light</button>
+      </div>
+    </div>
+
     <section class="hero">
       <div class="hero-copy">
         <h1>Input Latency Explorer</h1>
@@ -198,6 +216,40 @@
   </main>
 
   <script>
+    (function initReflexThemeToggle() {
+      const storageKey = "reflex-theme";
+      const root = document.documentElement;
+      const scopes = [root].concat(Array.from(document.querySelectorAll("[data-reflex-theme-scope]")));
+      const buttons = Array.from(document.querySelectorAll("[data-reflex-theme-option]"));
+      const normalize = (theme) => (theme === "lab" || theme === "light" ? "lab" : "dark");
+
+      function applyTheme(theme) {
+        const activeTheme = normalize(theme);
+        scopes.forEach((scope) => {
+          if (activeTheme === "lab") {
+            scope.setAttribute("data-reflex-theme", "lab");
+          } else {
+            scope.removeAttribute("data-reflex-theme");
+          }
+        });
+        buttons.forEach((button) => {
+          button.setAttribute("aria-pressed", String(normalize(button.dataset.reflexThemeOption) === activeTheme));
+        });
+        try {
+          localStorage.setItem(storageKey, activeTheme);
+        } catch (error) {
+        }
+      }
+
+      let savedTheme = "dark";
+      try {
+        savedTheme = localStorage.getItem(storageKey) || "dark";
+      } catch (error) {
+      }
+      applyTheme(savedTheme);
+      buttons.forEach((button) => button.addEventListener("click", () => applyTheme(button.dataset.reflexThemeOption)));
+    })();
+
     (function loadLatencyScripts() {
       const loadScript = (src, onload) => {
         const script = document.createElement("script");
