@@ -1282,6 +1282,67 @@ body::before {
   color: #c9fffb;
 }
 
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags span,
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags a,
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags button {
+  border-color: rgba(80, 0, 220, 0.18);
+  color: var(--muted);
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags a:hover,
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags button:hover {
+  border-color: rgba(80, 0, 220, 0.32);
+  color: var(--text);
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags .tag-prerelease {
+  border-color: rgba(171, 111, 0, 0.32);
+  background: rgba(255, 177, 66, 0.2);
+  color: #815600;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags .tag-archived {
+  border-color: rgba(98, 88, 121, 0.26);
+  background: rgba(98, 88, 121, 0.1);
+  color: #4b435f;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags .tag-source-open {
+  border-color: rgba(140, 122, 0, 0.34);
+  background: rgba(239, 255, 26, 0.32);
+  color: #5f5200;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags .tag-source-closed {
+  border-color: rgba(188, 42, 42, 0.28);
+  background: rgba(255, 92, 92, 0.14);
+  color: #9e2222;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags .tag-provenance-official {
+  border-color: rgba(80, 0, 220, 0.24);
+  background: rgba(80, 0, 220, 0.1);
+  color: #5000dc;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags .tag-provenance-third-party {
+  border-color: rgba(127, 60, 200, 0.26);
+  background: rgba(213, 109, 255, 0.12);
+  color: #7631b4;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags .tag-arcade-alternative {
+  border-color: rgba(140, 122, 0, 0.3);
+  background: rgba(239, 255, 26, 0.24);
+  color: #6f6100;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags .tag-dual-sdram {
+  border-color: rgba(21, 126, 120, 0.28);
+  background: rgba(78, 205, 196, 0.16);
+  color: #17635f;
+}
+
 .card-tags button:focus-visible {
   outline: 2px solid rgba(255, 211, 94, 0.65);
   outline-offset: 2px;
@@ -1773,10 +1834,10 @@ body::before {
   z-index: 4;
   max-width: min(300px, calc(100% - 16px));
   padding: 10px 12px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid var(--line-strong);
   border-radius: 10px;
-  background: rgba(12, 17, 24, 0.96);
-  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.34);
+  background: var(--surface);
+  box-shadow: 0 18px 46px rgba(13, 8, 32, 0.18);
   color: var(--text);
   pointer-events: none;
 }
@@ -2182,6 +2243,30 @@ body::before {
   border-color: rgba(128, 222, 234, 0.28);
   background: rgba(128, 222, 234, 0.1);
   color: #d9fbff;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags .tag-connection {
+  border-color: rgba(21, 126, 120, 0.28);
+  background: rgba(78, 205, 196, 0.16);
+  color: #17635f;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags .tag-rank-overall {
+  border-color: rgba(140, 122, 0, 0.34);
+  background: rgba(239, 255, 26, 0.32);
+  color: #5f5200;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags .tag-rank-mode {
+  border-color: rgba(80, 0, 220, 0.24);
+  background: rgba(80, 0, 220, 0.1);
+  color: #5000dc;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags .tag-mode-count {
+  border-color: rgba(55, 126, 138, 0.26);
+  background: rgba(128, 222, 234, 0.18);
+  color: #285f69;
 }
 
 .latency-card .card-subtitle,
