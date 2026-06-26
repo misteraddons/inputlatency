@@ -7,13 +7,13 @@
 :root {
   --brand-primary: #5000dc;
   --brand-primary-soft: #7b4dff;
-  --brand-accent: #e6ff1e;
+  --brand-accent: #efff1a;
   --page-bg: #0d0820;
   --page-bg-2: #0d0820;
   --surface: #171033;
   --surface-strong: #201747;
   --surface-soft: #120c2a;
-  --line: rgba(230, 255, 30, 0.14);
+  --line: rgba(239, 255, 26, 0.14);
   --line-strong: rgba(255, 255, 255, 0.12);
   --text: #f7f4ff;
   --muted: #c5baff;
@@ -24,12 +24,38 @@
   --computer: #8f79ff;
   --other: #d56dff;
   --utility: #f0ff6f;
-  --arcade: #e6ff1e;
+  --arcade: #efff1a;
   --radius-xl: 24px;
   --radius-lg: 18px;
   --font-display: "Space Grotesk", "Segoe UI", sans-serif;
   --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
   --font-mono: "JetBrains Mono", Consolas, monospace;
+}
+
+:root[data-reflex-theme="light"],
+:root[data-reflex-theme="lab"],
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) {
+  color-scheme: light;
+  --brand-primary: #5000dc;
+  --brand-primary-soft: #6b32f0;
+  --brand-accent: #efff1a;
+  --page-bg: #f2f1f6;
+  --page-bg-2: #f2f1f6;
+  --surface: #ffffff;
+  --surface-strong: #ece7fb;
+  --surface-soft: #f8f7fb;
+  --line: #d8d1e8;
+  --line-strong: #cfc5e7;
+  --text: #1c1430;
+  --muted: #625879;
+  --accent: var(--brand-primary);
+  --accent-soft: var(--brand-primary);
+  --console: #5000dc;
+  --handheld: #6b32f0;
+  --computer: #625879;
+  --other: #7f3cc8;
+  --utility: #8c7a00;
+  --arcade: #5000dc;
 }
 
 * {
