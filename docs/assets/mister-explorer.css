@@ -1384,6 +1384,36 @@ body::before {
   --category-ink: #fff0b3;
 }
 
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .core-card.category-arcade {
+  --category-bg: rgba(239, 255, 26, 0.32);
+  --category-ink: #5f5200;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .core-card.category-console {
+  --category-bg: rgba(80, 0, 220, 0.1);
+  --category-ink: #5000dc;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .core-card.category-handheld {
+  --category-bg: rgba(171, 147, 255, 0.16);
+  --category-ink: #4f34a8;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .core-card.category-computer {
+  --category-bg: rgba(143, 121, 255, 0.16);
+  --category-ink: #4a319b;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .core-card.category-others {
+  --category-bg: rgba(240, 127, 157, 0.14);
+  --category-ink: #8b2143;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .core-card.category-utilities {
+  --category-bg: rgba(239, 255, 26, 0.26);
+  --category-ink: #6f6100;
+}
+
 .core-card.is-alternative {
   border-color: rgba(230, 255, 30, 0.24);
 }
@@ -1392,6 +1422,10 @@ body::before {
   content: "ALT";
   margin-left: 8px;
   color: #ffe0bb;
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .core-card.is-alternative .card-category::after {
+  color: #6f6100;
 }
 
 .empty-state {
