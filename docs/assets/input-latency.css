@@ -872,6 +872,15 @@
   font: 700 0.9rem/1.15 var(--font-display);
 }
 
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .latency-detail-item {
+  border-color: rgba(80, 0, 220, 0.16);
+  background: rgba(80, 0, 220, 0.07);
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .latency-detail-item span {
+  color: var(--brand-primary);
+}
+
 .latency-mode-variants {
   display: grid;
   gap: 8px;
