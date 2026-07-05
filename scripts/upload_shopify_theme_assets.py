@@ -45,6 +45,7 @@ def default_asset_uploads(shopify_root: Path) -> tuple[tuple[str, str], ...]:
         ),
         ("sections/input-latency-explorer.liquid", "sections/input-latency-explorer.liquid"),
         ("templates/page.input-latency-explorer.json", "templates/page.input-latency-explorer.json"),
+        ("templates/page.latency.json", "templates/page.latency.json"),
     )
 
 
