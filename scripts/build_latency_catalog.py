@@ -323,6 +323,7 @@ REFLEX_ADAPT_SYSTEM_PATTERNS = (
     ("Wii Classic", r"\bwii\s*classic\b"),
 )
 ADAPTER_INPUT_SYSTEM_PATTERNS = (
+    ("3DO", r"\b3do\b"),
     ("GameCube", r"\bgame\s*cube\b|\bgamecube\b"),
     ("N64", r"\bn64\b"),
     ("SNES", r"\bsnes\b|\bsfc\b"),
@@ -2276,6 +2277,15 @@ def is_reflex_adapt_two_player_item(item: dict[str, Any]) -> bool:
     return bool(re.search(r"\b2p\b", search, flags=re.IGNORECASE))
 
 
+def is_reflex_adapt_hidden_n64_output_mode_item(item: dict[str, Any]) -> bool:
+    if not is_reflex_adapt_adapter_item(item):
+        return False
+    search = item_search_blob(item)
+    if infer_reflex_adapt_system(search) != "N64":
+        return False
+    return explicit_output_mode_key(item) in {"xinput", "switch"}
+
+
 def is_mayflash_wii_classic_baseline_item(item: dict[str, Any]) -> bool:
     if not is_controller_adapter_item(item):
         return False
@@ -2408,6 +2418,7 @@ def cleanup_requested_latency_items(items: list[dict[str, Any]]) -> list[dict[st
         if not is_feralai_gp2040_item(item)
         and not is_hori_wii_classic_hidden_adapter_item(item)
         and not is_reflex_adapt_two_player_item(item)
+        and not is_reflex_adapt_hidden_n64_output_mode_item(item)
     ]
 
     raw_keys = {

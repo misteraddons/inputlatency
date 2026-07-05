@@ -1,5 +1,5 @@
 window.MISTER_LATENCY_DATA = {
-  "generatedAt": "2026-07-05T15:57:48Z",
+  "generatedAt": "2026-07-05T16:36:17Z",
   "schemaVersion": 8,
   "sources": {
     "public": {
@@ -1879,9 +1879,9 @@ window.MISTER_LATENCY_DATA = {
       "isOpenSource": true,
       "sourceUrl": "",
       "joystickId": "",
-      "searchText": "reflex - adapt reflex adapt reflex adapt wired usb wired neo geo dinput wired dinput dinput controller adapter neo geo controller controller adapter published published controller adapter diamond platinum 00-01ms (diamond) actively sold open source open source mister / pc raw capture buy link reflex - adapt [neo geo] reflex - adapt reflex - adapt [neo geo] wired usb wired wired neo geo dinput dinput dinput ['controller adapter', 'neo geo controller'] controller adapter diamond platinum controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired neo geo dinput wired dinput dinput controller adapter neo geo controller published published controller adapter diamond platinum 00-01ms (diamond) actively sold open source open source mister / pc raw capture buy link reflex - adapt [neo geo] reflex - adapt reflex - adapt [sms 1p] wired usb wired wired sms 1p dinput dinput dinput ['controller adapter', 'sms controller'] controller adapter diamond platinum controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired sms 1p dinput wired dinput dinput controller adapter sms controller published published controller adapter diamond platinum 00-01ms (diamond) actively sold open source open source mister / pc raw capture buy link reflex - adapt [sms 1p] reflex - adapt reflex - adapt [pce 1p] wired usb wired wired pce 1p dinput dinput dinput ['controller adapter', 'pc engine controller'] controller adapter diamond platinum controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired pce 1p dinput wired dinput dinput controller adapter pc engine controller published published controller adapter diamond platinum 00-01ms (diamond) actively sold open source open source mister / pc raw capture buy link reflex - adapt [pce 1p] reflex - adapt reflex - adapt [saturn 1p] wired usb wired wired saturn 1p dinput dinput dinput ['controller adapter', 'saturn controller'] controller adapter diamond platinum controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired saturn 1p dinput wired dinput dinput controller adapter saturn controller published published controller adapter diamond platinum 00-01ms (diamond) actively sold open source open source mister / pc raw capture buy link reflex - adapt [saturn 1p] reflex - adapt reflex - adapt [genesis 1p] wired usb wired wired genesis 1p dinput dinput dinput ['controller adapter', 'genesis controller'] controller adapter diamond platinum controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired genesis 1p dinput wired dinput dinput controller adapter genesis controller published published controller adapter diamond platinum 00-01ms (diamond) actively sold open source open source mister / pc raw capture buy link reflex - adapt [genesis 1p] reflex - adapt reflex - adapt [jaguar] wired usb wired wired jaguar dinput dinput dinput ['controller adapter', 'jaguar controller'] controller adapter diamond platinum controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired jaguar dinput wired dinput dinput controller adapter jaguar controller published published controller adapter diamond platinum 00-01ms (diamond) actively sold open source open source mister / pc raw capture buy link reflex - adapt [jaguar] reflex - adapt reflex - adapt [n64 1p] wired usb wired wired n64 1p dinput dinput dinput ['controller adapter', 'n64 controller'] controller adapter platinum platinum controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired n64 1p dinput wired dinput dinput controller adapter n64 controller published published controller adapter platinum platinum 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [n64 1p] reflex - adapt 3do reflex adapt 3do [wired usb dinput] wired usb wired wired wired usb dinput dinput dinput dinput ['controller adapter'] controller adapter platinum controller adapter - published published actively sold open source open source reflex - adapt 3do reflex adapt 3do reflex adapt 3do wired usb wired wired usb dinput dinput wired dinput dinput controller adapter published published controller adapter - platinum 01-05ms (platinum) actively sold open source open source 16d0:127e_reflex3d0 buy link reflex adapt 3do [wired usb dinput] reflex - adapt reflex - adapt [wii classic 1p] wired usb wired wired wii classic 1p dinput dinput dinput ['controller adapter', 'wii classic controller'] controller adapter platinum gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired wii classic 1p dinput wired dinput dinput controller adapter wii classic controller published published controller adapter platinum gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [wii classic 1p] reflex - adapt reflex - adapt [snes 1p] wired usb wired wired snes 1p dinput dinput dinput ['controller adapter', 'snes controller'] controller adapter platinum gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired snes 1p dinput wired dinput dinput controller adapter snes controller published published controller adapter platinum gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [snes 1p] reflex - adapt reflex - adapt [virtual boy 1p] wired usb wired wired virtual boy 1p dinput dinput dinput ['controller adapter', 'virtual boy controller'] controller adapter platinum gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired virtual boy 1p dinput wired dinput dinput controller adapter virtual boy controller published published controller adapter platinum gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [virtual boy 1p] reflex - adapt reflex - adapt [nes 1p] wired usb wired wired nes 1p dinput dinput dinput ['controller adapter', 'nes controller'] controller adapter platinum gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired nes 1p dinput wired dinput dinput controller adapter nes controller published published controller adapter platinum gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [nes 1p] reflex - adapt reflex - adapt [n64 1p mpg xinput] wired usb wired wired n64 1p mpg xinput xinput xinput xinput ['controller adapter', 'n64 controller'] controller adapter gold gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired n64 1p mpg xinput xinput wired xinput xinput controller adapter n64 controller published published controller adapter gold gold 01-05ms (platinum) actively sold open source open source mister / pc xbox one xbox series raw capture buy link reflex - adapt [n64 1p mpg xinput] reflex - adapt reflex - adapt [n64 1p mpg hid] wired usb wired wired n64 1p mpg hid dinput dinput dinput ['controller adapter', 'n64 controller'] controller adapter gold gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired n64 1p mpg hid dinput wired dinput dinput controller adapter n64 controller published published controller adapter gold gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [n64 1p mpg hid] reflex - adapt reflex - adapt [n64 1p mpg switch] wired usb wired wired n64 1p mpg switch switch switch switch ['controller adapter', 'n64 controller'] controller adapter gold gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired n64 1p mpg switch switch wired switch switch controller adapter n64 controller published published controller adapter gold gold 01-05ms (platinum) actively sold open source open source mister / pc switch raw capture buy link reflex - adapt [n64 1p mpg switch] reflex - adapt reflex - adapt [psx 1p digital] wired usb wired wired psx 1p digital dinput dinput dinput ['controller adapter', 'psx controller'] controller adapter gold gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired psx 1p digital dinput wired dinput dinput controller adapter psx controller published published controller adapter gold gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [psx 1p digital] reflex - adapt reflex - adapt [gamecube 1p] wired usb wired wired gamecube 1p dinput dinput dinput ['controller adapter', 'gamecube controller'] controller adapter gold gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired gamecube 1p dinput wired dinput dinput controller adapter gamecube controller published published controller adapter gold gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [gamecube 1p] reflex - adapt reflex - adapt [saturn 3d 1p] wired usb wired wired saturn 3d 1p dinput dinput dinput ['controller adapter', 'saturn controller'] controller adapter silver bronze controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired saturn 3d 1p dinput wired dinput dinput controller adapter saturn controller published published controller adapter silver bronze 05-10ms (gold) actively sold open source open source mister / pc raw capture buy link reflex - adapt [saturn 3d 1p]",
+      "searchText": "reflex - adapt reflex adapt reflex adapt wired usb wired neo geo dinput wired dinput dinput controller adapter neo geo controller controller adapter published published controller adapter diamond platinum 00-01ms (diamond) actively sold open source open source mister / pc raw capture buy link reflex - adapt [neo geo] reflex - adapt reflex - adapt [neo geo] wired usb wired wired neo geo dinput dinput dinput ['controller adapter', 'neo geo controller'] controller adapter diamond platinum controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired neo geo dinput wired dinput dinput controller adapter neo geo controller published published controller adapter diamond platinum 00-01ms (diamond) actively sold open source open source mister / pc raw capture buy link reflex - adapt [neo geo] reflex - adapt reflex - adapt [sms 1p] wired usb wired wired sms 1p dinput dinput dinput ['controller adapter', 'sms controller'] controller adapter diamond platinum controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired sms 1p dinput wired dinput dinput controller adapter sms controller published published controller adapter diamond platinum 00-01ms (diamond) actively sold open source open source mister / pc raw capture buy link reflex - adapt [sms 1p] reflex - adapt reflex - adapt [pce 1p] wired usb wired wired pce 1p dinput dinput dinput ['controller adapter', 'pc engine controller'] controller adapter diamond platinum controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired pce 1p dinput wired dinput dinput controller adapter pc engine controller published published controller adapter diamond platinum 00-01ms (diamond) actively sold open source open source mister / pc raw capture buy link reflex - adapt [pce 1p] reflex - adapt reflex - adapt [saturn 1p] wired usb wired wired saturn 1p dinput dinput dinput ['controller adapter', 'saturn controller'] controller adapter diamond platinum controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired saturn 1p dinput wired dinput dinput controller adapter saturn controller published published controller adapter diamond platinum 00-01ms (diamond) actively sold open source open source mister / pc raw capture buy link reflex - adapt [saturn 1p] reflex - adapt reflex - adapt [genesis 1p] wired usb wired wired genesis 1p dinput dinput dinput ['controller adapter', 'genesis controller'] controller adapter diamond platinum controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired genesis 1p dinput wired dinput dinput controller adapter genesis controller published published controller adapter diamond platinum 00-01ms (diamond) actively sold open source open source mister / pc raw capture buy link reflex - adapt [genesis 1p] reflex - adapt reflex - adapt [jaguar] wired usb wired wired jaguar dinput dinput dinput ['controller adapter', 'jaguar controller'] controller adapter diamond platinum controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired jaguar dinput wired dinput dinput controller adapter jaguar controller published published controller adapter diamond platinum 00-01ms (diamond) actively sold open source open source mister / pc raw capture buy link reflex - adapt [jaguar] reflex - adapt reflex - adapt [n64 1p] wired usb wired wired n64 1p dinput dinput dinput ['controller adapter', 'n64 controller'] controller adapter platinum platinum controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired n64 1p dinput wired dinput dinput controller adapter n64 controller published published controller adapter platinum platinum 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [n64 1p] reflex - adapt 3do reflex adapt 3do [wired usb dinput] wired usb wired wired wired usb dinput dinput dinput dinput ['controller adapter', '3do controller'] controller adapter platinum controller adapter - published published actively sold open source open source reflex - adapt 3do reflex adapt 3do reflex adapt 3do wired usb wired wired usb dinput dinput wired dinput dinput controller adapter 3do controller published published controller adapter - platinum 01-05ms (platinum) actively sold open source open source 16d0:127e_reflex3d0 buy link reflex adapt 3do [wired usb dinput] reflex - adapt reflex - adapt [wii classic 1p] wired usb wired wired wii classic 1p dinput dinput dinput ['controller adapter', 'wii classic controller'] controller adapter platinum gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired wii classic 1p dinput wired dinput dinput controller adapter wii classic controller published published controller adapter platinum gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [wii classic 1p] reflex - adapt reflex - adapt [snes 1p] wired usb wired wired snes 1p dinput dinput dinput ['controller adapter', 'snes controller'] controller adapter platinum gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired snes 1p dinput wired dinput dinput controller adapter snes controller published published controller adapter platinum gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [snes 1p] reflex - adapt reflex - adapt [virtual boy 1p] wired usb wired wired virtual boy 1p dinput dinput dinput ['controller adapter', 'virtual boy controller'] controller adapter platinum gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired virtual boy 1p dinput wired dinput dinput controller adapter virtual boy controller published published controller adapter platinum gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [virtual boy 1p] reflex - adapt reflex - adapt [nes 1p] wired usb wired wired nes 1p dinput dinput dinput ['controller adapter', 'nes controller'] controller adapter platinum gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired nes 1p dinput wired dinput dinput controller adapter nes controller published published controller adapter platinum gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [nes 1p] reflex - adapt reflex - adapt [n64 1p mpg hid] wired usb wired wired n64 1p mpg hid dinput dinput dinput ['controller adapter', 'n64 controller'] controller adapter gold gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired n64 1p mpg hid dinput wired dinput dinput controller adapter n64 controller published published controller adapter gold gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [n64 1p mpg hid] reflex - adapt reflex - adapt [psx 1p digital] wired usb wired wired psx 1p digital dinput dinput dinput ['controller adapter', 'psx controller'] controller adapter gold gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired psx 1p digital dinput wired dinput dinput controller adapter psx controller published published controller adapter gold gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [psx 1p digital] reflex - adapt reflex - adapt [gamecube 1p] wired usb wired wired gamecube 1p dinput dinput dinput ['controller adapter', 'gamecube controller'] controller adapter gold gold controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired gamecube 1p dinput wired dinput dinput controller adapter gamecube controller published published controller adapter gold gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [gamecube 1p] reflex - adapt reflex - adapt [saturn 3d 1p] wired usb wired wired saturn 3d 1p dinput dinput dinput ['controller adapter', 'saturn controller'] controller adapter silver bronze controller adapter published published actively sold open source open source reflex - adapt reflex adapt reflex adapt wired usb wired saturn 3d 1p dinput wired dinput dinput controller adapter saturn controller published published controller adapter silver bronze 05-10ms (gold) actively sold open source open source mister / pc raw capture buy link reflex - adapt [saturn 3d 1p]",
       "controllerGroupKey": "|reflex adapt",
-      "modeVariantCount": 18,
+      "modeVariantCount": 16,
       "modeVariants": [
         {
           "id": "published-reflex-adapt",
@@ -2278,7 +2278,8 @@ window.MISTER_LATENCY_DATA = {
           "modeLabel": "DInput",
           "modeDisplay": "DInput",
           "deviceTypes": [
-            "Controller Adapter"
+            "Controller Adapter",
+            "3DO Controller"
           ],
           "rankMode": "Controller Adapter",
           "overallRank": 48,
@@ -2304,7 +2305,7 @@ window.MISTER_LATENCY_DATA = {
           "link": "https://misteraddons.com/products/reflex-adapt?_pos=3&_psq=reflex&_ss=e&_v=1.0",
           "amazon": "",
           "joystickId": "16D0:127E_Reflex3D0",
-          "searchText": "reflex - adapt 3do reflex adapt 3do reflex adapt 3do wired usb wired wired usb dinput dinput wired dinput dinput controller adapter published published controller adapter - platinum 01-05ms (platinum) actively sold open source open source 16d0:127e_reflex3d0 buy link reflex adapt 3do [wired usb dinput]"
+          "searchText": "reflex - adapt 3do reflex adapt 3do reflex adapt 3do wired usb wired wired usb dinput dinput wired dinput dinput controller adapter 3do controller published published controller adapter - platinum 01-05ms (platinum) actively sold open source open source 16d0:127e_reflex3d0 buy link reflex adapt 3do [wired usb dinput]"
         },
         {
           "id": "published-reflex-adapt-8",
@@ -2521,59 +2522,6 @@ window.MISTER_LATENCY_DATA = {
         {
           "id": "published-reflex-adapt-12",
           "name": "Reflex - Adapt",
-          "measurementName": "Reflex - Adapt [N64 1P MPG Xinput]",
-          "averageMs": 2.042,
-          "averageTier": "Gold",
-          "p99Ms": 2.68,
-          "p99Tier": "Gold",
-          "sameFramePct": 87.75,
-          "observedSameFramePct": 87.8,
-          "sampleCount": 5111,
-          "measuredAverageMs": null,
-          "adapterAverageMs": null,
-          "adapterMode": null,
-          "adapterSourceName": null,
-          "connection": "Wired USB",
-          "connectionKind": "Wired",
-          "wirelessConnection": "",
-          "connectionTag": "Wired",
-          "modeRaw": "N64 1P MPG Xinput",
-          "outputMode": "XInput",
-          "modeLabel": "XInput",
-          "modeDisplay": "XInput",
-          "deviceTypes": [
-            "Controller Adapter",
-            "N64 Controller"
-          ],
-          "rankMode": "Controller Adapter",
-          "overallRank": 86,
-          "modeRank": 28,
-          "resultType": "published",
-          "resultLabel": "Published",
-          "category": "Controller Adapter",
-          "faceButtons": "",
-          "homeButton": "",
-          "weightOz": "",
-          "dateAdded": "6/11/2026",
-          "dateAddedSort": "2026-06-11",
-          "hasRawCapture": true,
-          "metricSource": "Direct measurement",
-          "notes": "",
-          "tester": "",
-          "originalSystem": "",
-          "saleStatus": "Actively sold",
-          "sourceStatus": "Open Source",
-          "isOpenSource": true,
-          "sourceUrl": "",
-          "buyUrl": "https://misteraddons.com/products/reflex-adapt",
-          "link": "https://misteraddons.com/products/reflex-adapt",
-          "amazon": "",
-          "joystickId": "",
-          "searchText": "reflex - adapt reflex adapt reflex adapt wired usb wired n64 1p mpg xinput xinput wired xinput xinput controller adapter n64 controller published published controller adapter gold gold 01-05ms (platinum) actively sold open source open source mister / pc xbox one xbox series raw capture buy link reflex - adapt [n64 1p mpg xinput]"
-        },
-        {
-          "id": "published-reflex-adapt-13",
-          "name": "Reflex - Adapt",
           "measurementName": "Reflex - Adapt [N64 1P MPG HID]",
           "averageMs": 2.053,
           "averageTier": "Gold",
@@ -2599,8 +2547,8 @@ window.MISTER_LATENCY_DATA = {
             "N64 Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 88,
-          "modeRank": 29,
+          "overallRank": 87,
+          "modeRank": 28,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -2625,60 +2573,7 @@ window.MISTER_LATENCY_DATA = {
           "searchText": "reflex - adapt reflex adapt reflex adapt wired usb wired n64 1p mpg hid dinput wired dinput dinput controller adapter n64 controller published published controller adapter gold gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [n64 1p mpg hid]"
         },
         {
-          "id": "published-reflex-adapt-14",
-          "name": "Reflex - Adapt",
-          "measurementName": "Reflex - Adapt [N64 1P MPG Switch]",
-          "averageMs": 2.065,
-          "averageTier": "Gold",
-          "p99Ms": 2.68,
-          "p99Tier": "Gold",
-          "sameFramePct": 87.61,
-          "observedSameFramePct": 87.6,
-          "sampleCount": 2354,
-          "measuredAverageMs": null,
-          "adapterAverageMs": null,
-          "adapterMode": null,
-          "adapterSourceName": null,
-          "connection": "Wired USB",
-          "connectionKind": "Wired",
-          "wirelessConnection": "",
-          "connectionTag": "Wired",
-          "modeRaw": "N64 1P MPG Switch",
-          "outputMode": "Switch",
-          "modeLabel": "Switch",
-          "modeDisplay": "Switch",
-          "deviceTypes": [
-            "Controller Adapter",
-            "N64 Controller"
-          ],
-          "rankMode": "Controller Adapter",
-          "overallRank": 89,
-          "modeRank": 30,
-          "resultType": "published",
-          "resultLabel": "Published",
-          "category": "Controller Adapter",
-          "faceButtons": "",
-          "homeButton": "",
-          "weightOz": "",
-          "dateAdded": "6/11/2026",
-          "dateAddedSort": "2026-06-11",
-          "hasRawCapture": true,
-          "metricSource": "Direct measurement",
-          "notes": "",
-          "tester": "",
-          "originalSystem": "",
-          "saleStatus": "Actively sold",
-          "sourceStatus": "Open Source",
-          "isOpenSource": true,
-          "sourceUrl": "",
-          "buyUrl": "https://misteraddons.com/products/reflex-adapt",
-          "link": "https://misteraddons.com/products/reflex-adapt",
-          "amazon": "",
-          "joystickId": "",
-          "searchText": "reflex - adapt reflex adapt reflex adapt wired usb wired n64 1p mpg switch switch wired switch switch controller adapter n64 controller published published controller adapter gold gold 01-05ms (platinum) actively sold open source open source mister / pc switch raw capture buy link reflex - adapt [n64 1p mpg switch]"
-        },
-        {
-          "id": "published-reflex-adapt-15",
+          "id": "published-reflex-adapt-13",
           "name": "Reflex - Adapt",
           "measurementName": "Reflex - Adapt [PSX 1P Digital]",
           "averageMs": 2.066,
@@ -2705,8 +2600,8 @@ window.MISTER_LATENCY_DATA = {
             "PSX Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 90,
-          "modeRank": 31,
+          "overallRank": 88,
+          "modeRank": 29,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -2731,7 +2626,7 @@ window.MISTER_LATENCY_DATA = {
           "searchText": "reflex - adapt reflex adapt reflex adapt wired usb wired psx 1p digital dinput wired dinput dinput controller adapter psx controller published published controller adapter gold gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [psx 1p digital]"
         },
         {
-          "id": "published-reflex-adapt-16",
+          "id": "published-reflex-adapt-14",
           "name": "Reflex - Adapt",
           "measurementName": "Reflex - Adapt [GameCube 1P]",
           "averageMs": 2.781,
@@ -2758,8 +2653,8 @@ window.MISTER_LATENCY_DATA = {
             "GameCube Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 99,
-          "modeRank": 34,
+          "overallRank": 97,
+          "modeRank": 32,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -2784,7 +2679,7 @@ window.MISTER_LATENCY_DATA = {
           "searchText": "reflex - adapt reflex adapt reflex adapt wired usb wired gamecube 1p dinput wired dinput dinput controller adapter gamecube controller published published controller adapter gold gold 01-05ms (platinum) actively sold open source open source mister / pc raw capture buy link reflex - adapt [gamecube 1p]"
         },
         {
-          "id": "published-reflex-adapt-17",
+          "id": "published-reflex-adapt-15",
           "name": "Reflex - Adapt",
           "measurementName": "Reflex - Adapt [Saturn 3D 1P]",
           "averageMs": 6.959,
@@ -2811,8 +2706,8 @@ window.MISTER_LATENCY_DATA = {
             "Saturn Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 214,
-          "modeRank": 50,
+          "overallRank": 212,
+          "modeRank": 48,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -3759,7 +3654,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 176,
+          "overallRank": 174,
           "modeRank": 10,
           "resultType": "published",
           "resultLabel": "Published",
@@ -3811,7 +3706,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 177,
+          "overallRank": 175,
           "modeRank": 11,
           "resultType": "published",
           "resultLabel": "Published",
@@ -3863,7 +3758,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 179,
+          "overallRank": 177,
           "modeRank": 12,
           "resultType": "published",
           "resultLabel": "Published",
@@ -3915,7 +3810,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 242,
+          "overallRank": 240,
           "modeRank": 29,
           "resultType": "published",
           "resultLabel": "Published",
@@ -3967,7 +3862,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 256,
+          "overallRank": 254,
           "modeRank": 40,
           "resultType": "published",
           "resultLabel": "Published",
@@ -4019,7 +3914,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 292,
+          "overallRank": 290,
           "modeRank": 58,
           "resultType": "published",
           "resultLabel": "Published",
@@ -4071,7 +3966,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 297,
+          "overallRank": 295,
           "modeRank": 62,
           "resultType": "published",
           "resultLabel": "Published",
@@ -4123,7 +4018,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 302,
+          "overallRank": 300,
           "modeRank": 66,
           "resultType": "published",
           "resultLabel": "Published",
@@ -4292,7 +4187,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 244,
+          "overallRank": 242,
           "modeRank": 31,
           "resultType": "published",
           "resultLabel": "Published",
@@ -4344,7 +4239,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 252,
+          "overallRank": 250,
           "modeRank": 38,
           "resultType": "published",
           "resultLabel": "Published",
@@ -4396,7 +4291,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 255,
+          "overallRank": 253,
           "modeRank": 39,
           "resultType": "published",
           "resultLabel": "Published",
@@ -4448,7 +4343,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 298,
+          "overallRank": 296,
           "modeRank": 63,
           "resultType": "published",
           "resultLabel": "Published",
@@ -4500,7 +4395,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 303,
+          "overallRank": 301,
           "modeRank": 67,
           "resultType": "published",
           "resultLabel": "Published",
@@ -4722,7 +4617,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Arcade Stick"
           ],
           "rankMode": "Wireless Arcade Stick",
-          "overallRank": 203,
+          "overallRank": 201,
           "modeRank": 2,
           "resultType": "published",
           "resultLabel": "Published",
@@ -4774,7 +4669,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Arcade Stick"
           ],
           "rankMode": "Wireless Arcade Stick",
-          "overallRank": 296,
+          "overallRank": 294,
           "modeRank": 6,
           "resultType": "published",
           "resultLabel": "Published",
@@ -4826,7 +4721,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Arcade Stick"
           ],
           "rankMode": "Wireless Arcade Stick",
-          "overallRank": 301,
+          "overallRank": 299,
           "modeRank": 7,
           "resultType": "published",
           "resultLabel": "Published",
@@ -4995,7 +4890,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 259,
+          "overallRank": 257,
           "modeRank": 42,
           "resultType": "published",
           "resultLabel": "Published",
@@ -5335,7 +5230,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 218,
+          "overallRank": 216,
           "modeRank": 19,
           "resultType": "published",
           "resultLabel": "Published",
@@ -5387,7 +5282,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 219,
+          "overallRank": 217,
           "modeRank": 20,
           "resultType": "published",
           "resultLabel": "Published",
@@ -5726,7 +5621,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 257,
+          "overallRank": 255,
           "modeRank": 41,
           "resultType": "published",
           "resultLabel": "Published",
@@ -5895,7 +5790,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 141,
+          "overallRank": 139,
           "modeRank": 6,
           "resultType": "published",
           "resultLabel": "Published",
@@ -6402,7 +6297,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 91,
+          "overallRank": 89,
           "modeRank": 23,
           "resultType": "published",
           "resultLabel": "Published",
@@ -6454,7 +6349,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 92,
+          "overallRank": 90,
           "modeRank": 24,
           "resultType": "published",
           "resultLabel": "Published",
@@ -7357,8 +7252,8 @@ window.MISTER_LATENCY_DATA = {
             "Dreamcast Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 103,
-          "modeRank": 36,
+          "overallRank": 101,
+          "modeRank": 34,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -9340,7 +9235,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 206,
+          "overallRank": 204,
           "modeRank": 16,
           "resultType": "published",
           "resultLabel": "Published",
@@ -9457,7 +9352,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 87,
+          "overallRank": 86,
           "modeRank": 22,
           "resultType": "published",
           "resultLabel": "Published",
@@ -9576,8 +9471,8 @@ window.MISTER_LATENCY_DATA = {
             "SNES Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 93,
-          "modeRank": 32,
+          "overallRank": 91,
+          "modeRank": 30,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -9695,7 +9590,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 94,
+          "overallRank": 92,
           "modeRank": 17,
           "resultType": "published",
           "resultLabel": "Published",
@@ -9814,8 +9709,8 @@ window.MISTER_LATENCY_DATA = {
             "NES Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 95,
-          "modeRank": 33,
+          "overallRank": 93,
+          "modeRank": 31,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -9931,7 +9826,7 @@ window.MISTER_LATENCY_DATA = {
             "Arcade Stick Encoder"
           ],
           "rankMode": "Arcade Stick Encoder",
-          "overallRank": 96,
+          "overallRank": 94,
           "modeRank": 16,
           "resultType": "published",
           "resultLabel": "Published",
@@ -10048,7 +9943,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 97,
+          "overallRank": 95,
           "modeRank": 25,
           "resultType": "published",
           "resultLabel": "Published",
@@ -10165,7 +10060,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 98,
+          "overallRank": 96,
           "modeRank": 26,
           "resultType": "published",
           "resultLabel": "Published",
@@ -10282,7 +10177,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 100,
+          "overallRank": 98,
           "modeRank": 27,
           "resultType": "published",
           "resultLabel": "Published",
@@ -10400,7 +10295,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 101,
+          "overallRank": 99,
           "modeRank": 28,
           "resultType": "published",
           "resultLabel": "Published",
@@ -10519,8 +10414,8 @@ window.MISTER_LATENCY_DATA = {
             "SNES Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 102,
-          "modeRank": 35,
+          "overallRank": 100,
+          "modeRank": 33,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -10637,7 +10532,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 104,
+          "overallRank": 102,
           "modeRank": 18,
           "resultType": "published",
           "resultLabel": "Published",
@@ -10689,7 +10584,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 111,
+          "overallRank": 109,
           "modeRank": 21,
           "resultType": "published",
           "resultLabel": "Published",
@@ -10741,7 +10636,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 112,
+          "overallRank": 110,
           "modeRank": 22,
           "resultType": "published",
           "resultLabel": "Published",
@@ -10859,7 +10754,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 105,
+          "overallRank": 103,
           "modeRank": 29,
           "resultType": "published",
           "resultLabel": "Published",
@@ -10911,7 +10806,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 106,
+          "overallRank": 104,
           "modeRank": 30,
           "resultType": "published",
           "resultLabel": "Published",
@@ -10963,7 +10858,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 107,
+          "overallRank": 105,
           "modeRank": 31,
           "resultType": "published",
           "resultLabel": "Published",
@@ -11080,7 +10975,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 108,
+          "overallRank": 106,
           "modeRank": 32,
           "resultType": "published",
           "resultLabel": "Published",
@@ -11197,7 +11092,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 109,
+          "overallRank": 107,
           "modeRank": 19,
           "resultType": "published",
           "resultLabel": "Published",
@@ -11249,7 +11144,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 110,
+          "overallRank": 108,
           "modeRank": 20,
           "resultType": "published",
           "resultLabel": "Published",
@@ -11366,7 +11261,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 113,
+          "overallRank": 111,
           "modeRank": 33,
           "resultType": "published",
           "resultLabel": "Published",
@@ -11485,8 +11380,8 @@ window.MISTER_LATENCY_DATA = {
             "Genesis Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 114,
-          "modeRank": 37,
+          "overallRank": 112,
+          "modeRank": 35,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -11602,7 +11497,7 @@ window.MISTER_LATENCY_DATA = {
             "Arcade Stick Encoder"
           ],
           "rankMode": "Arcade Stick Encoder",
-          "overallRank": 115,
+          "overallRank": 113,
           "modeRank": 17,
           "resultType": "published",
           "resultLabel": "Published",
@@ -11719,7 +11614,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 116,
+          "overallRank": 114,
           "modeRank": 34,
           "resultType": "published",
           "resultLabel": "Published",
@@ -11837,7 +11732,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 117,
+          "overallRank": 115,
           "modeRank": 35,
           "resultType": "published",
           "resultLabel": "Published",
@@ -11954,7 +11849,7 @@ window.MISTER_LATENCY_DATA = {
             "Arcade Stick Encoder"
           ],
           "rankMode": "Arcade Stick Encoder",
-          "overallRank": 118,
+          "overallRank": 116,
           "modeRank": 18,
           "resultType": "published",
           "resultLabel": "Published",
@@ -12072,7 +11967,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 119,
+          "overallRank": 117,
           "modeRank": 36,
           "resultType": "published",
           "resultLabel": "Published",
@@ -12124,7 +12019,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 207,
+          "overallRank": 205,
           "modeRank": 17,
           "resultType": "published",
           "resultLabel": "Published",
@@ -12176,7 +12071,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 350,
+          "overallRank": 348,
           "modeRank": 103,
           "resultType": "published",
           "resultLabel": "Published",
@@ -12294,7 +12189,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 120,
+          "overallRank": 118,
           "modeRank": 37,
           "resultType": "published",
           "resultLabel": "Published",
@@ -12409,7 +12304,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 121,
+          "overallRank": 119,
           "modeRank": 1,
           "resultType": "published",
           "resultLabel": "Published",
@@ -12528,8 +12423,8 @@ window.MISTER_LATENCY_DATA = {
             "SNES Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 122,
-          "modeRank": 38,
+          "overallRank": 120,
+          "modeRank": 36,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -12647,8 +12542,8 @@ window.MISTER_LATENCY_DATA = {
             "Genesis Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 123,
-          "modeRank": 39,
+          "overallRank": 121,
+          "modeRank": 37,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -12700,8 +12595,8 @@ window.MISTER_LATENCY_DATA = {
             "Genesis Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 212,
-          "modeRank": 49,
+          "overallRank": 210,
+          "modeRank": 47,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -12819,7 +12714,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 124,
+          "overallRank": 122,
           "modeRank": 23,
           "resultType": "published",
           "resultLabel": "Published",
@@ -12936,8 +12831,8 @@ window.MISTER_LATENCY_DATA = {
             "Controller Adapter"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 125,
-          "modeRank": 40,
+          "overallRank": 123,
+          "modeRank": 38,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -13053,7 +12948,7 @@ window.MISTER_LATENCY_DATA = {
             "Arcade Stick Encoder"
           ],
           "rankMode": "Arcade Stick Encoder",
-          "overallRank": 126,
+          "overallRank": 124,
           "modeRank": 19,
           "resultType": "published",
           "resultLabel": "Published",
@@ -13170,7 +13065,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 127,
+          "overallRank": 125,
           "modeRank": 38,
           "resultType": "published",
           "resultLabel": "Published",
@@ -13222,7 +13117,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 132,
+          "overallRank": 130,
           "modeRank": 39,
           "resultType": "published",
           "resultLabel": "Published",
@@ -13339,7 +13234,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 128,
+          "overallRank": 126,
           "modeRank": 24,
           "resultType": "published",
           "resultLabel": "Published",
@@ -13391,7 +13286,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 129,
+          "overallRank": 127,
           "modeRank": 25,
           "resultType": "published",
           "resultLabel": "Published",
@@ -13443,7 +13338,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 131,
+          "overallRank": 129,
           "modeRank": 26,
           "resultType": "published",
           "resultLabel": "Published",
@@ -13560,7 +13455,7 @@ window.MISTER_LATENCY_DATA = {
             "Arcade Stick Encoder"
           ],
           "rankMode": "Arcade Stick Encoder",
-          "overallRank": 130,
+          "overallRank": 128,
           "modeRank": 20,
           "resultType": "published",
           "resultLabel": "Published",
@@ -13677,7 +13572,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 133,
+          "overallRank": 131,
           "modeRank": 40,
           "resultType": "published",
           "resultLabel": "Published",
@@ -13729,7 +13624,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 143,
+          "overallRank": 141,
           "modeRank": 44,
           "resultType": "published",
           "resultLabel": "Published",
@@ -13847,7 +13742,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 134,
+          "overallRank": 132,
           "modeRank": 41,
           "resultType": "published",
           "resultLabel": "Published",
@@ -13899,7 +13794,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 144,
+          "overallRank": 142,
           "modeRank": 45,
           "resultType": "published",
           "resultLabel": "Published",
@@ -14016,7 +13911,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 135,
+          "overallRank": 133,
           "modeRank": 2,
           "resultType": "published",
           "resultLabel": "Published",
@@ -14133,7 +14028,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 136,
+          "overallRank": 134,
           "modeRank": 3,
           "resultType": "published",
           "resultLabel": "Published",
@@ -14185,7 +14080,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 138,
+          "overallRank": 136,
           "modeRank": 5,
           "resultType": "published",
           "resultLabel": "Published",
@@ -14237,7 +14132,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 191,
+          "overallRank": 189,
           "modeRank": 70,
           "resultType": "published",
           "resultLabel": "Published",
@@ -14289,7 +14184,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 196,
+          "overallRank": 194,
           "modeRank": 75,
           "resultType": "published",
           "resultLabel": "Published",
@@ -14341,7 +14236,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 240,
+          "overallRank": 238,
           "modeRank": 28,
           "resultType": "published",
           "resultLabel": "Published",
@@ -14393,7 +14288,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 246,
+          "overallRank": 244,
           "modeRank": 33,
           "resultType": "published",
           "resultLabel": "Published",
@@ -14510,7 +14405,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 137,
+          "overallRank": 135,
           "modeRank": 4,
           "resultType": "published",
           "resultLabel": "Published",
@@ -14627,7 +14522,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 139,
+          "overallRank": 137,
           "modeRank": 42,
           "resultType": "published",
           "resultLabel": "Published",
@@ -14744,7 +14639,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 140,
+          "overallRank": 138,
           "modeRank": 27,
           "resultType": "published",
           "resultLabel": "Published",
@@ -14863,7 +14758,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 142,
+          "overallRank": 140,
           "modeRank": 43,
           "resultType": "published",
           "resultLabel": "Published",
@@ -14980,7 +14875,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 145,
+          "overallRank": 143,
           "modeRank": 46,
           "resultType": "published",
           "resultLabel": "Published",
@@ -15098,7 +14993,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 146,
+          "overallRank": 144,
           "modeRank": 47,
           "resultType": "published",
           "resultLabel": "Published",
@@ -15216,7 +15111,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 147,
+          "overallRank": 145,
           "modeRank": 28,
           "resultType": "published",
           "resultLabel": "Published",
@@ -15333,7 +15228,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 148,
+          "overallRank": 146,
           "modeRank": 7,
           "resultType": "published",
           "resultLabel": "Published",
@@ -15450,7 +15345,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 149,
+          "overallRank": 147,
           "modeRank": 48,
           "resultType": "published",
           "resultLabel": "Published",
@@ -15569,8 +15464,8 @@ window.MISTER_LATENCY_DATA = {
             "Wii Classic Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 150,
-          "modeRank": 41,
+          "overallRank": 148,
+          "modeRank": 39,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -15688,8 +15583,8 @@ window.MISTER_LATENCY_DATA = {
             "Wii Classic Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 151,
-          "modeRank": 42,
+          "overallRank": 149,
+          "modeRank": 40,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -15806,7 +15701,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 152,
+          "overallRank": 150,
           "modeRank": 49,
           "resultType": "published",
           "resultLabel": "Published",
@@ -15923,7 +15818,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 153,
+          "overallRank": 151,
           "modeRank": 50,
           "resultType": "published",
           "resultLabel": "Published",
@@ -15975,7 +15870,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 156,
+          "overallRank": 154,
           "modeRank": 53,
           "resultType": "published",
           "resultLabel": "Published",
@@ -16028,8 +15923,8 @@ window.MISTER_LATENCY_DATA = {
             "N64 Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 209,
-          "modeRank": 48,
+          "overallRank": 207,
+          "modeRank": 46,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -16143,7 +16038,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 154,
+          "overallRank": 152,
           "modeRank": 51,
           "resultType": "published",
           "resultLabel": "Published",
@@ -16195,7 +16090,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 173,
+          "overallRank": 171,
           "modeRank": 8,
           "resultType": "published",
           "resultLabel": "Published",
@@ -16247,7 +16142,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 280,
+          "overallRank": 278,
           "modeRank": 46,
           "resultType": "published",
           "resultLabel": "Published",
@@ -16364,7 +16259,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 155,
+          "overallRank": 153,
           "modeRank": 52,
           "resultType": "published",
           "resultLabel": "Published",
@@ -16416,7 +16311,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 174,
+          "overallRank": 172,
           "modeRank": 9,
           "resultType": "published",
           "resultLabel": "Published",
@@ -16468,7 +16363,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 281,
+          "overallRank": 279,
           "modeRank": 47,
           "resultType": "published",
           "resultLabel": "Published",
@@ -16585,7 +16480,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 157,
+          "overallRank": 155,
           "modeRank": 29,
           "resultType": "published",
           "resultLabel": "Published",
@@ -16702,7 +16597,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 158,
+          "overallRank": 156,
           "modeRank": 30,
           "resultType": "published",
           "resultLabel": "Published",
@@ -16819,7 +16714,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 159,
+          "overallRank": 157,
           "modeRank": 54,
           "resultType": "published",
           "resultLabel": "Published",
@@ -16936,7 +16831,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 160,
+          "overallRank": 158,
           "modeRank": 55,
           "resultType": "published",
           "resultLabel": "Published",
@@ -17053,7 +16948,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 161,
+          "overallRank": 159,
           "modeRank": 56,
           "resultType": "published",
           "resultLabel": "Published",
@@ -17105,7 +17000,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 220,
+          "overallRank": 218,
           "modeRank": 21,
           "resultType": "published",
           "resultLabel": "Published",
@@ -17157,7 +17052,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 320,
+          "overallRank": 318,
           "modeRank": 82,
           "resultType": "published",
           "resultLabel": "Published",
@@ -17274,7 +17169,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 162,
+          "overallRank": 160,
           "modeRank": 57,
           "resultType": "published",
           "resultLabel": "Published",
@@ -17326,7 +17221,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 166,
+          "overallRank": 164,
           "modeRank": 58,
           "resultType": "published",
           "resultLabel": "Published",
@@ -17378,7 +17273,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 282,
+          "overallRank": 280,
           "modeRank": 48,
           "resultType": "published",
           "resultLabel": "Published",
@@ -17430,7 +17325,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 315,
+          "overallRank": 313,
           "modeRank": 78,
           "resultType": "published",
           "resultLabel": "Published",
@@ -17482,7 +17377,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 317,
+          "overallRank": 315,
           "modeRank": 80,
           "resultType": "published",
           "resultLabel": "Published",
@@ -17601,8 +17496,8 @@ window.MISTER_LATENCY_DATA = {
             "N64 Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 163,
-          "modeRank": 43,
+          "overallRank": 161,
+          "modeRank": 41,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -17718,7 +17613,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 164,
+          "overallRank": 162,
           "modeRank": 31,
           "resultType": "published",
           "resultLabel": "Published",
@@ -17770,7 +17665,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 165,
+          "overallRank": 163,
           "modeRank": 32,
           "resultType": "published",
           "resultLabel": "Published",
@@ -17888,7 +17783,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 167,
+          "overallRank": 165,
           "modeRank": 59,
           "resultType": "published",
           "resultLabel": "Published",
@@ -18007,7 +17902,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Arcade Stick"
           ],
           "rankMode": "Wireless Arcade Stick",
-          "overallRank": 168,
+          "overallRank": 166,
           "modeRank": 1,
           "resultType": "published",
           "resultLabel": "Published",
@@ -18059,7 +17954,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 251,
+          "overallRank": 249,
           "modeRank": 38,
           "resultType": "published",
           "resultLabel": "Published",
@@ -18111,7 +18006,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Arcade Stick"
           ],
           "rankMode": "Wireless Arcade Stick",
-          "overallRank": 261,
+          "overallRank": 259,
           "modeRank": 4,
           "resultType": "published",
           "resultLabel": "Published",
@@ -18229,7 +18124,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 169,
+          "overallRank": 167,
           "modeRank": 60,
           "resultType": "published",
           "resultLabel": "Published",
@@ -18346,7 +18241,7 @@ window.MISTER_LATENCY_DATA = {
             "Arcade Stick Encoder"
           ],
           "rankMode": "Arcade Stick Encoder",
-          "overallRank": 170,
+          "overallRank": 168,
           "modeRank": 21,
           "resultType": "published",
           "resultLabel": "Published",
@@ -18463,7 +18358,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 171,
+          "overallRank": 169,
           "modeRank": 61,
           "resultType": "published",
           "resultLabel": "Published",
@@ -18581,7 +18476,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 172,
+          "overallRank": 170,
           "modeRank": 62,
           "resultType": "published",
           "resultLabel": "Published",
@@ -18633,7 +18528,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 189,
+          "overallRank": 187,
           "modeRank": 15,
           "resultType": "published",
           "resultLabel": "Published",
@@ -18752,8 +18647,8 @@ window.MISTER_LATENCY_DATA = {
             "GameCube Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 175,
-          "modeRank": 44,
+          "overallRank": 173,
+          "modeRank": 42,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -18870,7 +18765,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 178,
+          "overallRank": 176,
           "modeRank": 63,
           "resultType": "published",
           "resultLabel": "Published",
@@ -18922,7 +18817,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 260,
+          "overallRank": 258,
           "modeRank": 43,
           "resultType": "published",
           "resultLabel": "Published",
@@ -19039,7 +18934,7 @@ window.MISTER_LATENCY_DATA = {
             "Arcade Stick Encoder"
           ],
           "rankMode": "Arcade Stick Encoder",
-          "overallRank": 180,
+          "overallRank": 178,
           "modeRank": 22,
           "resultType": "published",
           "resultLabel": "Published",
@@ -19156,7 +19051,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 181,
+          "overallRank": 179,
           "modeRank": 33,
           "resultType": "published",
           "resultLabel": "Published",
@@ -19274,7 +19169,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 182,
+          "overallRank": 180,
           "modeRank": 64,
           "resultType": "published",
           "resultLabel": "Published",
@@ -19392,7 +19287,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 183,
+          "overallRank": 181,
           "modeRank": 65,
           "resultType": "published",
           "resultLabel": "Published",
@@ -19444,7 +19339,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 185,
+          "overallRank": 183,
           "modeRank": 13,
           "resultType": "published",
           "resultLabel": "Published",
@@ -19496,7 +19391,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 300,
+          "overallRank": 298,
           "modeRank": 65,
           "resultType": "published",
           "resultLabel": "Published",
@@ -19613,7 +19508,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 184,
+          "overallRank": 182,
           "modeRank": 66,
           "resultType": "published",
           "resultLabel": "Published",
@@ -19665,7 +19560,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 192,
+          "overallRank": 190,
           "modeRank": 71,
           "resultType": "published",
           "resultLabel": "Published",
@@ -19717,7 +19612,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 197,
+          "overallRank": 195,
           "modeRank": 76,
           "resultType": "published",
           "resultLabel": "Published",
@@ -19769,7 +19664,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 316,
+          "overallRank": 314,
           "modeRank": 79,
           "resultType": "published",
           "resultLabel": "Published",
@@ -19821,7 +19716,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 319,
+          "overallRank": 317,
           "modeRank": 81,
           "resultType": "published",
           "resultLabel": "Published",
@@ -19873,7 +19768,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 327,
+          "overallRank": 325,
           "modeRank": 87,
           "resultType": "published",
           "resultLabel": "Published",
@@ -19925,7 +19820,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 339,
+          "overallRank": 337,
           "modeRank": 96,
           "resultType": "published",
           "resultLabel": "Published",
@@ -19977,7 +19872,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 341,
+          "overallRank": 339,
           "modeRank": 98,
           "resultType": "published",
           "resultLabel": "Published",
@@ -20094,7 +19989,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 186,
+          "overallRank": 184,
           "modeRank": 67,
           "resultType": "published",
           "resultLabel": "Published",
@@ -20211,7 +20106,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 187,
+          "overallRank": 185,
           "modeRank": 68,
           "resultType": "published",
           "resultLabel": "Published",
@@ -20263,7 +20158,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 289,
+          "overallRank": 287,
           "modeRank": 55,
           "resultType": "published",
           "resultLabel": "Published",
@@ -20315,7 +20210,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 304,
+          "overallRank": 302,
           "modeRank": 68,
           "resultType": "published",
           "resultLabel": "Published",
@@ -20367,7 +20262,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 330,
+          "overallRank": 328,
           "modeRank": 90,
           "resultType": "published",
           "resultLabel": "Published",
@@ -20419,7 +20314,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 331,
+          "overallRank": 329,
           "modeRank": 91,
           "resultType": "published",
           "resultLabel": "Published",
@@ -20471,7 +20366,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 344,
+          "overallRank": 342,
           "modeRank": 99,
           "resultType": "published",
           "resultLabel": "Published",
@@ -20523,7 +20418,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 347,
+          "overallRank": 345,
           "modeRank": 101,
           "resultType": "published",
           "resultLabel": "Published",
@@ -20575,7 +20470,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 348,
+          "overallRank": 346,
           "modeRank": 102,
           "resultType": "published",
           "resultLabel": "Published",
@@ -20692,7 +20587,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 188,
+          "overallRank": 186,
           "modeRank": 14,
           "resultType": "published",
           "resultLabel": "Published",
@@ -20809,7 +20704,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 190,
+          "overallRank": 188,
           "modeRank": 69,
           "resultType": "published",
           "resultLabel": "Published",
@@ -20927,7 +20822,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 193,
+          "overallRank": 191,
           "modeRank": 72,
           "resultType": "published",
           "resultLabel": "Published",
@@ -21045,7 +20940,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 194,
+          "overallRank": 192,
           "modeRank": 73,
           "resultType": "published",
           "resultLabel": "Published",
@@ -21097,7 +20992,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 248,
+          "overallRank": 246,
           "modeRank": 35,
           "resultType": "published",
           "resultLabel": "Published",
@@ -21214,7 +21109,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 195,
+          "overallRank": 193,
           "modeRank": 74,
           "resultType": "published",
           "resultLabel": "Published",
@@ -21332,7 +21227,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 198,
+          "overallRank": 196,
           "modeRank": 77,
           "resultType": "published",
           "resultLabel": "Published",
@@ -21449,7 +21344,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 199,
+          "overallRank": 197,
           "modeRank": 78,
           "resultType": "published",
           "resultLabel": "Published",
@@ -21501,7 +21396,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 200,
+          "overallRank": 198,
           "modeRank": 79,
           "resultType": "published",
           "resultLabel": "Published",
@@ -21621,8 +21516,8 @@ window.MISTER_LATENCY_DATA = {
             "Wii Classic Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 201,
-          "modeRank": 45,
+          "overallRank": 199,
+          "modeRank": 43,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -21738,8 +21633,8 @@ window.MISTER_LATENCY_DATA = {
             "Controller Adapter"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 202,
-          "modeRank": 46,
+          "overallRank": 200,
+          "modeRank": 44,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -21857,8 +21752,8 @@ window.MISTER_LATENCY_DATA = {
             "Wii Classic Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 204,
-          "modeRank": 47,
+          "overallRank": 202,
+          "modeRank": 45,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -21974,7 +21869,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 205,
+          "overallRank": 203,
           "modeRank": 80,
           "resultType": "published",
           "resultLabel": "Published",
@@ -22091,7 +21986,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 208,
+          "overallRank": 206,
           "modeRank": 34,
           "resultType": "published",
           "resultLabel": "Published",
@@ -22143,7 +22038,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 210,
+          "overallRank": 208,
           "modeRank": 35,
           "resultType": "published",
           "resultLabel": "Published",
@@ -22260,7 +22155,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 211,
+          "overallRank": 209,
           "modeRank": 81,
           "resultType": "published",
           "resultLabel": "Published",
@@ -22378,7 +22273,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 213,
+          "overallRank": 211,
           "modeRank": 82,
           "resultType": "published",
           "resultLabel": "Published",
@@ -22495,7 +22390,7 @@ window.MISTER_LATENCY_DATA = {
             "Controller Conversion"
           ],
           "rankMode": "Controller Conversion",
-          "overallRank": 215,
+          "overallRank": 213,
           "modeRank": 7,
           "resultType": "published",
           "resultLabel": "Published",
@@ -22547,7 +22442,7 @@ window.MISTER_LATENCY_DATA = {
             "Controller Conversion"
           ],
           "rankMode": "Controller Conversion",
-          "overallRank": 229,
+          "overallRank": 227,
           "modeRank": 8,
           "resultType": "published",
           "resultLabel": "Published",
@@ -22599,7 +22494,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 230,
+          "overallRank": 228,
           "modeRank": 24,
           "resultType": "published",
           "resultLabel": "Published",
@@ -22651,7 +22546,7 @@ window.MISTER_LATENCY_DATA = {
             "Controller Conversion"
           ],
           "rankMode": "Controller Conversion",
-          "overallRank": 271,
+          "overallRank": 269,
           "modeRank": 9,
           "resultType": "published",
           "resultLabel": "Published",
@@ -22703,7 +22598,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 272,
+          "overallRank": 270,
           "modeRank": 44,
           "resultType": "published",
           "resultLabel": "Published",
@@ -22821,7 +22716,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Arcade Stick"
           ],
           "rankMode": "Wireless Arcade Stick",
-          "overallRank": 216,
+          "overallRank": 214,
           "modeRank": 3,
           "resultType": "published",
           "resultLabel": "Published",
@@ -22873,7 +22768,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 258,
+          "overallRank": 256,
           "modeRank": 39,
           "resultType": "published",
           "resultLabel": "Published",
@@ -22925,7 +22820,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Arcade Stick"
           ],
           "rankMode": "Wireless Arcade Stick",
-          "overallRank": 262,
+          "overallRank": 260,
           "modeRank": 5,
           "resultType": "published",
           "resultLabel": "Published",
@@ -23042,7 +22937,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 217,
+          "overallRank": 215,
           "modeRank": 18,
           "resultType": "published",
           "resultLabel": "Published",
@@ -23159,7 +23054,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 221,
+          "overallRank": 219,
           "modeRank": 36,
           "resultType": "published",
           "resultLabel": "Published",
@@ -23211,7 +23106,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 222,
+          "overallRank": 220,
           "modeRank": 37,
           "resultType": "published",
           "resultLabel": "Published",
@@ -23328,7 +23223,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 223,
+          "overallRank": 221,
           "modeRank": 83,
           "resultType": "published",
           "resultLabel": "Published",
@@ -23380,7 +23275,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 291,
+          "overallRank": 289,
           "modeRank": 57,
           "resultType": "published",
           "resultLabel": "Published",
@@ -23497,8 +23392,8 @@ window.MISTER_LATENCY_DATA = {
             "Controller Adapter"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 224,
-          "modeRank": 51,
+          "overallRank": 222,
+          "modeRank": 49,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -23549,8 +23444,8 @@ window.MISTER_LATENCY_DATA = {
             "Controller Adapter"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 225,
-          "modeRank": 52,
+          "overallRank": 223,
+          "modeRank": 50,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -23666,7 +23561,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 226,
+          "overallRank": 224,
           "modeRank": 84,
           "resultType": "published",
           "resultLabel": "Published",
@@ -23781,7 +23676,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 227,
+          "overallRank": 225,
           "modeRank": 22,
           "resultType": "published",
           "resultLabel": "Published",
@@ -23900,7 +23795,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 228,
+          "overallRank": 226,
           "modeRank": 23,
           "resultType": "published",
           "resultLabel": "Published",
@@ -23952,7 +23847,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 290,
+          "overallRank": 288,
           "modeRank": 56,
           "resultType": "published",
           "resultLabel": "Published",
@@ -24071,8 +23966,8 @@ window.MISTER_LATENCY_DATA = {
             "NES Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 231,
-          "modeRank": 53,
+          "overallRank": 229,
+          "modeRank": 51,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -24188,8 +24083,8 @@ window.MISTER_LATENCY_DATA = {
             "Controller Adapter"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 232,
-          "modeRank": 54,
+          "overallRank": 230,
+          "modeRank": 52,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -24307,8 +24202,8 @@ window.MISTER_LATENCY_DATA = {
             "Genesis Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 233,
-          "modeRank": 55,
+          "overallRank": 231,
+          "modeRank": 53,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -24424,8 +24319,8 @@ window.MISTER_LATENCY_DATA = {
             "Controller Adapter"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 234,
-          "modeRank": 56,
+          "overallRank": 232,
+          "modeRank": 54,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -24541,8 +24436,8 @@ window.MISTER_LATENCY_DATA = {
             "Controller Adapter"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 235,
-          "modeRank": 57,
+          "overallRank": 233,
+          "modeRank": 55,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -24658,7 +24553,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 236,
+          "overallRank": 234,
           "modeRank": 85,
           "resultType": "published",
           "resultLabel": "Published",
@@ -24710,7 +24605,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 274,
+          "overallRank": 272,
           "modeRank": 45,
           "resultType": "published",
           "resultLabel": "Published",
@@ -24827,7 +24722,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 237,
+          "overallRank": 235,
           "modeRank": 25,
           "resultType": "published",
           "resultLabel": "Published",
@@ -24879,7 +24774,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 243,
+          "overallRank": 241,
           "modeRank": 30,
           "resultType": "published",
           "resultLabel": "Published",
@@ -24994,7 +24889,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 238,
+          "overallRank": 236,
           "modeRank": 26,
           "resultType": "published",
           "resultLabel": "Published",
@@ -25111,7 +25006,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 239,
+          "overallRank": 237,
           "modeRank": 27,
           "resultType": "published",
           "resultLabel": "Published",
@@ -25228,7 +25123,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 241,
+          "overallRank": 239,
           "modeRank": 86,
           "resultType": "published",
           "resultLabel": "Published",
@@ -25280,7 +25175,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 286,
+          "overallRank": 284,
           "modeRank": 52,
           "resultType": "published",
           "resultLabel": "Published",
@@ -25397,7 +25292,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 245,
+          "overallRank": 243,
           "modeRank": 32,
           "resultType": "published",
           "resultLabel": "Published",
@@ -25514,7 +25409,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 247,
+          "overallRank": 245,
           "modeRank": 34,
           "resultType": "published",
           "resultLabel": "Published",
@@ -25631,7 +25526,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 249,
+          "overallRank": 247,
           "modeRank": 36,
           "resultType": "published",
           "resultLabel": "Published",
@@ -25748,7 +25643,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 250,
+          "overallRank": 248,
           "modeRank": 37,
           "resultType": "published",
           "resultLabel": "Published",
@@ -25800,7 +25695,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 329,
+          "overallRank": 327,
           "modeRank": 89,
           "resultType": "published",
           "resultLabel": "Published",
@@ -25852,7 +25747,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 332,
+          "overallRank": 330,
           "modeRank": 92,
           "resultType": "published",
           "resultLabel": "Published",
@@ -25904,7 +25799,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 335,
+          "overallRank": 333,
           "modeRank": 95,
           "resultType": "published",
           "resultLabel": "Published",
@@ -26021,8 +25916,8 @@ window.MISTER_LATENCY_DATA = {
             "Controller Adapter"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 253,
-          "modeRank": 58,
+          "overallRank": 251,
+          "modeRank": 56,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -26138,8 +26033,8 @@ window.MISTER_LATENCY_DATA = {
             "Controller Adapter"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 254,
-          "modeRank": 59,
+          "overallRank": 252,
+          "modeRank": 57,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -26257,8 +26152,8 @@ window.MISTER_LATENCY_DATA = {
             "PSX Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 263,
-          "modeRank": 60,
+          "overallRank": 261,
+          "modeRank": 58,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -26376,8 +26271,8 @@ window.MISTER_LATENCY_DATA = {
             "PSX Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 264,
-          "modeRank": 61,
+          "overallRank": 262,
+          "modeRank": 59,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -26493,7 +26388,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 265,
+          "overallRank": 263,
           "modeRank": 87,
           "resultType": "published",
           "resultLabel": "Published",
@@ -26610,7 +26505,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 266,
+          "overallRank": 264,
           "modeRank": 88,
           "resultType": "published",
           "resultLabel": "Published",
@@ -26727,7 +26622,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 267,
+          "overallRank": 265,
           "modeRank": 89,
           "resultType": "published",
           "resultLabel": "Published",
@@ -26844,7 +26739,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 268,
+          "overallRank": 266,
           "modeRank": 90,
           "resultType": "published",
           "resultLabel": "Published",
@@ -26961,7 +26856,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 269,
+          "overallRank": 267,
           "modeRank": 91,
           "resultType": "published",
           "resultLabel": "Published",
@@ -27078,7 +26973,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 270,
+          "overallRank": 268,
           "modeRank": 92,
           "resultType": "published",
           "resultLabel": "Published",
@@ -27196,7 +27091,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 273,
+          "overallRank": 271,
           "modeRank": 40,
           "resultType": "published",
           "resultLabel": "Published",
@@ -27248,7 +27143,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 275,
+          "overallRank": 273,
           "modeRank": 41,
           "resultType": "published",
           "resultLabel": "Published",
@@ -27300,7 +27195,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Arcade Stick"
           ],
           "rankMode": "Wired Arcade Stick",
-          "overallRank": 279,
+          "overallRank": 277,
           "modeRank": 42,
           "resultType": "published",
           "resultLabel": "Published",
@@ -27417,7 +27312,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 276,
+          "overallRank": 274,
           "modeRank": 93,
           "resultType": "published",
           "resultLabel": "Published",
@@ -27534,7 +27429,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 277,
+          "overallRank": 275,
           "modeRank": 94,
           "resultType": "published",
           "resultLabel": "Published",
@@ -27653,8 +27548,8 @@ window.MISTER_LATENCY_DATA = {
             "GameCube Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 278,
-          "modeRank": 62,
+          "overallRank": 276,
+          "modeRank": 60,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -27770,7 +27665,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 283,
+          "overallRank": 281,
           "modeRank": 49,
           "resultType": "published",
           "resultLabel": "Published",
@@ -27887,7 +27782,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 284,
+          "overallRank": 282,
           "modeRank": 50,
           "resultType": "published",
           "resultLabel": "Published",
@@ -27939,7 +27834,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 285,
+          "overallRank": 283,
           "modeRank": 51,
           "resultType": "published",
           "resultLabel": "Published",
@@ -27991,7 +27886,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 325,
+          "overallRank": 323,
           "modeRank": 96,
           "resultType": "published",
           "resultLabel": "Published",
@@ -28043,7 +27938,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 326,
+          "overallRank": 324,
           "modeRank": 97,
           "resultType": "published",
           "resultLabel": "Published",
@@ -28161,7 +28056,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 287,
+          "overallRank": 285,
           "modeRank": 53,
           "resultType": "published",
           "resultLabel": "Published",
@@ -28213,7 +28108,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 318,
+          "overallRank": 316,
           "modeRank": 95,
           "resultType": "published",
           "resultLabel": "Published",
@@ -28265,7 +28160,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 328,
+          "overallRank": 326,
           "modeRank": 88,
           "resultType": "published",
           "resultLabel": "Published",
@@ -28317,7 +28212,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 333,
+          "overallRank": 331,
           "modeRank": 93,
           "resultType": "published",
           "resultLabel": "Published",
@@ -28434,7 +28329,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 288,
+          "overallRank": 286,
           "modeRank": 54,
           "resultType": "published",
           "resultLabel": "Published",
@@ -28551,7 +28446,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 293,
+          "overallRank": 291,
           "modeRank": 59,
           "resultType": "published",
           "resultLabel": "Published",
@@ -28666,7 +28561,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 294,
+          "overallRank": 292,
           "modeRank": 60,
           "resultType": "published",
           "resultLabel": "Published",
@@ -28783,7 +28678,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 295,
+          "overallRank": 293,
           "modeRank": 61,
           "resultType": "published",
           "resultLabel": "Published",
@@ -28900,7 +28795,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 299,
+          "overallRank": 297,
           "modeRank": 64,
           "resultType": "published",
           "resultLabel": "Published",
@@ -28952,7 +28847,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 321,
+          "overallRank": 319,
           "modeRank": 83,
           "resultType": "published",
           "resultLabel": "Published",
@@ -29004,7 +28899,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 334,
+          "overallRank": 332,
           "modeRank": 94,
           "resultType": "published",
           "resultLabel": "Published",
@@ -29121,7 +29016,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 305,
+          "overallRank": 303,
           "modeRank": 69,
           "resultType": "published",
           "resultLabel": "Published",
@@ -29173,7 +29068,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 309,
+          "overallRank": 307,
           "modeRank": 73,
           "resultType": "published",
           "resultLabel": "Published",
@@ -29225,7 +29120,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 346,
+          "overallRank": 344,
           "modeRank": 100,
           "resultType": "published",
           "resultLabel": "Published",
@@ -29340,7 +29235,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 306,
+          "overallRank": 304,
           "modeRank": 70,
           "resultType": "published",
           "resultLabel": "Published",
@@ -29392,7 +29287,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 307,
+          "overallRank": 305,
           "modeRank": 71,
           "resultType": "published",
           "resultLabel": "Published",
@@ -29444,7 +29339,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 308,
+          "overallRank": 306,
           "modeRank": 72,
           "resultType": "published",
           "resultLabel": "Published",
@@ -29561,7 +29456,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 310,
+          "overallRank": 308,
           "modeRank": 74,
           "resultType": "published",
           "resultLabel": "Published",
@@ -29613,7 +29508,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 312,
+          "overallRank": 310,
           "modeRank": 76,
           "resultType": "published",
           "resultLabel": "Published",
@@ -29730,7 +29625,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 311,
+          "overallRank": 309,
           "modeRank": 75,
           "resultType": "published",
           "resultLabel": "Published",
@@ -29782,7 +29677,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 313,
+          "overallRank": 311,
           "modeRank": 77,
           "resultType": "published",
           "resultLabel": "Published",
@@ -29901,8 +29796,8 @@ window.MISTER_LATENCY_DATA = {
             "SNES Controller"
           ],
           "rankMode": "Controller Adapter",
-          "overallRank": 314,
-          "modeRank": 63,
+          "overallRank": 312,
+          "modeRank": 61,
           "resultType": "published",
           "resultLabel": "Published",
           "category": "Controller Adapter",
@@ -30018,7 +29913,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 322,
+          "overallRank": 320,
           "modeRank": 84,
           "resultType": "published",
           "resultLabel": "Published",
@@ -30070,7 +29965,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 323,
+          "overallRank": 321,
           "modeRank": 85,
           "resultType": "published",
           "resultLabel": "Published",
@@ -30122,7 +30017,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 324,
+          "overallRank": 322,
           "modeRank": 86,
           "resultType": "published",
           "resultLabel": "Published",
@@ -30237,7 +30132,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 336,
+          "overallRank": 334,
           "modeRank": 98,
           "resultType": "published",
           "resultLabel": "Published",
@@ -30354,7 +30249,7 @@ window.MISTER_LATENCY_DATA = {
             "Arcade Stick Encoder"
           ],
           "rankMode": "Arcade Stick Encoder",
-          "overallRank": 337,
+          "overallRank": 335,
           "modeRank": 23,
           "resultType": "published",
           "resultLabel": "Published",
@@ -30471,7 +30366,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 338,
+          "overallRank": 336,
           "modeRank": 99,
           "resultType": "published",
           "resultLabel": "Published",
@@ -30588,7 +30483,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 340,
+          "overallRank": 338,
           "modeRank": 97,
           "resultType": "published",
           "resultLabel": "Published",
@@ -30705,7 +30600,7 @@ window.MISTER_LATENCY_DATA = {
             "Supergun"
           ],
           "rankMode": "Supergun",
-          "overallRank": 342,
+          "overallRank": 340,
           "modeRank": 1,
           "resultType": "published",
           "resultLabel": "Published",
@@ -30822,7 +30717,7 @@ window.MISTER_LATENCY_DATA = {
             "Arcade Stick Encoder"
           ],
           "rankMode": "Arcade Stick Encoder",
-          "overallRank": 343,
+          "overallRank": 341,
           "modeRank": 24,
           "resultType": "published",
           "resultLabel": "Published",
@@ -30943,7 +30838,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 345,
+          "overallRank": 343,
           "modeRank": 100,
           "resultType": "published",
           "resultLabel": "Published",
@@ -31060,7 +30955,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 349,
+          "overallRank": 347,
           "modeRank": 101,
           "resultType": "published",
           "resultLabel": "Published",
@@ -31177,7 +31072,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 351,
+          "overallRank": 349,
           "modeRank": 104,
           "resultType": "published",
           "resultLabel": "Published",
@@ -31229,7 +31124,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 352,
+          "overallRank": 350,
           "modeRank": 105,
           "resultType": "published",
           "resultLabel": "Published",
@@ -31281,7 +31176,7 @@ window.MISTER_LATENCY_DATA = {
             "Wireless Controller"
           ],
           "rankMode": "Wireless Controller",
-          "overallRank": 353,
+          "overallRank": 351,
           "modeRank": 106,
           "resultType": "published",
           "resultLabel": "Published",
@@ -31398,7 +31293,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 354,
+          "overallRank": 352,
           "modeRank": 102,
           "resultType": "published",
           "resultLabel": "Published",
@@ -31515,7 +31410,7 @@ window.MISTER_LATENCY_DATA = {
             "Wired Controller"
           ],
           "rankMode": "Wired Controller",
-          "overallRank": 355,
+          "overallRank": 353,
           "modeRank": 103,
           "resultType": "published",
           "resultLabel": "Published",

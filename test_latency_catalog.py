@@ -1562,12 +1562,12 @@ class LatencyCatalogTests(unittest.TestCase):
         self.assertEqual(by_id["published-reflex-adapt"]["name"], "Reflex - Adapt")
         self.assertEqual(by_id["published-reflex-adapt"]["averageMs"], 0.77)
         self.assertEqual(by_id["published-reflex-adapt"]["modeLabel"], "DInput")
-        self.assertEqual(by_id["published-reflex-adapt"]["modeVariantCount"], 3)
+        self.assertEqual(by_id["published-reflex-adapt"]["modeVariantCount"], 2)
         self.assertEqual(
             [variant["modeLabel"] for variant in by_id["published-reflex-adapt"]["modeVariants"]],
-            ["DInput", "DInput", "XInput"],
+            ["DInput", "DInput"],
         )
-        self.assertIn("n64 1p mpg xinput", by_id["published-reflex-adapt"]["searchText"])
+        self.assertNotIn("n64 1p mpg xinput", by_id["published-reflex-adapt"]["searchText"])
 
     def test_requested_cleanup_hides_duplicates_and_adjusts_hori_wii_classic(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -1584,6 +1584,8 @@ class LatencyCatalogTests(unittest.TestCase):
                     ["Reflex", "Adapt", "Reflex - Adapt [N64 1P]", "Wired USB", "Wired", "Controller Adapter", "1.062", "Reflex - Adapt [N64 1P]", "reflex adapt n64 1p", "YES", "TRUE", "2104", "1.64"],
                     ["Reflex", "Adapt", "Reflex - Adapt [N64 2P]", "Wired USB", "Wired", "Controller Adapter", "1.148", "Reflex - Adapt [N64 2P]", "reflex adapt n64 2p", "YES", "TRUE", "2084", "1.89"],
                     ["Reflex", "Adapt", "Reflex - Adapt [N64 1P MPG HID]", "Wired USB", "Wired", "Controller Adapter", "2.053", "Reflex - Adapt [N64 1P MPG HID]", "reflex adapt n64 1p mpg hid", "YES", "TRUE", "6370", "2.69"],
+                    ["Reflex", "Adapt", "Reflex - Adapt [N64 1P MPG Xinput]", "Wired USB", "Wired", "Controller Adapter", "2.042", "Reflex - Adapt [N64 1P MPG Xinput]", "reflex adapt n64 1p mpg xinput", "YES", "TRUE", "5111", "2.68"],
+                    ["Reflex", "Adapt", "Reflex - Adapt [N64 1P MPG Switch]", "Wired USB", "Wired", "Controller Adapter", "2.065", "Reflex - Adapt [N64 1P MPG Switch]", "reflex adapt n64 1p mpg switch", "YES", "TRUE", "2354", "2.68"],
                     ["Reflex", "Adapt N64", "Reflex Adapt N64 [Wired USB Dinput]", "Wired USB", "Wired", "Controller Adapter", "2.95", "Reflex Adapt N64 [Wired USB Dinput]", "reflex adapt n64 wired usb dinput", "YES", "FALSE", "", ""],
                     ["Reflex", "Adapt 3DO", "Reflex Adapt 3DO [Wired USB Dinput]", "Wired USB", "Wired", "Controller Adapter", "1.22", "Reflex Adapt 3DO [Wired USB Dinput]", "reflex adapt 3do wired usb dinput", "YES", "FALSE", "", ""],
                     ["FeralAI", "GP2040 Encoder", "FeralAI GP2040 Encoder [Wired USB]", "Wired USB", "Wired", "Arcade Stick Encoder", "0.772", "FeralAI GP2040 Encoder [Wired USB]", "feralai gp2040 encoder wired usb", "YES", "FALSE", "", ""],
@@ -1619,10 +1621,14 @@ class LatencyCatalogTests(unittest.TestCase):
         reflex_variants = by_name["Reflex - Adapt"]["modeVariants"]
         reflex_measurements = [variant["measurementName"] for variant in reflex_variants]
         self.assertIn("Reflex Adapt 3DO [Wired USB Dinput]", reflex_measurements)
+        three_do = next(variant for variant in reflex_variants if variant["measurementName"] == "Reflex Adapt 3DO [Wired USB Dinput]")
+        self.assertEqual(three_do["deviceTypes"], ["Controller Adapter", "3DO Controller"])
         self.assertIn("Reflex - Adapt [N64 1P]", reflex_measurements)
         self.assertIn("Reflex - Adapt [N64 1P MPG HID]", reflex_measurements)
         self.assertNotIn("Reflex Adapt N64 [Wired USB Dinput]", reflex_measurements)
         self.assertNotIn("Reflex - Adapt [N64 2P]", reflex_measurements)
+        self.assertNotIn("Reflex - Adapt [N64 1P MPG Xinput]", reflex_measurements)
+        self.assertNotIn("Reflex - Adapt [N64 1P MPG Switch]", reflex_measurements)
 
         timville = by_name["Timville - Triple Controller"]
         self.assertEqual(timville["averageMs"], 0.816)
