@@ -147,6 +147,7 @@ DEVICE_TYPE_ORDER = (
     "N64 Controller",
     "GameCube Controller",
     "PC Engine Controller",
+    "Saturn 3D Controller",
     "Saturn Controller",
     "Neo Geo Controller",
     "PSX Controller",
@@ -283,6 +284,7 @@ DEVICE_TYPE_ALIASES = {
     "pc engine controller": "PC Engine Controller",
     "pce controller": "PC Engine Controller",
     "turbografx controller": "PC Engine Controller",
+    "saturn 3d controller": "Saturn 3D Controller",
     "saturn controller": "Saturn Controller",
     "neo geo controller": "Neo Geo Controller",
     "psx controller": "PSX Controller",
@@ -330,6 +332,7 @@ ADAPTER_INPUT_SYSTEM_PATTERNS = (
     ("NES", r"\bnes\b"),
     ("Genesis", r"\bgenesis\b|\bmegadrive\b|mega\s*drive"),
     ("PC Engine", r"\bpce\b|\bpc\s*engine\b|\bturbografx\b|\bnec\s+pi\b"),
+    ("Saturn 3D", r"\bsaturn\s+3d\b"),
     ("Saturn", r"\bsaturn\b"),
     ("Neo Geo", r"\bneo\s*geo\b"),
     ("PSX", r"\bpsx\b|\bplaystation\b|\bps1\b"),
@@ -2283,7 +2286,7 @@ def is_reflex_adapt_hidden_n64_output_mode_item(item: dict[str, Any]) -> bool:
     search = item_search_blob(item)
     if infer_reflex_adapt_system(search) != "N64":
         return False
-    return explicit_output_mode_key(item) in {"xinput", "switch"}
+    return reflex_adapt_variant_profile(item) == "mpg" or explicit_output_mode_key(item) in {"xinput", "switch"}
 
 
 def is_mayflash_wii_classic_baseline_item(item: dict[str, Any]) -> bool:

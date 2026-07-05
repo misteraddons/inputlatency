@@ -1588,6 +1588,7 @@ class LatencyCatalogTests(unittest.TestCase):
                     ["Reflex", "Adapt", "Reflex - Adapt [N64 1P MPG Switch]", "Wired USB", "Wired", "Controller Adapter", "2.065", "Reflex - Adapt [N64 1P MPG Switch]", "reflex adapt n64 1p mpg switch", "YES", "TRUE", "2354", "2.68"],
                     ["Reflex", "Adapt N64", "Reflex Adapt N64 [Wired USB Dinput]", "Wired USB", "Wired", "Controller Adapter", "2.95", "Reflex Adapt N64 [Wired USB Dinput]", "reflex adapt n64 wired usb dinput", "YES", "FALSE", "", ""],
                     ["Reflex", "Adapt 3DO", "Reflex Adapt 3DO [Wired USB Dinput]", "Wired USB", "Wired", "Controller Adapter", "1.22", "Reflex Adapt 3DO [Wired USB Dinput]", "reflex adapt 3do wired usb dinput", "YES", "FALSE", "", ""],
+                    ["Reflex", "Adapt", "Reflex - Adapt [Saturn 3D 1P]", "Wired USB", "Wired", "Controller Adapter", "6.959", "Reflex - Adapt [Saturn 3D 1P]", "reflex adapt saturn 3d 1p", "YES", "TRUE", "2096", "12.503"],
                     ["FeralAI", "GP2040 Encoder", "FeralAI GP2040 Encoder [Wired USB]", "Wired USB", "Wired", "Arcade Stick Encoder", "0.772", "FeralAI GP2040 Encoder [Wired USB]", "feralai gp2040 encoder wired usb", "YES", "FALSE", "", ""],
                     ["FeralAI", "GP2040 Encoder", "FeralAI - GP2040 Encoder", "Wired USB", "Wired", "Arcade Stick Encoder", "0.775", "FeralAI - GP2040 Encoder", "feralai gp2040 encoder", "YES", "TRUE", "10958", "1.28"],
                     ["Timville", "Triple Controller", "Timville - Triple Controller", "Wired USB", "Wired", "Controller Adapter", "0.816", "Timville - Triple Controller", "timville triple controller", "YES", "TRUE", "2611", "1.359"],
@@ -1624,11 +1625,13 @@ class LatencyCatalogTests(unittest.TestCase):
         three_do = next(variant for variant in reflex_variants if variant["measurementName"] == "Reflex Adapt 3DO [Wired USB Dinput]")
         self.assertEqual(three_do["deviceTypes"], ["Controller Adapter", "3DO Controller"])
         self.assertIn("Reflex - Adapt [N64 1P]", reflex_measurements)
-        self.assertIn("Reflex - Adapt [N64 1P MPG HID]", reflex_measurements)
         self.assertNotIn("Reflex Adapt N64 [Wired USB Dinput]", reflex_measurements)
         self.assertNotIn("Reflex - Adapt [N64 2P]", reflex_measurements)
+        self.assertNotIn("Reflex - Adapt [N64 1P MPG HID]", reflex_measurements)
         self.assertNotIn("Reflex - Adapt [N64 1P MPG Xinput]", reflex_measurements)
         self.assertNotIn("Reflex - Adapt [N64 1P MPG Switch]", reflex_measurements)
+        saturn_3d = next(variant for variant in reflex_variants if variant["measurementName"] == "Reflex - Adapt [Saturn 3D 1P]")
+        self.assertEqual(saturn_3d["deviceTypes"], ["Controller Adapter", "Saturn 3D Controller"])
 
         timville = by_name["Timville - Triple Controller"]
         self.assertEqual(timville["averageMs"], 0.816)
