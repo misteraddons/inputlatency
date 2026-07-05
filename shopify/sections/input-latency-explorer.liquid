@@ -1,4 +1,4 @@
-{% assign latency_asset_revision = '20260611-1350' %}
+{% assign latency_asset_revision = '20260705-1036' %}
 {% assign latency_css_revision = '20260625-2325' %}
 {% capture latency_data_asset %}input-latency-data-{{ latency_asset_revision }}.js{% endcapture %}
 {% capture latency_css_asset %}input-latency-explorer-{{ latency_css_revision }}.css{% endcapture %}
@@ -22,7 +22,7 @@
 <script src="{{ latency_data_url }}" defer></script>
 <script src="{{ latency_js_url }}" defer></script>
 
-<!-- Input latency explorer shell revision: latency-assets-20260611-1350 css-20260611-1929. -->
+<!-- Input latency explorer shell revision: latency-assets-20260705-1036 css-20260625-2325. -->
 <section class="input-latency-explorer-app" data-reflex-theme-scope data-latency-url="{{ section.settings.latency_url | escape }}">
   <div class="page-noise" aria-hidden="true"></div>
   <main class="page-shell latency-page">
