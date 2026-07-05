@@ -306,6 +306,7 @@ DEVICE_TYPE_ALIASES = {
 }
 EXCLUDED_RESULT_TYPES = {"experiment", "experimental"}
 REFLEX_ADAPT_SYSTEM_PATTERNS = (
+    ("3DO", r"\b3do\b"),
     ("GameCube", r"\bgame\s*cube\b|\bgamecube\b"),
     ("N64", r"\bn64\b|tribute64|bit controller"),
     ("NES", r"\bnes\b"),
@@ -813,7 +814,12 @@ def is_excluded_latency_item(item: dict[str, Any]) -> bool:
     mode_raw = normalize_text(item.get("modeRaw"))
     if not is_mayflash_arcade_stick_name(name):
         return False
-    return output_mode == "Console" or re.search(r"\bconsole\b", mode_raw, flags=re.IGNORECASE) is not None
+    search = " ".join(normalize_text(item.get(field)) for field in ("name", "measurementName", "modeRaw"))
+    return (
+        output_mode == "Console"
+        or re.search(r"\bconsole\b", mode_raw, flags=re.IGNORECASE) is not None
+        or re.search(r"\bpre-?\s*v\d", search, flags=re.IGNORECASE) is not None
+    )
 
 
 def is_internal_reflex_experimental_device(value: Any) -> bool:
@@ -2214,6 +2220,222 @@ def apply_reflex_adapt_pass_through_adjustments(items: list[dict[str, Any]]) -> 
         item["searchText"] = build_search_text(item)
 
 
+def item_search_blob(item: dict[str, Any]) -> str:
+    return " ".join(
+        normalize_text(item.get(field))
+        for field in (
+            "name",
+            "measurementName",
+            "make",
+            "model",
+            "deviceNorm",
+            "connection",
+            "modeRaw",
+            "outputMode",
+            "modeLabel",
+            "modeDisplay",
+            "category",
+        )
+    )
+
+
+def is_feralai_gp2040_item(item: dict[str, Any]) -> bool:
+    search = item_search_blob(item)
+    return bool(re.search(r"\bferalai\b", search, flags=re.IGNORECASE)) and bool(
+        re.search(r"\bgp2040\b", search, flags=re.IGNORECASE)
+    )
+
+
+def is_hori_fighting_commander_wii_classic_item(item: dict[str, Any]) -> bool:
+    return bool(
+        re.search(
+            r"\bhori\b.*\bfighting\s+commander\s+wii\s+classic\b",
+            item_search_blob(item),
+            flags=re.IGNORECASE,
+        )
+    )
+
+
+def is_hori_wii_classic_mayflash_item(item: dict[str, Any]) -> bool:
+    return is_hori_fighting_commander_wii_classic_item(item) and bool(
+        re.search(r"\bmay\s*flash\b", item_search_blob(item), flags=re.IGNORECASE)
+    )
+
+
+def is_hori_wii_classic_hidden_adapter_item(item: dict[str, Any]) -> bool:
+    if not is_hori_fighting_commander_wii_classic_item(item):
+        return False
+    search = item_search_blob(item)
+    return bool(re.search(r"\bgbro?s?\b|8bitdo\s+gc", search, flags=re.IGNORECASE))
+
+
+def is_reflex_adapt_two_player_item(item: dict[str, Any]) -> bool:
+    if not is_reflex_adapt_adapter_item(item):
+        return False
+    search = " ".join(normalize_text(item.get(field)) for field in ("measurementName", "modeRaw", "name"))
+    return bool(re.search(r"\b2p\b", search, flags=re.IGNORECASE))
+
+
+def is_mayflash_wii_classic_baseline_item(item: dict[str, Any]) -> bool:
+    if not is_controller_adapter_item(item):
+        return False
+    search = item_search_blob(item)
+    return bool(re.search(r"\bmay\s*flash\b", search, flags=re.IGNORECASE)) and bool(
+        re.search(r"\bwii\s+classic\b", search, flags=re.IGNORECASE)
+    )
+
+
+def mayflash_wii_classic_baseline_sort_key(item: dict[str, Any]) -> tuple[int, int, float, str]:
+    search = item_search_blob(item)
+    exact_raw = bool(re.search(r"mayflash\s*-\s*wii\s+classic\s+to\s+usb", search, flags=re.IGNORECASE))
+    return (
+        0 if item.get("hasRawCapture") else 1,
+        0 if exact_raw else 1,
+        item.get("averageMs") if item.get("averageMs") is not None else float("inf"),
+        normalize_text(item.get("measurementName") or item.get("name")).lower(),
+    )
+
+
+def mayflash_wii_classic_baseline(items: list[dict[str, Any]]) -> dict[str, Any] | None:
+    candidates = [
+        item
+        for item in items
+        if is_mayflash_wii_classic_baseline_item(item) and item.get("averageMs") is not None
+    ]
+    return sorted(candidates, key=mayflash_wii_classic_baseline_sort_key)[0] if candidates else None
+
+
+def apply_hori_wii_classic_adapter_adjustments(items: list[dict[str, Any]]) -> None:
+    baseline = mayflash_wii_classic_baseline(items)
+    if not baseline:
+        return
+    adapter_average = baseline.get("averageMs")
+    if adapter_average is None:
+        return
+
+    for item in items:
+        if not is_hori_wii_classic_mayflash_item(item):
+            continue
+        measured_average = item.get("averageMs")
+        if measured_average is None:
+            continue
+        adjusted_average = max(0, measured_average - adapter_average)
+        item["measuredAverageMs"] = measured_average
+        item["adapterAverageMs"] = round_optional(adapter_average)
+        item["adapterMode"] = normalize_text(baseline.get("modeDisplay") or baseline.get("modeRaw") or "Wii Classic to USB")
+        item["adapterSourceName"] = normalize_text(baseline.get("measurementName") or baseline.get("name"))
+        item["averageMs"] = round_optional(adjusted_average)
+        item["averageTier"] = tier_for_average(adjusted_average)
+        item["sameFramePct"] = round_optional(same_frame_from_average(adjusted_average), 2)
+        item["sameFrameSource"] = "Adapter adjusted average-implied"
+        item["metricSource"] = "Raw capture, adapter adjusted" if item.get("hasRawCapture") else "Adapter adjusted"
+        item["modeDisplay"] = mode_display_for_item(item)
+        item["searchText"] = build_search_text(item)
+
+
+def explicit_output_mode_key(item: dict[str, Any]) -> str:
+    mode_text = normalize_text(item.get("modeRaw"))
+    measurement_text = normalize_text(item.get("measurementName"))
+    output_text = normalize_text(item.get("outputMode"))
+    primary = " ".join((mode_text, measurement_text)).lower()
+    if re.search(r"\bx[\s-]?input\b", primary):
+        return "xinput"
+    if re.search(r"\bd[\s-]?input\b|direct\s+input", primary):
+        return "dinput"
+    if re.search(r"\bswitch\b", primary):
+        return "switch"
+    if re.search(r"\bps5\b", primary):
+        return "ps5"
+    if re.search(r"\bps4\b", primary):
+        return "ps4"
+    if re.search(r"\bps3\b", primary):
+        return "ps3"
+
+    output = output_text.lower()
+    if "xinput" in output:
+        return "xinput"
+    if "dinput" in output:
+        return "dinput"
+    return normalize_device_name(output_text or mode_text or measurement_text)
+
+
+def reflex_adapt_variant_profile(item: dict[str, Any]) -> str:
+    search = " ".join(normalize_text(item.get(field)) for field in ("measurementName", "modeRaw", "name"))
+    return "mpg" if re.search(r"\bmpg\b", search, flags=re.IGNORECASE) else "standard"
+
+
+def requested_cleanup_duplicate_key(item: dict[str, Any]) -> tuple[str, ...] | None:
+    search = item_search_blob(item)
+    display_name = normalize_device_name(controller_group_display_name(item))
+
+    if is_reflex_adapt_adapter_item(item):
+        system = infer_reflex_adapt_system(search)
+        return ("reflex-adapt", system, reflex_adapt_variant_profile(item), explicit_output_mode_key(item))
+
+    if is_mayflash_arcade_stick_name(search):
+        return ("mayflash-arcade", display_name, explicit_output_mode_key(item))
+
+    if is_timville_name(search):
+        return ("timville", display_name, explicit_output_mode_key(item) or "usb")
+
+    if is_hori_wii_classic_mayflash_item(item):
+        return ("hori-wii-classic", "mayflash")
+
+    if re.search(r"\bretro[\s-]?bit\b.*\btribute64\s+wireless\b", search, flags=re.IGNORECASE):
+        if re.search(r"\bn64\b", search, flags=re.IGNORECASE):
+            return ("retro-bit-tribute64", "n64")
+        return ("retro-bit-tribute64", explicit_output_mode_key(item))
+
+    return None
+
+
+def requested_cleanup_prefer_item(candidate: dict[str, Any], current: dict[str, Any]) -> bool:
+    candidate_adjusted = candidate.get("adapterAverageMs") is not None
+    current_adjusted = current.get("adapterAverageMs") is not None
+    if candidate_adjusted != current_adjusted:
+        return candidate_adjusted
+    candidate_raw = candidate.get("hasRawCapture") is True
+    current_raw = current.get("hasRawCapture") is True
+    if candidate_raw != current_raw:
+        return candidate_raw
+    return latency_item_sort_key(candidate) < latency_item_sort_key(current)
+
+
+def cleanup_requested_latency_items(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    visible = [
+        item
+        for item in items
+        if not is_feralai_gp2040_item(item)
+        and not is_hori_wii_classic_hidden_adapter_item(item)
+        and not is_reflex_adapt_two_player_item(item)
+    ]
+
+    raw_keys = {
+        key
+        for item in visible
+        if item.get("hasRawCapture") is True
+        for key in [requested_cleanup_duplicate_key(item)]
+        if key is not None
+    }
+    result: list[dict[str, Any]] = []
+    key_indexes: dict[tuple[str, ...], int] = {}
+
+    for item in visible:
+        key = requested_cleanup_duplicate_key(item)
+        if key is not None and item.get("hasRawCapture") is not True and key in raw_keys:
+            continue
+        if key is not None and key in key_indexes:
+            existing_index = key_indexes[key]
+            if requested_cleanup_prefer_item(item, result[existing_index]):
+                result[existing_index] = item
+            continue
+        if key is not None:
+            key_indexes[key] = len(result)
+        result.append(item)
+
+    return result
+
+
 def build_search_text(item: dict[str, Any]) -> str:
     measurement_name = normalize_text(item.get("measurementName"))
     parts = [
@@ -2476,6 +2698,8 @@ def build_latency_payload(
         if not is_excluded_latency_item(item)
     ]
     apply_reflex_adapt_pass_through_adjustments(catalog_items)
+    apply_hori_wii_classic_adapter_adjustments(catalog_items)
+    catalog_items = cleanup_requested_latency_items(catalog_items)
     items = sorted(
         catalog_items,
         key=latency_item_sort_key,

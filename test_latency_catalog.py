@@ -1569,6 +1569,94 @@ class LatencyCatalogTests(unittest.TestCase):
         )
         self.assertIn("n64 1p mpg xinput", by_id["published-reflex-adapt"]["searchText"])
 
+    def test_requested_cleanup_hides_duplicates_and_adjusts_hori_wii_classic(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            public_root = root / "inputlatency"
+            self.write_csv(
+                public_root / "results" / "latency_cleaned_export.csv",
+                [
+                    [
+                        "Make", "Model", "Device", "Connection", "Wired/Wireless", "Category",
+                        "Latency (in ms)", "DeviceClean", "DeviceNorm", "Valid Results",
+                        "HasRawCapture", "N", "P99",
+                    ],
+                    ["Reflex", "Adapt", "Reflex - Adapt [N64 1P]", "Wired USB", "Wired", "Controller Adapter", "1.062", "Reflex - Adapt [N64 1P]", "reflex adapt n64 1p", "YES", "TRUE", "2104", "1.64"],
+                    ["Reflex", "Adapt", "Reflex - Adapt [N64 2P]", "Wired USB", "Wired", "Controller Adapter", "1.148", "Reflex - Adapt [N64 2P]", "reflex adapt n64 2p", "YES", "TRUE", "2084", "1.89"],
+                    ["Reflex", "Adapt", "Reflex - Adapt [N64 1P MPG HID]", "Wired USB", "Wired", "Controller Adapter", "2.053", "Reflex - Adapt [N64 1P MPG HID]", "reflex adapt n64 1p mpg hid", "YES", "TRUE", "6370", "2.69"],
+                    ["Reflex", "Adapt N64", "Reflex Adapt N64 [Wired USB Dinput]", "Wired USB", "Wired", "Controller Adapter", "2.95", "Reflex Adapt N64 [Wired USB Dinput]", "reflex adapt n64 wired usb dinput", "YES", "FALSE", "", ""],
+                    ["Reflex", "Adapt 3DO", "Reflex Adapt 3DO [Wired USB Dinput]", "Wired USB", "Wired", "Controller Adapter", "1.22", "Reflex Adapt 3DO [Wired USB Dinput]", "reflex adapt 3do wired usb dinput", "YES", "FALSE", "", ""],
+                    ["FeralAI", "GP2040 Encoder", "FeralAI GP2040 Encoder [Wired USB]", "Wired USB", "Wired", "Arcade Stick Encoder", "0.772", "FeralAI GP2040 Encoder [Wired USB]", "feralai gp2040 encoder wired usb", "YES", "FALSE", "", ""],
+                    ["FeralAI", "GP2040 Encoder", "FeralAI - GP2040 Encoder", "Wired USB", "Wired", "Arcade Stick Encoder", "0.775", "FeralAI - GP2040 Encoder", "feralai gp2040 encoder", "YES", "TRUE", "10958", "1.28"],
+                    ["Timville", "Triple Controller", "Timville - Triple Controller", "Wired USB", "Wired", "Controller Adapter", "0.816", "Timville - Triple Controller", "timville triple controller", "YES", "TRUE", "2611", "1.359"],
+                    ["Timville", "Triple Controller", "Timville Triple Controller [Wired USB]", "Wired USB", "Wired", "Controller Adapter", "1.033", "Timville Triple Controller [Wired USB]", "timville triple controller wired usb", "YES", "FALSE", "", ""],
+                    ["Mayflash", "F300", "Mayflash - F300 [DInput PS3 FW V1.23]", "Wired USB", "Wired", "Arcade Stick", "1.271", "Mayflash - F300 [DInput PS3 FW V1.23]", "mayflash f300 dinput ps3 fw v1 23", "YES", "TRUE", "8804", "2.16"],
+                    ["Mayflash", "Arcade Stick F300 Rev 1.3", "Mayflash Arcade Stick F300 Rev 1.3 [DInput PS3] FW V1.23", "Wired USB", "Wired", "Arcade Stick", "1.27", "Mayflash Arcade Stick F300 Rev 1.3 [DInput PS3] FW V1.23", "mayflash arcade stick f300 rev 1 3 dinput ps3 fw v1 23", "YES", "FALSE", "", ""],
+                    ["Mayflash", "Arcade Stick F300 Rev 1.3", "Mayflash Arcade Stick F300 Rev 1.3 [PC] FW pre-V1.23", "Wired USB", "Wired", "Arcade Stick", "14.349", "Mayflash Arcade Stick F300 Rev 1.3 [PC] FW pre-V1.23", "mayflash arcade stick f300 rev 1 3 pc fw pre v1 23", "YES", "FALSE", "", ""],
+                    ["Mayflash", "F300", "Mayflash - F300 [Xinput Switch FW V1.23]", "Wired USB", "Wired", "Arcade Stick", "1.405", "Mayflash - F300 [Xinput Switch FW V1.23]", "mayflash f300 xinput switch fw v1 23", "YES", "TRUE", "2393", "2.171"],
+                    ["Mayflash", "Arcade Stick F300 Rev 1.3", "Mayflash Arcade Stick F300 Rev 1.3 [Xinput Switch] FW V1.23", "Wired USB", "Wired", "Arcade Stick", "1.4", "Mayflash Arcade Stick F300 Rev 1.3 [Xinput Switch] FW V1.23", "mayflash arcade stick f300 rev 1 3 xinput switch fw v1 23", "YES", "FALSE", "", ""],
+                    ["Mayflash", "Wii Classic to USB", "Mayflash - Wii Classic to USB", "Wired USB", "Wired", "Controller Adapter", "4.867", "Mayflash - Wii Classic to USB", "mayflash wii classic to usb", "YES", "TRUE", "2093", "8.972"],
+                    ["Hori", "Fighting Commander Wii Classic", "Hori - Fighting Commander Wii Classic [Mayflash]", "Mayflash", "Wired", "Controller", "34.115", "Hori - Fighting Commander Wii Classic [Mayflash]", "hori fighting commander wii classic mayflash", "YES", "TRUE", "2350", "83.285"],
+                    ["Hori", "Fighting Commander Wii Classic", "Hori Fighting Commander Wii Classic [MayFlash Wii Classic USB]", "MayFlash Wii Classic USB", "Wireless", "Controller", "34.115", "Hori Fighting Commander Wii Classic [MayFlash Wii Classic USB]", "hori fighting commander wii classic mayflash wii classic usb", "YES", "FALSE", "", ""],
+                    ["Hori", "Fighting Commander Wii Classic", "Hori - Fighting Commander Wii Classic [GBro]", "GBro", "Wired", "Controller", "36.071", "Hori - Fighting Commander Wii Classic [GBro]", "hori fighting commander wii classic gbro", "YES", "TRUE", "2370", "86.494"],
+                    ["Raphnet", "N64 - 1ms V3.6 - OEM N64", "Raphnet - N64 - 1ms V3.6 - OEM N64", "Wired USB", "Wired", "Controller Adapter", "1.595", "Raphnet - N64 - 1ms V3.6 - OEM N64", "raphnet n64 1ms v3 6 oem n64", "YES", "TRUE", "2223", "2.488"],
+                    ["Raphnet", "SNES Controller to USB Adapter", "Raphnet SNES Controller to USB Adapter [Wired USB]", "Wired USB", "Wired", "Controller Adapter", "1.646", "Raphnet SNES Controller to USB Adapter [Wired USB]", "raphnet snes controller to usb adapter wired usb", "YES", "FALSE", "", ""],
+                    ["Raphnet", "Dreamcast - 1ms v2.02 - OEM DC", "Raphnet - Dreamcast - 1ms v2.02 - OEM DC", "Wired USB", "Wired", "Controller Adapter", "2.966", "Raphnet - Dreamcast - 1ms v2.02 - OEM DC", "raphnet dreamcast 1ms v2 02 oem dc", "YES", "TRUE", "2050", "4.56"],
+                    ["Retro-Bit", "Tribute64 Wireless", "Retro-Bit - Tribute64 Wireless [Xinput]", "2.4GHz USB", "Wireless", "Controller", "4.961", "Retro-Bit - Tribute64 Wireless [Xinput]", "retro bit tribute64 wireless xinput", "YES", "TRUE", "2076", "7.308"],
+                    ["Retro-Bit", "Tribute64 Wireless", "Retro-Bit Tribute64 Wireless [2.4GHz USB Xinput]", "2.4GHz USB", "Wireless", "Controller", "4.96", "Retro-Bit Tribute64 Wireless [2.4GHz USB Xinput]", "retro bit tribute64 wireless 2 4ghz usb xinput", "YES", "FALSE", "", ""],
+                    ["Retro-Bit", "Tribute64 Wireless", "Retro-Bit - Tribute64 Wireless [Dinput]", "2.4GHz USB", "Wireless", "Controller", "5.008", "Retro-Bit - Tribute64 Wireless [Dinput]", "retro bit tribute64 wireless dinput", "YES", "TRUE", "2092", "7.271"],
+                    ["Retro-Bit", "Tribute64 Wireless", "Retro-Bit Tribute64 Wireless [2.4GHz USB Dinput]", "2.4GHz USB", "Wireless", "Controller", "5.01", "Retro-Bit Tribute64 Wireless [2.4GHz USB Dinput]", "retro bit tribute64 wireless 2 4ghz usb dinput", "YES", "FALSE", "", ""],
+                    ["Retro-Bit", "Tribute64 Wireless", "Retro-Bit Tribute64 Wireless [Wireless N64 Reflex Adapt]", "Wireless N64", "Wireless", "Controller Adapter", "6.76", "Retro-Bit Tribute64 Wireless [Wireless N64 Reflex Adapt]", "retro bit tribute64 wireless wireless n64 reflex adapt", "YES", "FALSE", "", ""],
+                    ["Retro-Bit", "Tribute64 Wireless", "Retro-Bit - Tribute64 Wireless [Wireless N64]", "Wireless N64", "Wireless", "Controller Adapter", "6.755", "Retro-Bit - Tribute64 Wireless [Wireless N64]", "retro bit tribute64 wireless wireless n64", "YES", "FALSE", "", ""],
+                ],
+            )
+
+            payload = latency.build_latency_payload(public_root, None, sheet_rows=None)
+
+        by_name = {item["name"]: item for item in payload["items"]}
+        self.assertNotIn("FeralAI - GP2040 Encoder", by_name)
+
+        reflex_variants = by_name["Reflex - Adapt"]["modeVariants"]
+        reflex_measurements = [variant["measurementName"] for variant in reflex_variants]
+        self.assertIn("Reflex Adapt 3DO [Wired USB Dinput]", reflex_measurements)
+        self.assertIn("Reflex - Adapt [N64 1P]", reflex_measurements)
+        self.assertIn("Reflex - Adapt [N64 1P MPG HID]", reflex_measurements)
+        self.assertNotIn("Reflex Adapt N64 [Wired USB Dinput]", reflex_measurements)
+        self.assertNotIn("Reflex - Adapt [N64 2P]", reflex_measurements)
+
+        timville = by_name["Timville - Triple Controller"]
+        self.assertEqual(timville["averageMs"], 0.816)
+        self.assertEqual(timville["modeVariantCount"], 1)
+        self.assertTrue(timville["modeVariants"][0]["hasRawCapture"])
+
+        f300 = by_name["Mayflash - F300"]
+        self.assertEqual(f300["modeVariantCount"], 2)
+        self.assertEqual([variant["measurementName"] for variant in f300["modeVariants"]], [
+            "Mayflash - F300 [DInput PS3 FW V1.23]",
+            "Mayflash - F300 [Xinput Switch FW V1.23]",
+        ])
+
+        hori = by_name["Hori - Fighting Commander Wii Classic"]
+        self.assertEqual(hori["modeVariantCount"], 1)
+        self.assertEqual(hori["averageMs"], 29.248)
+        self.assertEqual(hori["measuredAverageMs"], 34.115)
+        self.assertEqual(hori["adapterAverageMs"], 4.867)
+        self.assertEqual(hori["adapterSourceName"], "Mayflash - Wii Classic to USB")
+
+        raphnet = by_name["Raphnet - Controller Adapter"]
+        self.assertEqual(raphnet["modeVariantCount"], 3)
+
+        tribute64 = by_name["Retro-Bit - Tribute64 Wireless"]
+        self.assertEqual(tribute64["modeVariantCount"], 3)
+        self.assertEqual(
+            [variant["measurementName"] for variant in tribute64["modeVariants"]],
+            [
+                "Retro-Bit - Tribute64 Wireless [Xinput]",
+                "Retro-Bit - Tribute64 Wireless [Dinput]",
+                "Retro-Bit - Tribute64 Wireless [Wireless N64]",
+            ],
+        )
+
     def test_reflex_adapt_make_model_public_rows_stay_consolidated(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
