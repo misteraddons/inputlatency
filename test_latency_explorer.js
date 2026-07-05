@@ -132,6 +132,13 @@ test("latency explorer includes a collapsed testing methodology blurb below the 
   assert.match(explorerStyles, /\.latency-methodology-body/);
 });
 
+test("latency explorer normalizes forced view URLs back to the canonical latency page", () => {
+  assert.match(explorerSource, /function normalizeLatencyCanonicalPath/);
+  assert.match(explorerSource, /params\.get\("view"\) !== "input-latency-explorer"/);
+  assert.match(explorerSource, /window\.history\.replaceState\(window\.history\.state, document\.title, nextUrl\)/);
+  assert.match(explorerSource, /normalizeLatencyCanonicalPath\(\);/);
+});
+
 test("latency explorer leaves most recent 5 pane expanded between hero and filters", () => {
   for (const markup of [explorerMarkup, shopifyMarkup]) {
     const heroPosition = markup.indexOf('<section class="hero">');

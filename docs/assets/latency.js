@@ -161,6 +161,19 @@ function normalizeLatencyUrl(value) {
   return String(value || "").trim();
 }
 
+function normalizeLatencyCanonicalPath() {
+  if (typeof window === "undefined" || !window.location || !window.history) return;
+  const canonicalPath = "/pages/latency";
+  if (window.location.pathname !== canonicalPath) return;
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("view") !== "input-latency-explorer") return;
+  if (params.has("preview_theme_id") || params.has("oseid")) return;
+  const nextUrl = `${canonicalPath}${window.location.hash || ""}`;
+  window.history.replaceState(window.history.state, document.title, nextUrl);
+}
+
+normalizeLatencyCanonicalPath();
+
 function getConfiguredLatencyDataUrl() {
   const globalUrl = normalizeLatencyUrl(globalThis.MISTER_LATENCY_DATA_URL);
   if (globalUrl) return globalUrl;
