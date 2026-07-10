@@ -4,6 +4,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "scripts"))
@@ -55,6 +56,12 @@ class LatencyCatalogTests(unittest.TestCase):
         self.assertEqual(latency.tier_for_average(two_frames_ms + 0.001), "Rust")
         self.assertEqual(latency.tier_for_p99(16.0), "Bronze")
         self.assertEqual(latency.tier_for_p99(25.0), "Copper")
+
+    def test_product_urls_require_http_and_exclude_placeholders_and_source_links(self):
+        self.assertTrue(latency.is_product_or_buy_url("https://www.amazon.com/dp/B012345678"))
+        self.assertFalse(latency.is_product_or_buy_url("-"))
+        self.assertFalse(latency.is_product_or_buy_url("YES"))
+        self.assertFalse(latency.is_product_or_buy_url("https://github.com/example/project"))
 
     def test_build_payload_combines_public_and_private_latency_results(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -1493,6 +1500,54 @@ class LatencyCatalogTests(unittest.TestCase):
         self.assertEqual(item["outputMode"], "XInput")
         self.assertEqual(item["modeLabel"], "XInput")
 
+    def test_sheet_matching_prefers_exact_measurement_name_for_console_modes(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            public_root = root / "inputlatency"
+            self.write_csv(
+                public_root / "results" / "latency_cleaned_export.csv",
+                [
+                    ["Make", "Model", "DeviceClean", "Connection", "Wired/Wireless", "Latency (in ms)", "Valid Results"],
+                    ["Qanba", "Drone", "Qanba Drone [Wired USB PS3]", "Wired USB", "Wired", "3.25", "YES"],
+                    ["Qanba", "Drone", "Qanba Drone [Wired USB PS4]", "Wired USB", "Wired", "3.265", "YES"],
+                ],
+            )
+            sheet_rows = [
+                {
+                    "Make": "Qanba",
+                    "Model": "Drone",
+                    "Device": "Qanba Drone [Wired USB PS3]",
+                    "Mode": "Wired USB PS3",
+                    "Connection": "Wired USB",
+                    "Wired / Wireless": "Wired",
+                    "Joystick ID": "2c22:2003",
+                    "Link": "https://www.amazon.com/dp/B012345678",
+                },
+                {
+                    "Make": "Qanba",
+                    "Model": "Drone",
+                    "Device": "Qanba Drone [Wired USB PS4]",
+                    "Mode": "Wired USB PS4",
+                    "Connection": "Wired USB",
+                    "Wired / Wireless": "Wired",
+                    "Joystick ID": "2c22:2004",
+                    "Amazon": "YES",
+                },
+            ]
+
+            payload = latency.build_latency_payload(public_root, None, sheet_rows=sheet_rows)
+
+        variants = {
+            variant["measurementName"]: variant
+            for variant in payload["items"][0]["modeVariants"]
+        }
+        self.assertEqual(variants["Qanba Drone [Wired USB PS3]"]["modeRaw"], "Wired USB PS3")
+        self.assertEqual(variants["Qanba Drone [Wired USB PS3]"]["joystickId"], "2c22:2003")
+        self.assertEqual(variants["Qanba Drone [Wired USB PS4]"]["modeRaw"], "Wired USB PS4")
+        self.assertEqual(variants["Qanba Drone [Wired USB PS4]"]["joystickId"], "2c22:2004")
+        self.assertEqual(variants["Qanba Drone [Wired USB PS4]"]["buyUrl"], "https://www.amazon.com/dp/B012345678")
+        self.assertNotEqual(variants["Qanba Drone [Wired USB PS4]"]["amazon"], "YES")
+
     def test_sheet_mode_does_not_overwrite_distinct_connection_variants(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -2030,6 +2085,58 @@ class LatencyCatalogTests(unittest.TestCase):
             inline = output.with_suffix(".js").read_text(encoding="utf-8")
             self.assertTrue(inline.startswith("window.MISTER_LATENCY_DATA = "))
             self.assertIn('"generatedAt": "2026-06-06T00:00:00Z"', inline)
+
+    def test_mode_variant_ids_are_unique_when_a_model_name_ends_in_two(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            public_root = root / "inputlatency"
+            self.write_csv(
+                public_root / "results" / "latency_cleaned_export.csv",
+                [
+                    ["Make", "Model", "DeviceClean", "Connection", "Wired/Wireless", "Latency (in ms)", "Valid Results"],
+                    ["Qanba", "Drone", "Qanba Drone [Wired USB PS3]", "Wired USB", "Wired", "3.25", "YES"],
+                    ["Qanba", "Drone", "Qanba Drone [Wired USB PS4]", "Wired USB", "Wired", "3.265", "YES"],
+                    ["Qanba", "Drone 2", "Qanba Drone 2 [Wired USB PS4]", "Wired USB", "Wired", "11.6", "YES"],
+                ],
+            )
+
+            payload = latency.build_latency_payload(public_root, None)
+
+        variant_ids = [
+            variant["id"]
+            for item in payload["items"]
+            for variant in item["modeVariants"]
+        ]
+        self.assertEqual(len(variant_ids), len(set(variant_ids)))
+
+    def test_main_does_not_write_degraded_output_when_sheet_fetch_fails(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            public_root = root / "inputlatency"
+            output = root / "latency.json"
+            self.write_csv(
+                public_root / "results" / "latency_cleaned_export.csv",
+                [
+                    ["DeviceClean", "Connection", "Wired/Wireless", "Latency (in ms)", "Valid Results"],
+                    ["Example Pad", "Wired USB", "Wired", "1.0", "YES"],
+                ],
+            )
+            argv = [
+                "build_latency_catalog.py",
+                "--public-root",
+                str(public_root),
+                "--output",
+                str(output),
+            ]
+            with mock.patch.object(sys, "argv", argv), mock.patch.object(
+                latency,
+                "read_sheet_rows_from_url",
+                side_effect=OSError("offline"),
+            ):
+                with self.assertRaises(SystemExit):
+                    latency.main()
+
+            self.assertFalse(output.exists())
 
 
 if __name__ == "__main__":

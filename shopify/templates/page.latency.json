@@ -8,7 +8,7 @@
         "subtitle": "Browse controller latency measurements - recorded on MiSTer FPGA, but applicable to devices that poll USB at 1 ms.",
         "core_link_text": "Looking for core releases instead?",
         "core_link_label": "Open the MiSTer Core Explorer",
-        "core_link_url": "/pages/mister-core-explorer",
+        "core_link_url": "/pages/cores",
         "latency_url": "https://misteraddons.github.io/inputlatency/data/latency.json"
       }
     }

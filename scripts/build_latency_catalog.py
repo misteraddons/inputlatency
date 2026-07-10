@@ -10,6 +10,7 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 from urllib.request import urlopen
 
 
@@ -439,7 +440,16 @@ def is_source_code_url(value: Any) -> bool:
 
 def is_product_or_buy_url(value: Any) -> bool:
     text = normalize_text(value)
-    return bool(text) and not is_source_code_url(text)
+    parsed = urlparse(text)
+    return parsed.scheme in {"http", "https"} and bool(parsed.netloc) and not is_source_code_url(text)
+
+
+def product_url_from_values(*values: Any) -> str:
+    for value in values:
+        text = normalize_text(value)
+        if is_product_or_buy_url(text):
+            return text
+    return ""
 
 
 def strip_firmware_suffix(value: Any) -> str:
@@ -1153,6 +1163,17 @@ def primary_mode_rank_label(value: Any) -> str:
     return normalize_text(re.split(r"[,;/]", text, maxsplit=1)[0])
 
 
+def output_mode_match_labels(value: Any) -> set[str]:
+    labels = {
+        normalize_text(label)
+        for label in re.split(r"[,;/]", normalize_text(value))
+        if normalize_text(label)
+    }
+    if len(labels) > 1:
+        labels.discard("DInput")
+    return labels
+
+
 def is_wireless_latency_item(item: dict[str, Any]) -> bool:
     tag = normalize_text(item.get("connectionTag"))
     kind = normalize_text(item.get("connectionKind"))
@@ -1626,6 +1647,10 @@ def read_public_rows(public_root: Path) -> list[dict[str, Any]]:
                 row.get("Link"),
                 row.get("Amazon"),
             )
+            link = normalize_text(row.get("Link"))
+            amazon = normalize_text(row.get("Amazon"))
+            if not is_product_or_buy_url(amazon):
+                amazon = ""
             device_types = device_types_from_category_values(
                 category,
                 connection,
@@ -1640,9 +1665,9 @@ def read_public_rows(public_root: Path) -> list[dict[str, Any]]:
                 "deviceNorm": device_norm,
                 "make": normalize_text(row.get("Make")),
                 "model": normalize_text(row.get("Model")),
-                "link": normalize_text(row.get("Link")),
-                "amazon": normalize_text(row.get("Amazon")),
-                "buyUrl": normalize_text(row.get("Amazon")) or normalize_text(row.get("Link")),
+                "link": link,
+                "amazon": amazon,
+                "buyUrl": product_url_from_values(amazon, link),
                 "connection": connection,
                 "connectionKind": connection_kind,
                 "wirelessConnection": wireless_connection,
@@ -1984,10 +2009,11 @@ def sheet_match_output_hint(item: dict[str, Any]) -> str:
 
 
 def sheet_candidate_score(item: dict[str, Any], candidate: dict[str, Any]) -> int:
-    item_output_hint = sheet_match_output_hint(item)
+    item_output = output_mode_for_values(item.get("outputMode"), item.get("modeRaw"))
+    item_output_labels = output_mode_match_labels(item_output)
     candidate_mode_raw = normalize_text(candidate.get("Mode"))
     candidate_output = output_mode_for_values(candidate.get("Output Mode"), candidate_mode_raw)
-    candidate_output_primary = primary_mode_rank_label(candidate_output)
+    candidate_output_labels = output_mode_match_labels(candidate_output)
 
     item_connection_tag = connection_tag_for_values(
         "",
@@ -2004,8 +2030,11 @@ def sheet_candidate_score(item: dict[str, Any], candidate: dict[str, Any]) -> in
     item_connection = normalize_device_name(item.get("connection"))
     candidate_connection = normalize_device_name(candidate.get("Connection"))
 
+    item_measurement = normalize_device_name(item.get("measurementName"))
     item_device = normalize_device_name(item.get("name"))
     candidate_device = normalize_device_name(candidate.get("Device"))
+    item_mode_raw = normalize_device_name(item.get("modeRaw"))
+    candidate_mode = normalize_device_name(candidate_mode_raw)
     item_base = normalize_device_name(strip_version_suffix(strip_variant_suffix(item.get("name"))))
     candidate_base = normalize_device_name(strip_version_suffix(strip_variant_suffix(candidate.get("Device"))))
     item_family = product_family_name(item.get("name"))
@@ -2014,6 +2043,8 @@ def sheet_candidate_score(item: dict[str, Any], candidate: dict[str, Any]) -> in
     candidate_make_model = normalize_device_name(f"{candidate.get('Make')} {candidate.get('Model')}")
 
     score = 0
+    if item_measurement and candidate_device and item_measurement == candidate_device:
+        score += 300
     if item_device and candidate_device and item_device == candidate_device:
         score += 100
     if item_base and candidate_base and item_base == candidate_base:
@@ -2022,10 +2053,12 @@ def sheet_candidate_score(item: dict[str, Any], candidate: dict[str, Any]) -> in
         score += 35
     if item_make_model and candidate_make_model and item_make_model == candidate_make_model:
         score += 30
-    if item_output_hint and candidate_output_primary == item_output_hint:
-        score += 60
-    elif item_output_hint and candidate_output_primary and item_output_hint != candidate_output_primary:
-        score -= 45
+    if item_mode_raw and candidate_mode and item_mode_raw == candidate_mode:
+        score += 120
+    if item_output_labels and candidate_output_labels == item_output_labels:
+        score += 80
+    elif item_output_labels and candidate_output_labels and candidate_output_labels != item_output_labels:
+        score -= 80
     if item_connection and candidate_connection and item_connection == candidate_connection:
         score += 50
     if item_connection_tag and candidate_connection_tag and item_connection_tag == candidate_connection_tag:
@@ -2034,23 +2067,64 @@ def sheet_candidate_score(item: dict[str, Any], candidate: dict[str, Any]) -> in
 
 
 def sheet_candidate_mode_compatible(item: dict[str, Any], candidate: dict[str, Any]) -> bool:
-    item_output_hint = sheet_match_output_hint(item)
-    candidate_output = primary_mode_rank_label(output_mode_for_values(candidate.get("Output Mode"), candidate.get("Mode")))
-    return not item_output_hint or not candidate_output or item_output_hint == candidate_output
+    item_output = output_mode_match_labels(
+        output_mode_for_values(item.get("outputMode"), item.get("modeRaw"))
+    )
+    candidate_output = output_mode_match_labels(
+        output_mode_for_values(candidate.get("Output Mode"), candidate.get("Mode"))
+    )
+    return not item_output or not candidate_output or item_output == candidate_output
+
+
+def sheet_candidates_for_item(
+    item: dict[str, Any],
+    lookup: dict[str, list[dict[str, Any]]],
+) -> list[dict[str, Any]]:
+    candidates: list[dict[str, Any]] = []
+    seen: set[int] = set()
+    probes = (
+        {"Device": item.get("measurementName"), "Make": item.get("make"), "Model": item.get("model")},
+        {"Device": item.get("name"), "Make": item.get("make"), "Model": item.get("model")},
+    )
+    for probe in probes:
+        for key in sheet_match_keys(probe):
+            for candidate in lookup.get(key, []):
+                candidate_id = id(candidate)
+                if candidate_id not in seen:
+                    seen.add(candidate_id)
+                    candidates.append(candidate)
+    return candidates
 
 
 def find_sheet_match(item: dict[str, Any], lookup: dict[str, list[dict[str, Any]]]) -> dict[str, Any] | None:
-    candidates: list[dict[str, Any]] = []
-    seen: set[int] = set()
-    for key in sheet_match_keys({"Device": item.get("name"), "Make": item.get("make"), "Model": item.get("model")}):
-        for candidate in lookup.get(key, []):
-            candidate_id = id(candidate)
-            if candidate_id not in seen:
-                seen.add(candidate_id)
-                candidates.append(candidate)
+    candidates = sheet_candidates_for_item(item, lookup)
     if not candidates:
         return None
 
+    measurement_name = normalize_device_name(item.get("measurementName"))
+    exact_candidates = [
+        candidate
+        for candidate in candidates
+        if measurement_name
+        and normalize_device_name(candidate.get("Device")) == measurement_name
+    ]
+    if exact_candidates:
+        candidates = exact_candidates
+
+    return max(candidates, key=lambda candidate: sheet_candidate_score(item, candidate))
+
+
+def find_sheet_product_match(
+    item: dict[str, Any],
+    lookup: dict[str, list[dict[str, Any]]],
+) -> dict[str, Any] | None:
+    candidates = [
+        candidate
+        for candidate in sheet_candidates_for_item(item, lookup)
+        if product_url_from_values(candidate.get("Amazon"), candidate.get("Link"))
+    ]
+    if not candidates:
+        return None
     return max(candidates, key=lambda candidate: sheet_candidate_score(item, candidate))
 
 
@@ -2063,9 +2137,14 @@ def augment_items_with_sheet_links(items: list[dict[str, Any]], sheet_rows: list
             continue
 
         is_published = item.get("resultType") == "published"
-        link = normalize_text(match.get("Link"))
-        amazon = normalize_text(match.get("Amazon"))
-        price = normalize_text(match.get("Price"))
+        product_match = find_sheet_product_match(item, lookup) or match
+        exact_link = normalize_text(match.get("Link"))
+        exact_amazon = normalize_text(match.get("Amazon"))
+        product_link = normalize_text(product_match.get("Link"))
+        product_amazon = normalize_text(product_match.get("Amazon"))
+        link = product_url_from_values(exact_link) or product_url_from_values(product_link)
+        amazon = product_url_from_values(exact_amazon) or product_url_from_values(product_amazon)
+        price = normalize_text(match.get("Price")) or normalize_text(product_match.get("Price"))
         date_added = sheet_date_added(match)
         sheet_category_value = sheet_category(match)
         sheet_face_buttons_value = sheet_face_buttons(match)
@@ -2150,13 +2229,19 @@ def augment_items_with_sheet_links(items: list[dict[str, Any]], sheet_rows: list
         )
         item["isOpenSource"] = is_open_source
         item["sourceStatus"] = source_status
-        item["sourceUrl"] = source_url_from_values(source_url, item.get("link"), link, item.get("amazon"), amazon)
+        item["sourceUrl"] = source_url_from_values(
+            source_url,
+            exact_link,
+            product_link,
+            item.get("link"),
+            item.get("amazon"),
+        )
         apply_item_classification(item)
         apply_source_firmware_status(item)
         apply_sale_status_overrides(item)
         item["modeDisplay"] = mode_display_for_item(item)
         if is_published:
-            item["buyUrl"] = item.get("amazon") or item.get("link") or ""
+            item["buyUrl"] = product_url_from_values(item.get("amazon"), item.get("link"), amazon, link)
         item["searchText"] = build_search_text(item)
         if is_published and item["buyUrl"]:
             linked += 1
@@ -2562,13 +2647,20 @@ def median(values: list[float]) -> float | None:
 
 
 def unique_ids(items: list[dict[str, Any]]) -> None:
-    seen: dict[str, int] = {}
+    original_ids = {item["id"] for item in items}
+    used: set[str] = set()
     for item in items:
-        item_id = item["id"]
-        count = seen.get(item_id, 0)
-        seen[item_id] = count + 1
-        if count:
-            item["id"] = f"{item_id}-{count + 1}"
+        base_id = item["id"]
+        candidate = base_id
+        suffix = 2
+        while candidate in used:
+            candidate = f"{base_id}-{suffix}"
+            suffix += 1
+            while candidate in original_ids and candidate != base_id:
+                candidate = f"{base_id}-{suffix}"
+                suffix += 1
+        item["id"] = candidate
+        used.add(candidate)
 
 
 def latency_item_sort_key(item: dict[str, Any]) -> tuple[float, str, str]:
@@ -2779,7 +2871,11 @@ def main() -> int:
             try:
                 sheet_rows = read_sheet_rows_from_url(args.sheet_csv_url)
             except OSError as error:
-                print(f"Warning: could not load sheet product links: {error}", file=sys.stderr)
+                raise SystemExit(
+                    "Could not load spreadsheet metadata. Use --sheet-csv with a verified cache "
+                    "or --no-sheet-links for an intentional metadata-free build. "
+                    f"Original error: {error}"
+                ) from error
     payload = build_latency_payload(args.public_root, private_root, sheet_rows=sheet_rows)
     write_payload(payload, args.output)
     linked = payload["summary"].get("linkedItems", 0)

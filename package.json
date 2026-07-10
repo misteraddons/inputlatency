@@ -1,0 +1,12 @@
+{
+  "name": "inputlatency-explorer",
+  "private": true,
+  "scripts": {
+    "test": "npm run test:unit && npm run test:browser",
+    "test:unit": "node --test test_latency_explorer.js",
+    "test:browser": "node test_latency_browser.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.61.1"
+  }
+}

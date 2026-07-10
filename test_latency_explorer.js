@@ -300,7 +300,10 @@ test("list mode summarizes controllers tested over usb plus wireless transports"
 test("rank badges use catalog-global ranks instead of filtered result ranks", () => {
   assert.match(explorerSource, /assignLatencyDisplayRanks\(latencyState\.items\)/);
   assert.doesNotMatch(explorerSource, /assignLatencyDisplayRanks\(filtered\)/);
-  assert.match(explorerSource, /modeRank:\s*selected\.modeRank\s*\?\?\s*item\.modeRank/);
+  assert.match(explorerSource, /overallRank:\s*item\.overallRank/);
+  assert.match(explorerSource, /modeRank:\s*item\.modeRank/);
+  assert.doesNotMatch(explorerSource, /overallRank:\s*selected\.overallRank/);
+  assert.doesNotMatch(explorerSource, /modeRank:\s*selected\.modeRank/);
   assert.match(explorerSource, /title:\s*"Ranked by average latency across all results"/);
   assert.match(explorerSource, /title:\s*`Ranked by average latency within all \$\{item\.rankMode\} results`/);
 });

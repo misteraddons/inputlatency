@@ -1758,9 +1758,9 @@ function resolveLatencyDisplayItem(item, filters) {
     modeVariants: item.modeVariants,
     modeVariantCount: item.modeVariantCount,
     displayVariantId: selected.id,
-    rankMode: selected.rankMode || item.rankMode,
-    overallRank: selected.overallRank ?? item.overallRank,
-    modeRank: selected.modeRank ?? item.modeRank,
+    rankMode: item.rankMode,
+    overallRank: item.overallRank,
+    modeRank: item.modeRank,
   };
 }
 

@@ -24,10 +24,19 @@ The current interactive explorer is published from `docs/latency.html`. It uses 
 ### Build the explorer data
 
 ```bash
-python scripts/build_latency_catalog.py
+python scripts/build_latency_catalog.py --no-private --sheet-csv results/latency_sheet_cache.csv
 ```
 
-The generator reads this repo's public latency export from `results/latency_cleaned_export.csv`, augments product metadata from the Google Sheet when available, and also includes private capture rows from the sibling `input-latency-private` repo unless `--no-private` is passed.
+The generator reads this repo's public latency export from `results/latency_cleaned_export.csv` and augments product metadata from the verified sheet cache. A default build fetches the live Google Sheet and fails before writing output if that fetch fails. Use `--no-sheet-links` only for an intentional metadata-free build, and `--include-private` only for a private preview.
+
+Run the complete verification set with:
+
+```bash
+python -m unittest test_latency_catalog.py test_update_prices.py
+npm install
+npx playwright install chromium
+npm test
+```
 
 ## R latency report
 

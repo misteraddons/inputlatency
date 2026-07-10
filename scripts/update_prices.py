@@ -27,6 +27,10 @@ import os
 import re
 import sys
 import time
+from collections.abc import Callable
+from urllib.error import HTTPError
+from urllib.parse import urlparse
+from urllib.request import Request, urlopen
 
 logging.basicConfig(
     level=logging.INFO,
@@ -49,10 +53,69 @@ def extract_asin(url: str) -> str | None:
         r"amazon\.[^/]+/([A-Z0-9]{10})(?:[/?]|$)",
     ]
     for pattern in patterns:
-        match = re.search(pattern, url)
+        match = re.search(pattern, url, flags=re.IGNORECASE)
         if match:
-            return match.group(1)
+            return match.group(1).upper()
     return None
+
+
+def expand_product_url(url: str) -> str:
+    """Follow an Amazon short link and return its destination URL."""
+    headers = {"User-Agent": "Mozilla/5.0 (compatible; inputlatency-price-updater/1.0)"}
+    request = Request(url, headers=headers, method="HEAD")
+    try:
+        with urlopen(request, timeout=15) as response:
+            return response.geturl()
+    except HTTPError:
+        request = Request(url, headers=headers, method="GET")
+        with urlopen(request, timeout=15) as response:
+            return response.geturl()
+
+
+def resolve_asin(url: str, expand_url: Callable[[str], str] = expand_product_url) -> str | None:
+    asin = extract_asin(url)
+    if asin:
+        return asin
+
+    host = urlparse(url).netloc.lower().split(":", 1)[0]
+    if host not in {"amzn.to", "www.amzn.to", "a.co", "www.a.co"}:
+        return None
+    return extract_asin(expand_url(url))
+
+
+def row_product_url(row: list[str], amazon_col: int | None, link_col: int | None) -> str:
+    for column in (amazon_col, link_col):
+        if column is None or column >= len(row):
+            continue
+        value = row[column].strip()
+        parsed = urlparse(value)
+        if parsed.scheme in {"http", "https"} and parsed.netloc:
+            return value
+    return ""
+
+
+def collect_row_asins(
+    all_values: list[list[str]],
+    amazon_col: int | None,
+    link_col: int | None,
+    resolve: Callable[[str], str | None] = resolve_asin,
+) -> dict[int, str]:
+    row_asins: dict[int, str] = {}
+    resolved_urls: dict[str, str | None] = {}
+    for row_idx, row in enumerate(all_values[1:], start=2):
+        url = row_product_url(row, amazon_col, link_col)
+        if not url:
+            continue
+        if url not in resolved_urls:
+            try:
+                resolved_urls[url] = resolve(url)
+            except OSError as error:
+                log.warning("Could not resolve product URL %s: %s", url, error)
+                resolved_urls[url] = None
+        asin = resolved_urls[url]
+        if asin:
+            row_asins[row_idx] = asin
+    return row_asins
 
 
 def get_sheet_client():
@@ -86,8 +149,7 @@ def fetch_prices_paapi(asins: list[str]) -> dict[str, float]:
     partner_tag = os.environ.get("AMAZON_PARTNER_TAG", "")
 
     if not all([access_key, secret_key, partner_tag]):
-        log.warning("Amazon PA-API credentials not configured; skipping price fetch")
-        return {}
+        raise RuntimeError("Amazon PA-API credentials are not configured")
 
     try:
         from paapi5_python_sdk.api.default_api import DefaultApi
@@ -96,13 +158,13 @@ def fetch_prices_paapi(asins: list[str]) -> dict[str, float]:
         from paapi5_python_sdk.models.partner_type import PartnerType
         from paapi5_python_sdk.rest import ApiException
     except ImportError:
-        log.warning("paapi5-python-sdk not installed; skipping price fetch")
-        return {}
+        raise RuntimeError("paapi5-python-sdk is not installed")
 
     api = DefaultApi(access_key=access_key, secret_key=secret_key, host="webservices.amazon.com", region="us-east-1")
     resources = [GetItemsResource.OFFERSLISTINGSPRICE]
 
     prices: dict[str, float] = {}
+    failed_batches = 0
     # PA-API allows up to 10 items per request
     for batch_start in range(0, len(asins), 10):
         batch = asins[batch_start : batch_start + 10]
@@ -122,12 +184,17 @@ def fetch_prices_paapi(asins: list[str]) -> dict[str, float]:
                             prices[item.asin] = listing.price.amount
         except ApiException as e:
             log.error("PA-API error for batch %s: %s", batch, e)
+            failed_batches += 1
         except Exception as e:
             log.error("Unexpected error for batch %s: %s", batch, e)
+            failed_batches += 1
 
         if batch_start + 10 < len(asins):
             time.sleep(1)  # Rate limiting
 
+    batch_count = (len(asins) + 9) // 10
+    if batch_count and failed_batches == batch_count:
+        raise RuntimeError("Every Amazon PA-API request failed")
     return prices
 
 
@@ -163,31 +230,26 @@ def main():
         log.error("No 'Price' column found in the spreadsheet header")
         sys.exit(1)
 
-    url_col = amazon_col if amazon_col is not None else link_col
-    if url_col is None:
+    if amazon_col is None and link_col is None:
         log.error("Neither 'Amazon' nor 'Link' column found")
         sys.exit(1)
 
-    log.info("Using column %d ('%s') for URLs, column %d for Price", url_col, header[url_col], price_col)
+    log.info("Using per-row URLs from Amazon and Link columns; Price column is %d", price_col)
 
     # Collect ASINs
-    row_asins: dict[int, str] = {}  # row_index -> asin
-    for row_idx, row in enumerate(all_values[1:], start=2):
-        if url_col < len(row):
-            asin = extract_asin(row[url_col])
-            if asin:
-                row_asins[row_idx] = asin
+    row_asins = collect_row_asins(all_values, amazon_col, link_col)
 
-    unique_asins = list(set(row_asins.values()))
+    unique_asins = sorted(set(row_asins.values()))
     log.info("Found %d rows with Amazon ASINs (%d unique)", len(row_asins), len(unique_asins))
 
     if not unique_asins:
-        log.info("No ASINs to look up; exiting")
-        return
+        raise RuntimeError("No Amazon ASINs could be resolved from the spreadsheet URLs")
 
     # Fetch prices
     prices = fetch_prices_paapi(unique_asins)
     log.info("Fetched prices for %d / %d ASINs", len(prices), len(unique_asins))
+    if not prices:
+        raise RuntimeError("Amazon PA-API returned no prices")
 
     # Apply updates
     updates = 0
@@ -216,4 +278,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except RuntimeError as error:
+        log.error("%s", error)
+        raise SystemExit(1) from error

@@ -1,29 +1,33 @@
-{% assign latency_asset_revision = '20260705-1036' %}
-{% assign latency_css_revision = '20260625-2325' %}
+{% assign latency_asset_revision = '20260709-1659' %}
+{% assign latency_css_revision = '20260709-1623' %}
 {% capture latency_data_asset %}input-latency-data-{{ latency_asset_revision }}.js{% endcapture %}
 {% capture latency_css_asset %}input-latency-explorer-{{ latency_css_revision }}.css{% endcapture %}
 {% capture latency_js_asset %}input-latency-explorer-{{ latency_asset_revision }}.js{% endcapture %}
 {% assign latency_data_url = latency_data_asset | asset_url %}
 {% assign latency_css_url = latency_css_asset | asset_url %}
 {% assign latency_js_url = latency_js_asset | asset_url %}
-<script>
-  (function () {
-    try {
-      var theme = localStorage.getItem('reflex-theme');
-      if (theme === 'lab' || theme === 'light') {
-        document.documentElement.setAttribute('data-reflex-theme', 'lab');
-      }
-    } catch (error) {
-    }
-  })();
-</script>
+{% assign core_link_url = section.settings.core_link_url %}
+{% if core_link_url == blank or core_link_url == '/pages/mister-core-explorer' %}
+  {% assign core_link_url = '/pages/cores' %}
+{% endif %}
 {{ 'reflex.css' | asset_url | stylesheet_tag }}
 {{ latency_css_url | stylesheet_tag }}
 <script src="{{ latency_data_url }}" defer></script>
 <script src="{{ latency_js_url }}" defer></script>
 
-<!-- Input latency explorer shell revision: latency-assets-20260705-1036 css-20260625-2325. -->
+<!-- Input latency explorer shell revision: latency-assets-20260709-1659 css-20260709-1623. -->
 <section class="input-latency-explorer-app" data-reflex-theme-scope data-latency-url="{{ section.settings.latency_url | escape }}">
+  <script>
+    (function (scope) {
+      try {
+        var theme = localStorage.getItem('reflex-theme');
+        if (theme === 'lab' || theme === 'light') {
+          scope.setAttribute('data-reflex-theme', 'lab');
+        }
+      } catch (error) {
+      }
+    })(document.currentScript.parentElement);
+  </script>
   <div class="page-noise" aria-hidden="true"></div>
   <main class="page-shell latency-page">
     <div class="rx-theme-toolbar">
@@ -45,7 +49,7 @@
         </p>
         <p class="hero-linkline">
           {{ section.settings.core_link_text }}
-          <a href="{{ section.settings.core_link_url }}">{{ section.settings.core_link_label }}</a>.
+          <a href="{{ core_link_url }}">{{ section.settings.core_link_label }}</a>.
         </p>
         <div class="hero-stats latency-hero-stats" id="latencyHeroStats"></div>
         <details class="latency-methodology">
@@ -218,9 +222,8 @@
 <script>
   (function initReflexThemeToggle() {
     var storageKey = 'reflex-theme';
-    var root = document.documentElement;
-    var scopes = [root].concat(Array.prototype.slice.call(document.querySelectorAll('[data-reflex-theme-scope]')));
-    var buttons = Array.prototype.slice.call(document.querySelectorAll('[data-reflex-theme-option]'));
+    var scope = document.currentScript.previousElementSibling;
+    var buttons = Array.prototype.slice.call(scope.querySelectorAll('[data-reflex-theme-option]'));
 
     function normalize(theme) {
       return theme === 'lab' || theme === 'light' ? 'lab' : 'dark';
@@ -228,13 +231,11 @@
 
     function applyTheme(theme) {
       var activeTheme = normalize(theme);
-      scopes.forEach(function (scope) {
-        if (activeTheme === 'lab') {
-          scope.setAttribute('data-reflex-theme', 'lab');
-        } else {
-          scope.removeAttribute('data-reflex-theme');
-        }
-      });
+      if (activeTheme === 'lab') {
+        scope.setAttribute('data-reflex-theme', 'lab');
+      } else {
+        scope.removeAttribute('data-reflex-theme');
+      }
       buttons.forEach(function (button) {
         button.setAttribute('aria-pressed', String(normalize(button.getAttribute('data-reflex-theme-option')) === activeTheme));
       });
@@ -296,7 +297,7 @@
       "type": "text",
       "id": "core_link_url",
       "label": "Core explorer URL",
-      "default": "/pages/mister-core-explorer"
+      "default": "/pages/cores"
     },
     {
       "type": "text",

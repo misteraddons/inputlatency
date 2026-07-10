@@ -1,0 +1,143 @@
+import assert from "node:assert/strict";
+import { createServer } from "node:http";
+import { readFile } from "node:fs/promises";
+import { extname, resolve, sep } from "node:path";
+import { fileURLToPath } from "node:url";
+import { chromium } from "playwright";
+
+
+const repoRoot = fileURLToPath(new URL(".", import.meta.url));
+const expectedItemCount = JSON.parse(
+  await readFile(resolve(repoRoot, "docs/data/latency.json"), "utf8"),
+).summary.totalItems;
+const contentTypes = new Map([
+  [".css", "text/css; charset=utf-8"],
+  [".html", "text/html; charset=utf-8"],
+  [".js", "text/javascript; charset=utf-8"],
+  [".json", "application/json; charset=utf-8"],
+  [".svg", "image/svg+xml"],
+]);
+
+function startStaticServer() {
+  const server = createServer(async (request, response) => {
+    try {
+      const pathname = decodeURIComponent(new URL(request.url || "/", "http://127.0.0.1").pathname);
+      const relativePath = pathname === "/" ? "docs/latency.html" : pathname.replace(/^\/+/, "");
+      const absolutePath = resolve(repoRoot, relativePath);
+      if (!absolutePath.startsWith(`${resolve(repoRoot)}${sep}`)) {
+        response.writeHead(403).end("Forbidden");
+        return;
+      }
+      const body = await readFile(absolutePath);
+      response.writeHead(200, { "Content-Type": contentTypes.get(extname(absolutePath)) || "application/octet-stream" });
+      response.end(body);
+    } catch (error) {
+      response.writeHead(error && error.code === "ENOENT" ? 404 : 500).end("Not found");
+    }
+  });
+  return new Promise((accept, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", () => accept(server));
+  });
+}
+
+function parseRank(text) {
+  return Number(/#(\d+)/.exec(text || "")?.[1] || 0);
+}
+
+async function assertTitlesFit(page) {
+  const clipped = await page.locator(".latency-grid.view-list .card-title").evaluateAll((titles) => titles
+    .filter((title) => title.scrollHeight > title.clientHeight + 1)
+    .map((title) => ({ text: title.textContent.trim(), clientHeight: title.clientHeight, scrollHeight: title.scrollHeight })));
+  assert.deepEqual(clipped, [], `Clipped list titles: ${JSON.stringify(clipped)}`);
+}
+
+async function assertRankBounds(page) {
+  const cardCount = await page.locator(".latency-card").count();
+  const ranks = await page.locator(".tag-rank-overall").allTextContents();
+  const maxRank = Math.max(...ranks.map(parseRank));
+  assert.equal(cardCount, expectedItemCount);
+  assert.ok(maxRank <= cardCount, `Maximum overall rank ${maxRank} exceeds ${cardCount} consolidated results`);
+}
+
+async function applyShopifyStyles(page) {
+  await page.evaluate(async () => {
+    for (const link of document.querySelectorAll('link[rel="stylesheet"]')) {
+      if (/assets\/(reflex|mister-explorer|input-latency)\.css/.test(link.getAttribute("href") || "")) {
+        link.remove();
+      }
+    }
+    document.body.classList.add("input-latency-explorer-app");
+    const loadStyle = (href) => new Promise((accept, reject) => {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = href;
+      link.onload = accept;
+      link.onerror = reject;
+      document.head.appendChild(link);
+    });
+    await loadStyle("/shopify/assets/reflex.css");
+    await loadStyle("/shopify/assets/input-latency-explorer.css");
+  });
+}
+
+const server = await startStaticServer();
+const address = server.address();
+const browser = await chromium.launch({ headless: true });
+const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+const pageErrors = [];
+page.on("pageerror", (error) => pageErrors.push(error.message));
+
+try {
+  await page.goto(`http://127.0.0.1:${address.port}/docs/latency.html`, { waitUntil: "networkidle" });
+  await page.locator(".latency-card").first().waitFor();
+  await page.evaluate(() => document.fonts.ready);
+
+  await assertRankBounds(page);
+  await assertTitlesFit(page);
+
+  const adaptCard = page.locator(".latency-card").filter({ has: page.locator(".card-title", { hasText: /^Reflex - Adapt$/ }) }).first();
+  const initialAdaptRank = parseRank(await adaptCard.locator(".tag-rank-overall").textContent());
+  await page.locator("#latencyCategorySelect").selectOption({ label: "Controller Adapter" });
+  await page.locator("#latencyAdapterInputSelect").selectOption({ label: "N64 Controller" });
+  const filteredAdaptCard = page.locator(".latency-card").filter({ has: page.locator(".card-title", { hasText: /^Reflex - Adapt$/ }) }).first();
+  assert.equal(parseRank(await filteredAdaptCard.locator(".tag-rank-overall").textContent()), initialAdaptRank);
+
+  await page.locator(".latency-recent-item").first().click();
+  await page.locator(".latency-card.is-selected .latency-detail-panel:not([hidden])").waitFor();
+  assert.equal(await page.locator(".latency-card").count(), 1);
+
+  await page.locator("#latencySearchInput").fill("Reflex - Adapt");
+  const detailsCard = page.locator(".latency-card").filter({ has: page.locator(".card-title", { hasText: /^Reflex - Adapt$/ }) }).first();
+  await detailsCard.focus();
+  await page.keyboard.press("Enter");
+  await detailsCard.locator(".latency-mode-variant").first().waitFor();
+  const fontSizes = await detailsCard.evaluate((card) => ({
+    detail: getComputedStyle(card.querySelector(".latency-detail-item strong")).fontSize,
+    mode: getComputedStyle(card.querySelector(".latency-mode-variant strong")).fontSize,
+  }));
+  assert.equal(fontSizes.detail, fontSizes.mode);
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.locator("#latencySearchInput").fill("");
+  await assertTitlesFit(page);
+  assert.deepEqual(pageErrors, []);
+
+  const shopifyPage = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const shopifyPageErrors = [];
+  shopifyPage.on("pageerror", (error) => shopifyPageErrors.push(error.message));
+  await shopifyPage.goto(`http://127.0.0.1:${address.port}/docs/latency.html`, { waitUntil: "networkidle" });
+  await shopifyPage.locator(".latency-card").first().waitFor();
+  await applyShopifyStyles(shopifyPage);
+  await shopifyPage.evaluate(() => document.fonts.ready);
+  await assertRankBounds(shopifyPage);
+  await assertTitlesFit(shopifyPage);
+  await shopifyPage.setViewportSize({ width: 390, height: 844 });
+  await assertTitlesFit(shopifyPage);
+  assert.deepEqual(shopifyPageErrors, []);
+} finally {
+  await browser.close();
+  await new Promise((accept) => server.close(accept));
+}
+
+console.log("Browser smoke checks passed");

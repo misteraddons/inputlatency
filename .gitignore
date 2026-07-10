@@ -2,3 +2,5 @@
 .DS_Store
 nul
 __pycache__/
+node_modules/
+.playwright-cli/

@@ -11,7 +11,7 @@ Files:
 To rebuild the latency data from this repo:
 
 ```powershell
-python scripts/build_latency_catalog.py
+python scripts/build_latency_catalog.py --no-private --sheet-csv results/latency_sheet_cache.csv
 ```
 
 That writes:
@@ -22,11 +22,12 @@ That writes:
 For Shopify, copy these assets into the theme:
 
 - `shopify/assets/input-latency-data.js`
-- `shopify/assets/input-latency-data-20260609-1704.js`
+- the revisioned `shopify/assets/input-latency-data-<revision>.js` referenced by the section
 - `shopify/assets/input-latency-explorer.css`
-- `shopify/assets/input-latency-explorer-20260609-1704.css`
+- the revisioned `shopify/assets/input-latency-explorer-<revision>.css` referenced by the section
 - `shopify/assets/input-latency-explorer.js`
-- `shopify/assets/input-latency-explorer-20260609-1704.js`
+- the revisioned `shopify/assets/input-latency-explorer-<revision>.js` referenced by the section
 - `shopify/assets/reflex.css`
 - `shopify/sections/input-latency-explorer.liquid`
 - `shopify/templates/page.input-latency-explorer.json`
+- `shopify/templates/page.latency.json`
