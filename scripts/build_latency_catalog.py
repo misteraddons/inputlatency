@@ -18,6 +18,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_PUBLIC_ROOT = REPO_ROOT
 DEFAULT_PRIVATE_ROOT = REPO_ROOT.parent / "input-latency-private"
 DEFAULT_OUTPUT = REPO_ROOT / "docs" / "data" / "latency.json"
+DEFAULT_SHOPIFY_DATA_OUTPUT = REPO_ROOT / "shopify" / "assets" / "input-latency-data.js"
 DEFAULT_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/export?format=csv&gid=0"
 SHEET_DATE_ADDED_BA_INDEX = 52
 SHEET_DATE_ADDED_BA_KEY = "_sheetDateAddedBA"
@@ -2969,14 +2970,19 @@ def build_latency_payload(
     }
 
 
-def write_payload(payload: dict[str, Any], output: Path) -> None:
+def write_payload(
+    payload: dict[str, Any],
+    output: Path,
+    shopify_data_output: Path | None = None,
+) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     json_text = json.dumps(payload, indent=2, ensure_ascii=False)
+    js_text = "window.MISTER_LATENCY_DATA = " + json_text + ";\n"
     output.write_text(json_text + "\n", encoding="utf-8")
-    output.with_suffix(".js").write_text(
-        "window.MISTER_LATENCY_DATA = " + json_text + ";\n",
-        encoding="utf-8",
-    )
+    output.with_suffix(".js").write_text(js_text, encoding="utf-8")
+    if shopify_data_output is not None:
+        shopify_data_output.parent.mkdir(parents=True, exist_ok=True)
+        shopify_data_output.write_text(js_text, encoding="utf-8")
 
 
 def parse_args() -> argparse.Namespace:
@@ -3009,9 +3015,17 @@ def main() -> int:
                     f"Original error: {error}"
                 ) from error
     payload = build_latency_payload(args.public_root, private_root, sheet_rows=sheet_rows)
-    write_payload(payload, args.output)
+    mirror_shopify_data = (
+        DEFAULT_SHOPIFY_DATA_OUTPUT
+        if args.public_root.resolve() == DEFAULT_PUBLIC_ROOT.resolve()
+        and args.output.resolve() == DEFAULT_OUTPUT.resolve()
+        else None
+    )
+    write_payload(payload, args.output, shopify_data_output=mirror_shopify_data)
     linked = payload["summary"].get("linkedItems", 0)
     print(f"Wrote {payload['summary']['totalItems']} latency rows to {args.output} ({linked} with product links)")
+    if mirror_shopify_data is not None:
+        print(f"Mirrored Shopify latency data to {mirror_shopify_data}")
     return 0
 
 

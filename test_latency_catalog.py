@@ -1898,6 +1898,17 @@ class LatencyCatalogTests(unittest.TestCase):
         self.assertTrue(latency.requested_cleanup_prefer_item(classic2usb, legacy))
         self.assertFalse(latency.requested_cleanup_prefer_item(legacy, classic2usb))
 
+    def test_write_payload_can_mirror_shopify_data_asset(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            output = root / "docs" / "data" / "latency.json"
+            shopify_output = root / "shopify" / "assets" / "input-latency-data.js"
+            payload = {"generatedAt": "2026-07-18T00:00:00Z", "items": []}
+
+            latency.write_payload(payload, output, shopify_data_output=shopify_output)
+
+            self.assertEqual(output.with_suffix(".js").read_bytes(), shopify_output.read_bytes())
+
     def test_private_source_is_optional(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

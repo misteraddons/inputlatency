@@ -18,8 +18,10 @@ That writes:
 
 - `docs/data/latency.json`
 - `docs/data/latency.js`
+- `shopify/assets/input-latency-data.js`
 
-For Shopify, copy these assets into the theme:
+For Shopify, copy these assets into the theme. The upload script publishes the
+unversioned data asset to both the normal and revisioned Shopify asset names:
 
 - `shopify/assets/input-latency-data.js`
 - the revisioned `shopify/assets/input-latency-data-<revision>.js` referenced by the section
