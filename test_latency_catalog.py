@@ -10,6 +10,7 @@ from unittest import mock
 sys.path.insert(0, str(Path(__file__).resolve().parent / "scripts"))
 
 import build_latency_catalog as latency  # noqa: E402
+import upload_shopify_theme_assets as shopify_upload  # noqa: E402
 
 
 class LatencyCatalogTests(unittest.TestCase):
@@ -18,6 +19,28 @@ class LatencyCatalogTests(unittest.TestCase):
         with path.open("w", newline="", encoding="utf-8") as handle:
             writer = csv.writer(handle)
             writer.writerows(rows)
+
+    def test_shopify_upload_uses_unversioned_javascript_for_revisioned_assets(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            shopify_root = Path(temp_dir)
+            section = shopify_root / "sections" / "input-latency-explorer.liquid"
+            section.parent.mkdir(parents=True)
+            section.write_text(
+                "{% assign latency_asset_revision = '20260718-1548' %}\n"
+                "{% assign latency_css_revision = '20260717-1050' %}\n",
+                encoding="utf-8",
+            )
+
+            uploads = dict(shopify_upload.default_asset_uploads(shopify_root))
+
+        self.assertEqual(
+            uploads["assets/input-latency-data-20260718-1548.js"],
+            "assets/input-latency-data.js",
+        )
+        self.assertEqual(
+            uploads["assets/input-latency-explorer-20260718-1548.js"],
+            "assets/input-latency-explorer.js",
+        )
 
     def private_header(self):
         return [

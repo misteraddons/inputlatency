@@ -21,14 +21,13 @@ That writes:
 - `shopify/assets/input-latency-data.js`
 
 For Shopify, copy these assets into the theme. The upload script publishes the
-unversioned data asset to both the normal and revisioned Shopify asset names:
+unversioned JavaScript assets to both the normal and revisioned Shopify asset
+names, so revisioned JavaScript files are not stored in this repository:
 
 - `shopify/assets/input-latency-data.js`
-- the revisioned `shopify/assets/input-latency-data-<revision>.js` referenced by the section
 - `shopify/assets/input-latency-explorer.css`
 - the revisioned `shopify/assets/input-latency-explorer-<revision>.css` referenced by the section
 - `shopify/assets/input-latency-explorer.js`
-- the revisioned `shopify/assets/input-latency-explorer-<revision>.js` referenced by the section
 - `shopify/assets/reflex.css`
 - `shopify/sections/input-latency-explorer.liquid`
 - `shopify/templates/page.input-latency-explorer.json`

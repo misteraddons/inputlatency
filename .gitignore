@@ -4,3 +4,17 @@ nul
 __pycache__/
 node_modules/
 .playwright-cli/
+
+# Local agent configuration
+/.claude/
+/AGENTS.md
+/CLAUDE.md
+
+# Local test and capture artifacts
+/output/playwright/
+/latency-http-*.log
+/captures/*.bak
+
+# Shopify uploads create revisioned JavaScript assets remotely.
+/shopify/assets/input-latency-data-*.js
+/shopify/assets/input-latency-explorer-*.js
