@@ -1846,7 +1846,7 @@ class LatencyCatalogTests(unittest.TestCase):
         }
         self.assertTrue(hidden_names.isdisjoint(by_name))
 
-    def test_reflex_adapt_make_model_public_rows_stay_consolidated(self):
+    def test_reflex_adapt_generations_stay_separate_and_each_consolidates_modes(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
             public_root = root / "inputlatency"
@@ -1857,6 +1857,8 @@ class LatencyCatalogTests(unittest.TestCase):
                     ["Reflex", "Adapt Neo Geo", "Reflex Adapt Neo Geo [Wired USB Dinput]", "Wired USB", "Wired", "Controller Adapter", "0.77", "Reflex Adapt Neo Geo [Wired USB Dinput]", "reflex adapt neo geo wired usb dinput", "YES"],
                     ["Reflex", "Adapt SNES", "Reflex Adapt SNES [Wired USB Dinput]", "Wired USB", "Wired", "Controller Adapter", "1.48", "Reflex Adapt SNES [Wired USB Dinput]", "reflex adapt snes wired usb dinput", "YES"],
                     ["Reflex", "Adapt N64", "Reflex Adapt N64 [Wired USB Dinput]", "Wired USB", "Wired", "Controller Adapter", "2.95", "Reflex Adapt N64 [Wired USB Dinput]", "reflex adapt n64 wired usb dinput", "YES"],
+                    ["Reflex", "Adapt Classic2USB", "Reflex Adapt Classic2USB [Neo-Geo]", "Wired USB", "Wired", "Controller Adapter", "0.766", "Reflex Adapt Classic2USB [Neo-Geo]", "reflex adapt classic2usb neo geo", "YES"],
+                    ["Reflex", "Adapt Classic2USB", "Reflex Adapt Classic2USB [GameCube]", "Wired USB", "Wired", "Controller Adapter", "1.604", "Reflex Adapt Classic2USB [GameCube]", "reflex adapt classic2usb gamecube", "YES"],
                     ["AliExpress", "Gamecube Wireless", "AliExpress Gamecube Wireless [2.4GHz via Reflex Adapt]", "2.4GHz Wireless", "Wireless", "Controller", "14.96", "AliExpress Gamecube Wireless [2.4GHz via Reflex Adapt]", "aliexpress gamecube wireless 2 4ghz via reflex adapt", "YES"],
                 ],
             )
@@ -1864,39 +1866,21 @@ class LatencyCatalogTests(unittest.TestCase):
             payload = latency.build_latency_payload(public_root, None)
 
         by_name = {item["name"]: item for item in payload["items"]}
-        self.assertEqual(payload["summary"]["totalItems"], 2)
+        self.assertEqual(payload["summary"]["totalItems"], 3)
         self.assertIn("Reflex - Adapt", by_name)
+        self.assertIn("Reflex - Adapt Classic2USB", by_name)
         self.assertTrue(any(name.startswith("AliExpress") and "Gamecube Wireless" in name for name in by_name))
         self.assertNotIn("Reflex - Adapt SNES", by_name)
         self.assertNotIn("Reflex - Adapt N64", by_name)
         self.assertEqual(by_name["Reflex - Adapt"]["modeVariantCount"], 3)
         self.assertEqual(by_name["Reflex - Adapt"]["averageMs"], 0.77)
         self.assertIn("adapt snes", by_name["Reflex - Adapt"]["searchText"])
-
-    def test_reflex_adapt_classic2usb_raw_result_replaces_older_matching_mode(self):
-        classic2usb = {
-            "name": "Reflex - Adapt",
-            "measurementName": "Reflex Adapt Classic2USB [N64]",
-            "category": "Controller Adapter",
-            "outputMode": "DInput",
-            "hasRawCapture": True,
-            "averageMs": 1.427,
-        }
-        legacy = {
-            "name": "Reflex - Adapt",
-            "measurementName": "Reflex Adapt [N64 1P]",
-            "category": "Controller Adapter",
-            "outputMode": "DInput",
-            "hasRawCapture": True,
-            "averageMs": 1.06,
-        }
-
-        self.assertEqual(
-            latency.requested_cleanup_duplicate_key(classic2usb),
-            latency.requested_cleanup_duplicate_key(legacy),
+        self.assertEqual(by_name["Reflex - Adapt Classic2USB"]["modeVariantCount"], 2)
+        self.assertEqual(by_name["Reflex - Adapt Classic2USB"]["averageMs"], 0.766)
+        self.assertNotEqual(
+            by_name["Reflex - Adapt"]["controllerGroupKey"],
+            by_name["Reflex - Adapt Classic2USB"]["controllerGroupKey"],
         )
-        self.assertTrue(latency.requested_cleanup_prefer_item(classic2usb, legacy))
-        self.assertFalse(latency.requested_cleanup_prefer_item(legacy, classic2usb))
 
     def test_write_payload_can_mirror_shopify_data_asset(self):
         with tempfile.TemporaryDirectory() as temp_dir:

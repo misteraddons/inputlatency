@@ -1079,6 +1079,8 @@ def controller_group_display_name(item: dict[str, Any]) -> str:
     if is_reflex_ctrl_name(base):
         return "Reflex CTRL"
     if is_reflex_adapt_adapter_item(item):
+        if is_reflex_adapt_classic2usb_item(item):
+            return "Reflex - Adapt Classic2USB"
         return "Reflex - Adapt"
     if is_reflex_encode_fightboard_name(base):
         return "Reflex Encode Fightboard (GP2040-CE)"
@@ -2570,7 +2572,14 @@ def requested_cleanup_duplicate_key(item: dict[str, Any]) -> tuple[str, ...] | N
 
     if is_reflex_adapt_adapter_item(item):
         system = infer_reflex_adapt_system(search)
-        return ("reflex-adapt", system, reflex_adapt_variant_profile(item), explicit_output_mode_key(item))
+        generation = "classic2usb" if is_reflex_adapt_classic2usb_item(item) else "original"
+        return (
+            "reflex-adapt",
+            generation,
+            system,
+            reflex_adapt_variant_profile(item),
+            explicit_output_mode_key(item),
+        )
 
     if is_mayflash_arcade_stick_name(search):
         return ("mayflash-arcade", display_name, explicit_output_mode_key(item))
@@ -2598,10 +2607,6 @@ def requested_cleanup_prefer_item(candidate: dict[str, Any], current: dict[str, 
     current_raw = current.get("hasRawCapture") is True
     if candidate_raw != current_raw:
         return candidate_raw
-    candidate_classic2usb = is_reflex_adapt_classic2usb_item(candidate)
-    current_classic2usb = is_reflex_adapt_classic2usb_item(current)
-    if candidate_classic2usb != current_classic2usb:
-        return candidate_classic2usb
     return latency_item_sort_key(candidate) < latency_item_sort_key(current)
 
 
