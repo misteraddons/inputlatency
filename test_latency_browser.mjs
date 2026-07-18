@@ -60,6 +60,30 @@ async function assertRankBounds(page) {
   assert.ok(maxRank <= cardCount, `Maximum overall rank ${maxRank} exceeds ${cardCount} consolidated results`);
 }
 
+async function assertLightMedianContrast(page) {
+  await page.getByRole("button", { name: "Light", exact: true }).click();
+  const medianLine = page.locator(".latency-median-line line");
+  await medianLine.waitFor({ state: "attached" });
+  const style = await medianLine.evaluate((line) => ({
+    stroke: getComputedStyle(line).stroke,
+    strokeWidth: getComputedStyle(line).strokeWidth,
+  }));
+  assert.equal(style.stroke, "rgb(80, 0, 220)");
+  assert.ok(parseFloat(style.strokeWidth) >= 1.75, `Median stroke is only ${style.strokeWidth}`);
+  await page.getByRole("button", { name: "Dark", exact: true }).click();
+}
+
+async function assertThemeToggleContrast(page) {
+  const darkButton = page.getByRole("button", { name: "Dark", exact: true });
+  const lightButton = page.getByRole("button", { name: "Light", exact: true });
+
+  await darkButton.click();
+  assert.equal(await lightButton.evaluate((button) => getComputedStyle(button).color), "rgb(197, 186, 255)");
+  await lightButton.click();
+  assert.equal(await darkButton.evaluate((button) => getComputedStyle(button).color), "rgb(98, 88, 121)");
+  await darkButton.click();
+}
+
 async function applyShopifyStyles(page) {
   await page.evaluate(async () => {
     for (const link of document.querySelectorAll('link[rel="stylesheet"]')) {
@@ -68,6 +92,9 @@ async function applyShopifyStyles(page) {
       }
     }
     document.body.classList.add("input-latency-explorer-app");
+    const storefrontButtonStyle = document.createElement("style");
+    storefrontButtonStyle.textContent = "button { color: #242424; }";
+    document.head.appendChild(storefrontButtonStyle);
     const loadStyle = (href) => new Promise((accept, reject) => {
       const link = document.createElement("link");
       link.rel = "stylesheet";
@@ -95,6 +122,8 @@ try {
 
   await assertRankBounds(page);
   await assertTitlesFit(page);
+  await assertThemeToggleContrast(page);
+  await assertLightMedianContrast(page);
 
   const adaptCard = page.locator(".latency-card").filter({ has: page.locator(".card-title", { hasText: /^Reflex - Adapt$/ }) }).first();
   const initialAdaptRank = parseRank(await adaptCard.locator(".tag-rank-overall").textContent());
@@ -132,6 +161,8 @@ try {
   await shopifyPage.evaluate(() => document.fonts.ready);
   await assertRankBounds(shopifyPage);
   await assertTitlesFit(shopifyPage);
+  await assertThemeToggleContrast(shopifyPage);
+  await assertLightMedianContrast(shopifyPage);
   await shopifyPage.setViewportSize({ width: 390, height: 844 });
   await assertTitlesFit(shopifyPage);
   assert.deepEqual(shopifyPageErrors, []);

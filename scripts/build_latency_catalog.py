@@ -658,6 +658,12 @@ def is_reflex_adapt_adapter_item(item: dict[str, Any]) -> bool:
     )
 
 
+def is_reflex_adapt_classic2usb_item(item: dict[str, Any]) -> bool:
+    if not is_reflex_adapt_adapter_item(item):
+        return False
+    return "classic2usb" in catalog_item_identity(item)
+
+
 def is_blisster_name(value: Any) -> bool:
     return bool(re.search(r"\bblisster\b|\bblissbox\b", normalize_text(value), flags=re.IGNORECASE))
 
@@ -1000,6 +1006,65 @@ def reflex_adapt_baseline_sort_key(item: dict[str, Any]) -> tuple[int, int, int,
     )
 
 
+CURATED_COMBINED_DISPLAY_NAMES = {
+    "8BitDo - GBros",
+    "8BitDo - M30 for Xbox",
+    "8BitDo - NEOGEO Wireless Controller",
+    "8BitDo - Ultimate 2C Wireless Controller (Model 81HD)",
+    "FlyDigi - Vader 2",
+    "JAMMIX - JAMMIX",
+    "Mcbazel - PlayStation 2 Controller to USB Adapter for PC",
+    "Generic - PS2 Controller to USB Adapter Converter Cable",
+    "Sony - DualSense (PlayStation 5)",
+}
+
+
+def catalog_item_identity(item: dict[str, Any]) -> str:
+    return normalize_device_name(
+        " ".join(
+            normalize_text(item.get(field))
+            for field in ("name", "measurementName", "make", "model")
+            if normalize_text(item.get(field))
+        )
+    )
+
+
+def curated_catalog_display_name(item: dict[str, Any]) -> str:
+    identity = catalog_item_identity(item)
+    if re.search(r"\b8bitdo\b.*\b(?:g bros|gbros)\b", identity):
+        return "8BitDo - GBros"
+    if re.search(r"\b8bitdo\b.*\bm30\b.*\bxbox\b", identity):
+        return "8BitDo - M30 for Xbox"
+    if re.search(r"\b8bitdo\b.*\bneo ?geo\b", identity):
+        return "8BitDo - NEOGEO Wireless Controller"
+    if re.search(r"\b8bitdo\b.*\bultimate 2c\b.*\b81hd\b", identity):
+        return "8BitDo - Ultimate 2C Wireless Controller (Model 81HD)"
+    if re.search(r"\bflydigi\b.*\bvader ?2\b", identity):
+        return "FlyDigi - Vader 2"
+    if re.search(r"(?:^| )jammix(?: |$)", identity):
+        return "JAMMIX - JAMMIX"
+    if re.search(r"\bmcbazel\b.*\bplaystation 2\b.*\bcontroller to usb adapter\b", identity):
+        return "Mcbazel - PlayStation 2 Controller to USB Adapter for PC"
+    if (
+        "controller to usb adapter converter cable" in identity
+        and (identity.startswith("generic ") or identity.startswith("ps2 "))
+    ):
+        return "Generic - PS2 Controller to USB Adapter Converter Cable"
+    if re.search(r"\bsony\b.*\bdual ?sense\b", identity):
+        return "Sony - DualSense (PlayStation 5)"
+    if re.search(r"\batrac17\b.*\bdjhardrich\b.*\brp2040\b.*\bls 30\b", identity):
+        return "RP2040 LS-30 rotary encoder"
+    return ""
+
+
+def normalized_retro_fighters_display_name(item: dict[str, Any], fallback: str) -> str:
+    identity = catalog_item_identity(item)
+    if not re.search(r"\bretro ?fighters\b", identity):
+        return ""
+    display = make_model_display_name(item.get("make"), item.get("model")) or fallback
+    return re.sub(r"^RetroFighters\b", "Retro Fighters", display, flags=re.IGNORECASE)
+
+
 def controller_group_display_name(item: dict[str, Any]) -> str:
     base, _mode = split_controller_mode_suffix(item.get("name"))
     base = strip_firmware_suffix(base)
@@ -1020,10 +1085,16 @@ def controller_group_display_name(item: dict[str, Any]) -> str:
         return "DaemonBite - Controller Adapter"
     if is_controller_adapter_item(item) and is_raphnet_name(base):
         return "Raphnet - Controller Adapter"
+    curated_display = curated_catalog_display_name(item)
+    if curated_display:
+        return curated_display
     make_model = make_model_display_name(item.get("make"), item.get("model"))
     mayflash_display = mayflash_arcade_stick_display_name(base) or mayflash_arcade_stick_display_name(make_model)
     if mayflash_display:
         return mayflash_display
+    retro_fighters_display = normalized_retro_fighters_display_name(item, base)
+    if retro_fighters_display:
+        return retro_fighters_display
     if make_model:
         return make_model
     return base or normalize_text(item.get("name"))
@@ -2374,6 +2445,30 @@ def is_reflex_adapt_hidden_n64_output_mode_item(item: dict[str, Any]) -> bool:
     return reflex_adapt_variant_profile(item) == "mpg" or explicit_output_mode_key(item) in {"xinput", "switch"}
 
 
+def is_redundant_gamescare_arcade_encoder_item(item: dict[str, Any]) -> bool:
+    measurement_name = normalize_text(item.get("measurementName") or item.get("name"))
+    return bool(
+        re.fullmatch(
+            r"games\s*-\s*care\s+multi\s+console\s+arcade\s+\((?:small|large)\)",
+            measurement_name,
+            flags=re.IGNORECASE,
+        )
+    )
+
+
+def is_curated_hidden_duplicate_item(item: dict[str, Any]) -> bool:
+    identity = normalize_device_name(item.get("measurementName") or item.get("name"))
+    if identity in {
+        "atrac17 spinner",
+        "gravis gamepad",
+        "sega astro city pad",
+        "sega astro city stick",
+        "mayflash wii classic to usb",
+    }:
+        return True
+    return identity.startswith("finiera usb 2 0 games controller adapter converter cable")
+
+
 def is_mayflash_wii_classic_baseline_item(item: dict[str, Any]) -> bool:
     if not is_controller_adapter_item(item):
         return False
@@ -2466,6 +2561,12 @@ def requested_cleanup_duplicate_key(item: dict[str, Any]) -> tuple[str, ...] | N
     search = item_search_blob(item)
     display_name = normalize_device_name(controller_group_display_name(item))
 
+    curated_display = curated_catalog_display_name(item)
+    if curated_display in CURATED_COMBINED_DISPLAY_NAMES:
+        average = item.get("averageMs")
+        average_key = f"{average:.2f}" if average is not None else normalize_device_name(item.get("measurementName"))
+        return ("curated-device", normalize_device_name(curated_display), average_key)
+
     if is_reflex_adapt_adapter_item(item):
         system = infer_reflex_adapt_system(search)
         return ("reflex-adapt", system, reflex_adapt_variant_profile(item), explicit_output_mode_key(item))
@@ -2496,7 +2597,42 @@ def requested_cleanup_prefer_item(candidate: dict[str, Any], current: dict[str, 
     current_raw = current.get("hasRawCapture") is True
     if candidate_raw != current_raw:
         return candidate_raw
+    candidate_classic2usb = is_reflex_adapt_classic2usb_item(candidate)
+    current_classic2usb = is_reflex_adapt_classic2usb_item(current)
+    if candidate_classic2usb != current_classic2usb:
+        return candidate_classic2usb
     return latency_item_sort_key(candidate) < latency_item_sort_key(current)
+
+
+def merge_duplicate_item_metadata(primary: dict[str, Any], fallback: dict[str, Any]) -> dict[str, Any]:
+    merged = dict(primary)
+    for field in (
+        "buyUrl",
+        "link",
+        "amazon",
+        "price",
+        "priceNum",
+        "sourceUrl",
+        "firmware",
+        "vidPid",
+        "notes",
+        "tester",
+        "joystickId",
+    ):
+        if merged.get(field) in (None, "") and fallback.get(field) not in (None, ""):
+            merged[field] = fallback[field]
+
+    if normalize_text(merged.get("saleStatus")) in {"", "Unknown"}:
+        fallback_sale_status = normalize_text(fallback.get("saleStatus"))
+        if fallback_sale_status and fallback_sale_status != "Unknown":
+            merged["saleStatus"] = fallback_sale_status
+
+    primary_date_sort = normalize_text(merged.get("dateAddedSort"))
+    fallback_date_sort = normalize_text(fallback.get("dateAddedSort"))
+    if fallback_date_sort and (not primary_date_sort or fallback_date_sort < primary_date_sort):
+        merged["dateAdded"] = fallback.get("dateAdded")
+        merged["dateAddedSort"] = fallback_date_sort
+    return merged
 
 
 def cleanup_requested_latency_items(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -2507,26 +2643,20 @@ def cleanup_requested_latency_items(items: list[dict[str, Any]]) -> list[dict[st
         and not is_hori_wii_classic_hidden_adapter_item(item)
         and not is_reflex_adapt_two_player_item(item)
         and not is_reflex_adapt_hidden_n64_output_mode_item(item)
+        and not is_redundant_gamescare_arcade_encoder_item(item)
+        and not is_curated_hidden_duplicate_item(item)
     ]
-
-    raw_keys = {
-        key
-        for item in visible
-        if item.get("hasRawCapture") is True
-        for key in [requested_cleanup_duplicate_key(item)]
-        if key is not None
-    }
     result: list[dict[str, Any]] = []
     key_indexes: dict[tuple[str, ...], int] = {}
 
     for item in visible:
         key = requested_cleanup_duplicate_key(item)
-        if key is not None and item.get("hasRawCapture") is not True and key in raw_keys:
-            continue
         if key is not None and key in key_indexes:
             existing_index = key_indexes[key]
             if requested_cleanup_prefer_item(item, result[existing_index]):
-                result[existing_index] = item
+                result[existing_index] = merge_duplicate_item_metadata(item, result[existing_index])
+            else:
+                result[existing_index] = merge_duplicate_item_metadata(result[existing_index], item)
             continue
         if key is not None:
             key_indexes[key] = len(result)
@@ -2750,6 +2880,8 @@ def collapse_mode_variants(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
             or is_reflex_ctrl_name(representative.get("name"))
             or is_reflex_encode_fightboard_name(representative.get("name"))
             or is_mayflash_arcade_stick_name(representative.get("name"))
+            or bool(curated_catalog_display_name(representative))
+            or bool(normalized_retro_fighters_display_name(representative, sanitized_name))
         )
         if should_rename:
             representative["name"] = display_name

@@ -5,13 +5,21 @@
 
 
 
+.latency-page {
+  --latency-median-color: rgba(230, 255, 30, 0.62);
+}
+
+:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .latency-page {
+  --latency-median-color: #5000dc;
+}
+
 .latency-page .hero-stats {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .latency-plot-section {
-  margin-top: 20px;
-  padding: 18px;
+  margin-top: var(--section-gap);
+  padding: var(--panel-padding);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: rgba(255, 255, 255, 0.035);
@@ -156,13 +164,13 @@
 
 .latency-median-line line {
   vector-effect: non-scaling-stroke;
-  stroke: rgba(230, 255, 30, 0.62);
+  stroke: var(--latency-median-color);
   stroke-dasharray: 6 5;
-  stroke-width: 1.25;
+  stroke-width: 1.75;
 }
 
 .latency-median-line text {
-  fill: var(--accent);
+  fill: var(--latency-median-color);
   font: 700 0.62rem/1.1 var(--font-mono);
   letter-spacing: 0.03em;
   text-transform: uppercase;
@@ -329,7 +337,7 @@
 }
 
 .latency-recent-panel {
-  margin-top: 20px;
+  margin-top: var(--section-gap);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: var(--surface);
@@ -993,7 +1001,7 @@
 
 .empty-state {
   margin: 0;
-  padding: 18px;
+  padding: var(--panel-padding);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   background: var(--surface);

@@ -4,6 +4,9 @@ const test = require("node:test");
 
 const explorerSource = fs.readFileSync("docs/assets/latency.js", "utf8");
 const explorerStyles = fs.readFileSync("docs/assets/input-latency.css", "utf8");
+const shopifyStyles = fs.readFileSync("shopify/assets/input-latency-explorer.css", "utf8");
+const reflexStyles = fs.readFileSync("docs/assets/reflex.css", "utf8");
+const shopifyReflexStyles = fs.readFileSync("shopify/assets/reflex.css", "utf8");
 const explorerMarkup = fs.readFileSync("docs/latency.html", "utf8");
 const shopifyMarkup = fs.readFileSync("shopify/sections/input-latency-explorer.liquid", "utf8");
 const explorerAssets = `${explorerSource}\n${explorerStyles}`;
@@ -262,6 +265,23 @@ test("latency map has tier guide, smooth mouse-wheel horizontal zoom, and filter
   assert.match(explorerSource, /const medianAverage = getLatencyMedianAverage\(allPlotItems\)/);
   assert.match(explorerSource, /latency-median-line/);
   assert.match(explorerSource, /Median/);
+});
+
+test("latency median line uses a high-contrast light-theme color", () => {
+  for (const styles of [explorerStyles, shopifyStyles]) {
+    assert.match(styles, /--latency-median-color:\s*rgba\(230, 255, 30, 0\.62\)/);
+    assert.match(styles, /--latency-median-color:\s*#5000dc/);
+    assert.match(styles, /stroke:\s*var\(--latency-median-color\)/);
+    assert.match(styles, /stroke-width:\s*1\.75/);
+  }
+});
+
+test("theme toggle text overrides storefront button colors", () => {
+  for (const styles of [reflexStyles, shopifyReflexStyles]) {
+    assert.match(styles, /\.rx-theme-toggle button\s*\{[^}]*color:\s*var\(--muted\)/s);
+    assert.match(styles, /\.rx-theme-toggle button\[aria-pressed="true"\]\s*\{[^}]*color:\s*#1c1430/s);
+    assert.doesNotMatch(styles, /:where\(\.rx-theme-toggle button/);
+  }
 });
 
 test("hero title pane shows updated next to best average", () => {

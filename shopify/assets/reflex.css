@@ -304,7 +304,7 @@ body:where([data-reflex-ui], .rx-app) {
   background: var(--surface-soft);
 }
 
-:where(.rx-theme-toggle button) {
+.rx-theme-toggle button {
   min-width: 62px;
   min-height: 32px;
   border: 0;
@@ -318,12 +318,12 @@ body:where([data-reflex-ui], .rx-app) {
   text-transform: uppercase;
 }
 
-:where(.rx-theme-toggle button[aria-pressed="true"]) {
+.rx-theme-toggle button[aria-pressed="true"] {
   background: var(--brand-accent);
   color: #1c1430;
 }
 
-:where(.rx-theme-toggle button:focus-visible) {
+.rx-theme-toggle button:focus-visible {
   outline: 2px solid var(--brand-accent);
   outline-offset: 2px;
 }

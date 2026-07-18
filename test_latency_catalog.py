@@ -1721,6 +1721,131 @@ class LatencyCatalogTests(unittest.TestCase):
             ],
         )
 
+    def test_gamescare_arcade_encoder_duplicates_keep_only_canonical_large_result(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            public_root = root / "inputlatency"
+            self.write_csv(
+                public_root / "results" / "latency_cleaned_export.csv",
+                [
+                    [
+                        "Make", "Model", "Device", "Connection", "Wired/Wireless", "Category",
+                        "Latency (in ms)", "DeviceClean", "DeviceNorm", "Valid Results", "HasRawCapture",
+                    ],
+                    ["Games", "Care Multi Console Arcade (Small)", "Games - Care Multi Console Arcade (Small)", "Wired USB", "Wired", "Controller", "0.730", "Games - Care Multi Console Arcade (Small)", "games care multi console arcade small", "YES", "TRUE"],
+                    ["Games", "Care Multi Console Arcade (Large)", "Games - Care Multi Console Arcade (Large)", "Wired USB", "Wired", "Arcade Stick", "0.739", "Games - Care Multi Console Arcade (Large)", "games care multi console arcade large", "YES", "TRUE"],
+                    ["GamesCare", "Multi Console Arcade Stick (Large)", "GamesCare Multi Console Arcade Stick (Large) [Wired USB]", "Wired USB", "Wired", "Arcade Stick Encoder", "0.739", "GamesCare Multi Console Arcade Stick (Large) [Wired USB]", "gamescare multi console arcade stick large wired usb", "YES", "FALSE"],
+                ],
+            )
+
+            payload = latency.build_latency_payload(public_root, None, sheet_rows=None)
+
+        gamescare_items = [item for item in payload["items"] if "games" in item["name"].lower()]
+        self.assertEqual([item["name"] for item in gamescare_items], ["GamesCare - Multi Console Arcade Stick (Large)"])
+        self.assertEqual(gamescare_items[0]["measurementName"], "GamesCare Multi Console Arcade Stick (Large) [Wired USB]")
+
+    def test_curated_duplicate_families_follow_physical_device_mode_standard(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            public_root = root / "inputlatency"
+
+            def result(make, model, device, connection, wireless, average, raw, category="Controller"):
+                return [
+                    make, model, device, connection, wireless, category, str(average),
+                    device, latency.normalize_device_name(device), "YES", "TRUE" if raw else "FALSE",
+                ]
+
+            self.write_csv(
+                public_root / "results" / "latency_cleaned_export.csv",
+                [
+                    [
+                        "Make", "Model", "Device", "Connection", "Wired/Wireless", "Category",
+                        "Latency (in ms)", "DeviceClean", "DeviceNorm", "Valid Results", "HasRawCapture",
+                    ],
+                    result("8BitDo", "G Bros", "8BitDo G Bros [Wii Classic Controller]", "Wii Classic Controller", "Wireless", 6.268, False, "Controller Adapter"),
+                    result("8BitDo", "GBros", "8BitDo - GBros", "Wired USB", "Wired", 6.268, True, "Controller Adapter"),
+                    result("8BitDo", "M30 for Xbox", "8BitDo M30 for Xbox [Wired USB]", "Wired USB", "Wired", 4.540, False),
+                    result("8BitDo", "M30 Wired Controller for Xbox", "8BitDo - M30 Wired Controller for Xbox", "Wired USB", "Wired", 4.535, True),
+                    result("8BitDo", "NEOGEO Wireless Controller", "8BitDo NEOGEO Wireless Controller [Wired USB] FW 1.09", "Wired USB", "Wired", 6.098, False),
+                    result("8BitDo", "NeoGeo USB fw1.09", "8BitDo - NeoGeo USB fw1.09", "Wired USB", "Wired", 6.098, True),
+                    result("8BitDo", "NEOGEO Wireless Controller", "8BitDo NEOGEO Wireless Controller [2.4GHz USB] FW 1.09", "2.4GHz USB", "Wireless", 4.514, False),
+                    result("8BitDo", "NeoGeo 2.4G fw1.09", "8BitDo - NeoGeo 2.4G fw1.09", "2.4GHz Wireless", "Wireless", 4.514, True),
+                    result("8BitDo", "NEOGEO Wireless Controller", "8BitDo NEOGEO Wireless Controller [BT] FW 1.09", "Bluetooth", "Wireless", 9.750, False),
+                    result("8BitDo", "NeoGeo BT fw1.09", "8BitDo - NeoGeo BT fw1.09", "Bluetooth", "Wireless", 9.750, True),
+                    result("8BitDo", "Ultimate 2C Wireless Controller (Model 81HD)", "8BitDo Ultimate 2C Wireless Controller (Model 81HD) [Wired USB]", "Wired USB", "Wired", 5.006, False),
+                    result("8BitDo", "Ultimate 2C Wireless Controller 81HD", "8BitDo - Ultimate 2C Wireless Controller 81HD [Wired USB]", "Wired USB", "Wired", 5.006, False),
+                    result("8BitDo", "Ultimate 2C Wireless Controller (Model 81HD)", "8BitDo Ultimate 2C Wireless Controller (Model 81HD) [2.4G]", "2.4GHz USB", "Wireless", 5.610, False),
+                    result("8BitDo", "Ultimate 2C Wireless Controller 81HD", "8BitDo - Ultimate 2C Wireless Controller 81HD [Wireless 2.4G]", "2.4GHz Wireless", "Wireless", 5.610, False),
+                    result("8BitDo", "Ultimate 2C Wireless Controller (Model 81HD)", "8BitDo Ultimate 2C Wireless Controller (Model 81HD) [BT]", "Bluetooth", "Wireless", 13.394, False),
+                    result("8BitDo", "Ultimate 2C Wireless Controller 81HD", "8BitDo - Ultimate 2C Wireless Controller 81HD [Wireless BT]", "Bluetooth", "Wireless", 13.394, False),
+                    result("FlyDigi", "Vader 2", "FlyDigi Vader 2 [BT Low Energy]", "BT Low Energy", "Wireless", 17.074, False),
+                    result("FlyDigi", "VADER2 Classic Mode", "FlyDigi - VADER2 Classic Mode [Edimax BLE]", "Edimax BLE", "Wireless", 17.074, True),
+                    result("FlyDigi", "Vader 2", "FlyDigi Vader 2 [BT CSR8510]", "BT CSR8510", "Wireless", 17.802, False),
+                    result("FlyDigi", "VADER2 Classic Mode", "FlyDigi - VADER2 Classic Mode [CSR 4.0]", "CSR 4.0", "Wireless", 17.802, True),
+                    result("JAMMIX", "JAMMIX", "JAMMIX JAMMIX [Wired USB]", "Wired USB", "Wired", 2.377, False, "Arcade Stick Encoder"),
+                    result("", "", "JAMMIX", "Wired USB", "Wired", 2.381, True, "Arcade Stick Encoder"),
+                    result("Mcbazel", "PlayStation 2 Controller to USB Adapter for PC", "Mcbazel PlayStation 2 Controller to USB Adapter for PC [Wired USB]", "Wired USB", "Wired", 11.265, False, "Controller Adapter"),
+                    result("Mcbazel", "PlayStation 2 Controller to USB Adapter for PC or Playstation 3 Converter Cable", "Mcbazel - PlayStation 2 Controller to USB Adapter for PC or Playstation 3 Converter Cable", "Wired USB", "Wired", 11.265, True, "Controller Adapter"),
+                    result("Generic", "PS2 Controller to USB Adapter Converter Cable", "Generic PS2 Controller to USB Adapter Converter Cable [Wired USB]", "Wired USB", "Wired", 10.589, False, "Controller Adapter"),
+                    result("PS2", "Controller to USB Adapter Converter Cable", "PS2 - Controller to USB Adapter Converter Cable", "Wired USB", "Wired", 10.589, True, "Controller Adapter"),
+                    result("Sony", "DualSense (Playstation 5)", "Sony DualSense (Playstation 5) [Wired USB]", "Wired USB", "Wired", 1.809, False),
+                    result("Sony", "DualSense (Playstation 5)", "Sony DualSense (Playstation 5) [BT CSR8510]", "Bluetooth CSR8510", "Wireless", 6.322, False),
+                    result("Sony", "Dual Sense Wired", "Sony - Dual Sense Wired", "Wired USB", "Wired", 1.809, True),
+                    result("Sony", "Dual Sense", "Sony - Dual Sense [BT4.2]", "Bluetooth 4.2", "Wireless", 4.786, True),
+                    result("Retro Fighters", "Brawler 64 NSO Edition", "Retro Fighters Brawler 64 NSO Edition [Wired USB Dinput]", "Wired USB", "Wired", 4.510, False),
+                    result("RetroFighters", "Brawler64", "RetroFighters - Brawler64 [Dinput]", "Wired USB", "Wired", 4.508, True),
+                    result("atrac17", "Spinner", "atrac17 - Spinner", "Wired USB", "Wired", 0.747, True, "Arcade Stick Encoder"),
+                    result("atrac17 + DJHardRich", "RP2040 LS-30 Rotary Encoder", "atrac17 + DJHardRich RP2040 LS-30 Rotary Encoder [Wired USB]", "Wired USB", "Wired", 0.747, False, "Arcade Stick Encoder"),
+                    result("Finera", "USB 2.0 Games Controller Adapter Converter Cable", "Finera - USB 2.0 Games Controller Adapter Converter Cable", "Wired USB", "Wired", 9.107, True, "Controller Adapter"),
+                    result("Finiera", "USB 2.0 Games Controller Adapter Converter Cable", "Finiera USB 2.0 Games Controller Adapter Converter Cable [Wired USB]", "Wired USB", "Wired", 9.107, False, "Controller Adapter"),
+                    result("Gravis", "Gamepad", "Gravis - Gamepad", "Wired USB", "Wired", 11.813, True),
+                    result("Gravis", "GamePad Pro", "Gravis GamePad Pro [Wired USB]", "Wired USB", "Wired", 11.813, False),
+                    result("Sega", "Astro City Pad", "Sega - Astro City Pad", "Wired USB", "Wired", 5.037, True),
+                    result("Sega", "Astro City Mini Controller (ACS-1002)", "Sega Astro City Mini Controller (ACS-1002) [Wired USB]", "Wired USB", "Wired", 5.037, False),
+                    result("Sega", "Astro City Stick", "Sega - Astro City Stick", "Wired USB", "Wired", 5.013, True, "Arcade Stick"),
+                    result("Sega", "Astro City Mini Real Arcade Stick", "Sega Astro City Mini Real Arcade Stick [Wired USB]", "Wired USB", "Wired", 5.013, False, "Arcade Stick"),
+                    result("Mayflash", "Wii Classic to USB", "Mayflash - Wii Classic to USB", "Wired USB", "Wired", 4.867, True, "Controller Adapter"),
+                    result("Mayflash", "Wii Classic Controller Adapter For PC", "Mayflash Wii Classic Controller Adapter For PC [Wired USB]", "Wired USB", "Wired", 4.852, False, "Controller Adapter"),
+                ],
+            )
+
+            payload = latency.build_latency_payload(public_root, None, sheet_rows=None)
+
+        by_name = {item["name"]: item for item in payload["items"]}
+        expected_variants = {
+            "8BitDo - GBros": 1,
+            "8BitDo - M30 for Xbox": 1,
+            "8BitDo - NEOGEO Wireless Controller": 3,
+            "8BitDo - Ultimate 2C Wireless Controller (Model 81HD)": 3,
+            "FlyDigi - Vader 2": 2,
+            "JAMMIX - JAMMIX": 1,
+            "Mcbazel - PlayStation 2 Controller to USB Adapter for PC": 1,
+            "Generic - PS2 Controller to USB Adapter Converter Cable": 1,
+            "Sony - DualSense (PlayStation 5)": 3,
+        }
+        for name, variant_count in expected_variants.items():
+            self.assertIn(name, by_name)
+            self.assertEqual(by_name[name]["modeVariantCount"], variant_count)
+
+        self.assertIn("Retro Fighters - Brawler 64 NSO Edition", by_name)
+        self.assertIn("Retro Fighters - Brawler64", by_name)
+        self.assertIn("RP2040 LS-30 rotary encoder", by_name)
+        self.assertIn("Finera - USB 2.0 Games Controller Adapter Converter Cable", by_name)
+        self.assertIn("Gravis - GamePad Pro", by_name)
+        self.assertIn("Sega - Astro City Mini Controller (ACS-1002)", by_name)
+        self.assertIn("Sega - Astro City Mini Real Arcade Stick", by_name)
+        self.assertIn("Mayflash - Wii Classic Controller Adapter For PC", by_name)
+
+        hidden_names = {
+            "atrac17 - Spinner",
+            "Finiera - USB 2.0 Games Controller Adapter Converter Cable",
+            "Gravis - Gamepad",
+            "Sega - Astro City Pad",
+            "Sega - Astro City Stick",
+            "Mayflash - Wii Classic to USB",
+        }
+        self.assertTrue(hidden_names.isdisjoint(by_name))
+
     def test_reflex_adapt_make_model_public_rows_stay_consolidated(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
@@ -1747,6 +1872,31 @@ class LatencyCatalogTests(unittest.TestCase):
         self.assertEqual(by_name["Reflex - Adapt"]["modeVariantCount"], 3)
         self.assertEqual(by_name["Reflex - Adapt"]["averageMs"], 0.77)
         self.assertIn("adapt snes", by_name["Reflex - Adapt"]["searchText"])
+
+    def test_reflex_adapt_classic2usb_raw_result_replaces_older_matching_mode(self):
+        classic2usb = {
+            "name": "Reflex - Adapt",
+            "measurementName": "Reflex Adapt Classic2USB [N64]",
+            "category": "Controller Adapter",
+            "outputMode": "DInput",
+            "hasRawCapture": True,
+            "averageMs": 1.427,
+        }
+        legacy = {
+            "name": "Reflex - Adapt",
+            "measurementName": "Reflex Adapt [N64 1P]",
+            "category": "Controller Adapter",
+            "outputMode": "DInput",
+            "hasRawCapture": True,
+            "averageMs": 1.06,
+        }
+
+        self.assertEqual(
+            latency.requested_cleanup_duplicate_key(classic2usb),
+            latency.requested_cleanup_duplicate_key(legacy),
+        )
+        self.assertTrue(latency.requested_cleanup_prefer_item(classic2usb, legacy))
+        self.assertFalse(latency.requested_cleanup_prefer_item(legacy, classic2usb))
 
     def test_private_source_is_optional(self):
         with tempfile.TemporaryDirectory() as temp_dir:
