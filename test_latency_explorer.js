@@ -6,7 +6,6 @@ const explorerSource = fs.readFileSync("docs/assets/latency.js", "utf8");
 const explorerStyles = fs.readFileSync("docs/assets/input-latency.css", "utf8");
 const shopifyStyles = fs.readFileSync("shopify/assets/input-latency-explorer.css", "utf8");
 const reflexStyles = fs.readFileSync("docs/assets/reflex.css", "utf8");
-const shopifyReflexStyles = fs.readFileSync("shopify/assets/reflex.css", "utf8");
 const explorerMarkup = fs.readFileSync("docs/latency.html", "utf8");
 const shopifyMarkup = fs.readFileSync("shopify/sections/input-latency-explorer.liquid", "utf8");
 const explorerAssets = `${explorerSource}\n${explorerStyles}`;
@@ -277,11 +276,17 @@ test("latency median line uses a high-contrast light-theme color", () => {
 });
 
 test("theme toggle text overrides storefront button colors", () => {
-  for (const styles of [reflexStyles, shopifyReflexStyles]) {
+  for (const styles of [reflexStyles, shopifyStyles]) {
     assert.match(styles, /\.rx-theme-toggle button\s*\{[^}]*color:\s*var\(--muted\)/s);
     assert.match(styles, /\.rx-theme-toggle button\[aria-pressed="true"\]\s*\{[^}]*color:\s*#1c1430/s);
     assert.doesNotMatch(styles, /:where\(\.rx-theme-toggle button/);
   }
+});
+
+test("Shopify uses one fully scoped CSS bundle", () => {
+  assert.doesNotMatch(shopifyMarkup, /['"]reflex\.css['"]/);
+  assert.doesNotMatch(shopifyStyles, /@import\s+url\(["']?reflex\.css/);
+  assert.match(shopifyStyles, /\.input-latency-explorer-app\s*\{[^}]*--brand-primary:\s*#5000dc/s);
 });
 
 test("hero title pane shows updated next to best average", () => {

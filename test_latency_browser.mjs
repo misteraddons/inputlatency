@@ -84,6 +84,48 @@ async function assertThemeToggleContrast(page) {
   await darkButton.click();
 }
 
+async function assertShopifyIsolation(page) {
+  const styles = await page.evaluate(() => {
+    const outside = document.createElement("div");
+    const range = document.createElement("input");
+    range.type = "range";
+    outside.appendChild(range);
+    document.documentElement.appendChild(outside);
+    const result = {
+      rootColorScheme: getComputedStyle(document.documentElement).colorScheme,
+      rootPageBg: getComputedStyle(document.documentElement).getPropertyValue("--page-bg").trim(),
+      rangeAccent: getComputedStyle(range).accentColor,
+    };
+    outside.remove();
+    return result;
+  });
+  assert.equal(styles.rootColorScheme, "normal");
+  assert.equal(styles.rootPageBg, "");
+  assert.notEqual(styles.rangeAccent, "rgb(239, 255, 26)");
+}
+
+async function assertLightInteractionContrast(page) {
+  await page.getByRole("button", { name: "Light", exact: true }).click();
+  const searchInput = page.locator("#latencySearchInput");
+  await searchInput.focus();
+  assert.equal(
+    await searchInput.evaluate((input) => getComputedStyle(input).outlineColor),
+    "rgb(80, 0, 220)",
+  );
+
+  const selectedPoint = page.locator(".latency-point").first();
+  await selectedPoint.evaluate((point) => point.classList.add("is-selected"));
+  await page.waitForTimeout(180);
+  const selectedStyle = await selectedPoint.evaluate((point) => ({
+    stroke: getComputedStyle(point).stroke,
+    token: getComputedStyle(point).getPropertyValue("--plot-selection").trim(),
+  }));
+  assert.equal(selectedStyle.token, "#5000dc", JSON.stringify(selectedStyle));
+  assert.equal(selectedStyle.stroke, "rgb(80, 0, 220)", JSON.stringify(selectedStyle));
+  await selectedPoint.evaluate((point) => point.classList.remove("is-selected"));
+  await page.getByRole("button", { name: "Dark", exact: true }).click();
+}
+
 async function applyShopifyStyles(page) {
   await page.evaluate(async () => {
     for (const link of document.querySelectorAll('link[rel="stylesheet"]')) {
@@ -103,7 +145,6 @@ async function applyShopifyStyles(page) {
       link.onerror = reject;
       document.head.appendChild(link);
     });
-    await loadStyle("/shopify/assets/reflex.css");
     await loadStyle("/shopify/assets/input-latency-explorer.css");
   });
 }
@@ -161,8 +202,10 @@ try {
   await shopifyPage.evaluate(() => document.fonts.ready);
   await assertRankBounds(shopifyPage);
   await assertTitlesFit(shopifyPage);
+  await assertShopifyIsolation(shopifyPage);
   await assertThemeToggleContrast(shopifyPage);
   await assertLightMedianContrast(shopifyPage);
+  await assertLightInteractionContrast(shopifyPage);
   await shopifyPage.setViewportSize({ width: 390, height: 844 });
   await assertTitlesFit(shopifyPage);
   assert.deepEqual(shopifyPageErrors, []);

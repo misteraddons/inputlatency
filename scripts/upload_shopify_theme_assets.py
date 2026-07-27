@@ -30,7 +30,6 @@ def default_asset_uploads(shopify_root: Path) -> tuple[tuple[str, str], ...]:
     asset_revision = get_liquid_revision(shopify_root, "latency_asset_revision")
     css_revision = get_liquid_revision(shopify_root, "latency_css_revision", asset_revision)
     return (
-        ("assets/reflex.css", "assets/reflex.css"),
         ("assets/input-latency-data.js", "assets/input-latency-data.js"),
         (f"assets/input-latency-data-{asset_revision}.js", "assets/input-latency-data.js"),
         ("assets/input-latency-explorer.css", "assets/input-latency-explorer.css"),

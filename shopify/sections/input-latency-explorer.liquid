@@ -1,5 +1,5 @@
 {% assign latency_asset_revision = '20260718-1548' %}
-{% assign latency_css_revision = '20260717-1050' %}
+{% assign latency_css_revision = '20260727-1558' %}
 {% capture latency_data_asset %}input-latency-data-{{ latency_asset_revision }}.js{% endcapture %}
 {% capture latency_css_asset %}input-latency-explorer-{{ latency_css_revision }}.css{% endcapture %}
 {% capture latency_js_asset %}input-latency-explorer-{{ latency_asset_revision }}.js{% endcapture %}
@@ -10,12 +10,11 @@
 {% if core_link_url == blank or core_link_url == '/pages/mister-core-explorer' %}
   {% assign core_link_url = '/pages/cores' %}
 {% endif %}
-{{ 'reflex.css' | asset_url | stylesheet_tag }}
 {{ latency_css_url | stylesheet_tag }}
 <script src="{{ latency_data_url }}" defer></script>
 <script src="{{ latency_js_url }}" defer></script>
 
-<!-- Input latency explorer shell revision: latency-assets-20260709-1659 css-20260709-1623. -->
+<!-- Input latency explorer shell revision: scoped-css-20260727-1558. -->
 <section class="input-latency-explorer-app" data-reflex-theme-scope data-latency-url="{{ section.settings.latency_url | escape }}">
   <script>
     (function (scope) {

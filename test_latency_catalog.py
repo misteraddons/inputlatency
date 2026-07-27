@@ -27,7 +27,7 @@ class LatencyCatalogTests(unittest.TestCase):
             section.parent.mkdir(parents=True)
             section.write_text(
                 "{% assign latency_asset_revision = '20260718-1548' %}\n"
-                "{% assign latency_css_revision = '20260717-1050' %}\n",
+                "{% assign latency_css_revision = '20260727-1558' %}\n",
                 encoding="utf-8",
             )
 
