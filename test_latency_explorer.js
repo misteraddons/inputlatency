@@ -206,6 +206,11 @@ test("open source firmware is labeled as open source in filters, tags, and detai
   assert.doesNotMatch(explorerSource, /Open Source Firmware/);
 });
 
+test("card titles use verified product or source URLs", () => {
+  assert.match(explorerSource, /const titleUrl = normalizeLatencyUrl\(item\.buyUrl \|\| item\.sourceUrl\)/);
+  assert.doesNotMatch(explorerSource, /item\.buyUrl \|\| item\.link/);
+});
+
 test("controller adapter input filter is only active for controller adapters", () => {
   assert.match(explorerSource, /function syncLatencyAdapterInputAvailability/);
   assert.match(explorerSource, /latencyRefs\.categorySelect\.value === "Controller Adapter"/);

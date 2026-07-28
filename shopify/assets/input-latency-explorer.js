@@ -799,15 +799,15 @@ function renderLatencyCard(item) {
   }
 
   const title = card.querySelector(".card-title");
-  const buyUrl = normalizeLatencyUrl(item.buyUrl || item.link);
-  if (buyUrl) {
+  const titleUrl = normalizeLatencyUrl(item.buyUrl || item.sourceUrl);
+  if (titleUrl) {
     const titleLink = document.createElement("a");
     titleLink.className = "card-title-link";
-    titleLink.href = buyUrl;
+    titleLink.href = titleUrl;
     titleLink.target = "_blank";
     titleLink.rel = "noreferrer noopener";
     titleLink.textContent = item.name;
-    titleLink.title = "Open product page";
+    titleLink.title = item.buyUrl ? "Open product page" : "Open source page";
     title.appendChild(titleLink);
   } else {
     title.textContent = item.name;

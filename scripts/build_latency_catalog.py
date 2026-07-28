@@ -388,6 +388,7 @@ RETROUSB_USB_ADAPTER_URL = "https://retrousb.com/products/USB_adapter"
 ULTIMARC_IPAC_URL = "https://www.ultimarc.com/control-interfaces/i-pacs/"
 ULTIMARC_IPAC_ULTIMATE_URL = "https://www.ultimarc.com/control-interfaces/i-pacs/i-pac-ultimate-i-o/"
 ULTIMARC_JPAC_URL = "https://www.ultimarc.com/control-interfaces/j-pac-en/"
+RP2040_LS30_SOURCE_URL = "https://github.com/va7deo/SNK68/tree/main/dev/rp2040"
 
 
 def normalize_text(value: Any) -> str:
@@ -706,12 +707,17 @@ def item_name_text(item: dict[str, Any]) -> str:
     return normalize_text(item.get("measurementName") or item.get("name"))
 
 
+def is_rp2040_ls30_rotary_encoder(*values: Any) -> bool:
+    identity = normalize_device_name(" ".join(normalize_text(value) for value in values))
+    return bool(re.search(r"\batrac17\b.*\bdjhardrich\b.*\brp2040\b.*\bls 30\b", identity))
+
+
 def is_open_source_firmware_family(*values: Any) -> bool:
     return any(
         is_reflex_adapt_device_name(value) or is_raphnet_name(value) or is_timville_name(value)
         or is_reflex_encode_fightboard_name(value)
         for value in values
-    )
+    ) or is_rp2040_ls30_rotary_encoder(*values)
 
 
 def is_known_wired_family(*values: Any) -> bool:
@@ -725,14 +731,17 @@ def is_known_wired_family(*values: Any) -> bool:
 
 
 def apply_source_firmware_status(item: dict[str, Any]) -> None:
-    if is_open_source_firmware_family(
+    identity_values = (
         item.get("name"),
         item.get("measurementName"),
         item.get("make"),
         item.get("model"),
-    ):
+    )
+    if is_open_source_firmware_family(*identity_values):
         item["isOpenSource"] = True
         item["sourceStatus"] = "Open Source"
+        if is_rp2040_ls30_rotary_encoder(*identity_values):
+            item["sourceUrl"] = RP2040_LS30_SOURCE_URL
     else:
         item["isOpenSource"] = False
         item["sourceStatus"] = "Closed Source"

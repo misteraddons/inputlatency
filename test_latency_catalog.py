@@ -1853,6 +1853,13 @@ class LatencyCatalogTests(unittest.TestCase):
         self.assertIn("Retro Fighters - Brawler 64 NSO Edition", by_name)
         self.assertIn("Retro Fighters - Brawler64", by_name)
         self.assertIn("RP2040 LS-30 rotary encoder", by_name)
+        ls30 = by_name["RP2040 LS-30 rotary encoder"]
+        self.assertTrue(ls30["isOpenSource"])
+        self.assertEqual(ls30["sourceStatus"], "Open Source")
+        self.assertEqual(
+            ls30["sourceUrl"],
+            "https://github.com/va7deo/SNK68/tree/main/dev/rp2040",
+        )
         self.assertIn("Finera - USB 2.0 Games Controller Adapter Converter Cable", by_name)
         self.assertIn("Gravis - GamePad Pro", by_name)
         self.assertIn("Sega - Astro City Mini Controller (ACS-1002)", by_name)

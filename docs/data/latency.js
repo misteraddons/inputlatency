@@ -1,5 +1,5 @@
 window.MISTER_LATENCY_DATA = {
-  "generatedAt": "2026-07-18T21:47:43Z",
+  "generatedAt": "2026-07-28T00:22:36Z",
   "schemaVersion": 8,
   "sources": {
     "public": {
@@ -88,8 +88,8 @@ window.MISTER_LATENCY_DATA = {
       "Unknown": 41
     },
     "sourceStatuses": {
-      "Closed Source": 171,
-      "Open Source": 5
+      "Closed Source": 170,
+      "Open Source": 6
     },
     "deviceTypes": {
       "Wired Controller": 76,
@@ -634,11 +634,11 @@ window.MISTER_LATENCY_DATA = {
       "tester": "",
       "originalSystem": "",
       "saleStatus": "Unknown",
-      "sourceStatus": "Closed Source",
-      "isOpenSource": false,
-      "sourceUrl": "",
+      "sourceStatus": "Open Source",
+      "isOpenSource": true,
+      "sourceUrl": "https://github.com/va7deo/SNK68/tree/main/dev/rp2040",
       "joystickId": "2e8a:000a",
-      "searchText": "rp2040 ls-30 rotary encoder rp2040 ls 30 rotary encoder atrac17 + djhardrich rp2040 ls-30 rotary encoder wired usb wired wired usb dinput wired dinput dinput arcade stick encoder arcade stick encoder published published arcade stick encoder - - - diamond 00-01ms (diamond) unknown closed source mister / pc 2e8a:000a atrac17 + djhardrich rp2040 ls-30 rotary encoder [wired usb] atrac17 + djhardrich - rp2040 ls-30 rotary encoder atrac17 + djhardrich rp2040 ls-30 rotary encoder [wired usb] wired usb wired wired wired usb dinput dinput dinput ['arcade stick encoder'] arcade stick encoder diamond arcade stick encoder - - - published published unknown closed source atrac17 + djhardrich - rp2040 ls-30 rotary encoder atrac17 djhardrich rp2040 ls 30 rotary encoder atrac17 + djhardrich rp2040 ls-30 rotary encoder wired usb wired wired usb dinput wired dinput dinput arcade stick encoder published published arcade stick encoder - - - diamond 00-01ms (diamond) unknown closed source mister / pc 2e8a:000a atrac17 + djhardrich rp2040 ls-30 rotary encoder [wired usb]",
+      "searchText": "rp2040 ls-30 rotary encoder rp2040 ls 30 rotary encoder atrac17 + djhardrich rp2040 ls-30 rotary encoder wired usb wired wired usb dinput wired dinput dinput arcade stick encoder arcade stick encoder published published arcade stick encoder - - - diamond 00-01ms (diamond) unknown open source open source https://github.com/va7deo/snk68/tree/main/dev/rp2040 mister / pc 2e8a:000a atrac17 + djhardrich rp2040 ls-30 rotary encoder [wired usb] atrac17 + djhardrich - rp2040 ls-30 rotary encoder atrac17 + djhardrich rp2040 ls-30 rotary encoder [wired usb] wired usb wired wired wired usb dinput dinput dinput ['arcade stick encoder'] arcade stick encoder diamond arcade stick encoder - - - published published unknown open source open source https://github.com/va7deo/snk68/tree/main/dev/rp2040 atrac17 + djhardrich - rp2040 ls-30 rotary encoder atrac17 djhardrich rp2040 ls 30 rotary encoder atrac17 + djhardrich rp2040 ls-30 rotary encoder wired usb wired wired usb dinput wired dinput dinput arcade stick encoder published published arcade stick encoder - - - diamond 00-01ms (diamond) unknown open source open source https://github.com/va7deo/snk68/tree/main/dev/rp2040 mister / pc 2e8a:000a atrac17 + djhardrich rp2040 ls-30 rotary encoder [wired usb]",
       "controllerGroupKey": "published|rp2040 ls 30 rotary encoder",
       "modeVariantCount": 1,
       "modeVariants": [
@@ -685,14 +685,14 @@ window.MISTER_LATENCY_DATA = {
           "tester": "",
           "originalSystem": "",
           "saleStatus": "Unknown",
-          "sourceStatus": "Closed Source",
-          "isOpenSource": false,
-          "sourceUrl": "",
+          "sourceStatus": "Open Source",
+          "isOpenSource": true,
+          "sourceUrl": "https://github.com/va7deo/SNK68/tree/main/dev/rp2040",
           "buyUrl": "",
           "link": "-",
           "amazon": "",
           "joystickId": "2e8a:000a",
-          "searchText": "atrac17 + djhardrich - rp2040 ls-30 rotary encoder atrac17 djhardrich rp2040 ls 30 rotary encoder atrac17 + djhardrich rp2040 ls-30 rotary encoder wired usb wired wired usb dinput wired dinput dinput arcade stick encoder published published arcade stick encoder - - - diamond 00-01ms (diamond) unknown closed source mister / pc 2e8a:000a atrac17 + djhardrich rp2040 ls-30 rotary encoder [wired usb]"
+          "searchText": "atrac17 + djhardrich - rp2040 ls-30 rotary encoder atrac17 djhardrich rp2040 ls 30 rotary encoder atrac17 + djhardrich rp2040 ls-30 rotary encoder wired usb wired wired usb dinput wired dinput dinput arcade stick encoder published published arcade stick encoder - - - diamond 00-01ms (diamond) unknown open source open source https://github.com/va7deo/snk68/tree/main/dev/rp2040 mister / pc 2e8a:000a atrac17 + djhardrich rp2040 ls-30 rotary encoder [wired usb]"
         }
       ]
     },
