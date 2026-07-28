@@ -126,6 +126,15 @@ async function assertLightInteractionContrast(page) {
   await page.getByRole("button", { name: "Dark", exact: true }).click();
 }
 
+async function assertExternalProductLinksAvoidRestockMatcher(page) {
+  const externalLink = page
+    .locator('.card-title-link[href*="newwavetoys.com"]')
+    .first();
+  const href = await externalLink.getAttribute("href");
+  assert.match(href, /^https:\/\/newwavetoys\.com\/%70roducts\//);
+  assert.doesNotMatch(href, /\/products\//);
+}
+
 async function applyShopifyStyles(page) {
   await page.evaluate(async () => {
     for (const link of document.querySelectorAll('link[rel="stylesheet"]')) {
@@ -206,6 +215,7 @@ try {
   await assertThemeToggleContrast(shopifyPage);
   await assertLightMedianContrast(shopifyPage);
   await assertLightInteractionContrast(shopifyPage);
+  await assertExternalProductLinksAvoidRestockMatcher(shopifyPage);
   await shopifyPage.setViewportSize({ width: 390, height: 844 });
   await assertTitlesFit(shopifyPage);
   assert.deepEqual(shopifyPageErrors, []);

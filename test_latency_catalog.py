@@ -1275,6 +1275,28 @@ class LatencyCatalogTests(unittest.TestCase):
         self.assertEqual(payload["summary"]["saleStatuses"]["Discontinued"], 2)
         self.assertEqual(payload["summary"]["sourceStatuses"]["Open Source"], 2)
 
+    def test_stale_external_product_links_are_replaced(self):
+        snes = {
+            "name": "8BitDo - SNES Conversion PCB",
+            "buyUrl": "https://shop.8bitdo.com/products/mod-kit-for-snes-controller",
+            "link": "https://shop.8bitdo.com/products/mod-kit-for-snes-controller",
+        }
+        retrofi = {
+            "name": "bootsector - RetroFi",
+            "buyUrl": "https://brunofreitas.myshopify.com/products/retrofi-low-latency-wireless-multiplayer-joystick-adapter",
+            "link": "https://brunofreitas.myshopify.com/products/retrofi-low-latency-wireless-multiplayer-joystick-adapter",
+        }
+
+        latency.apply_sale_status_overrides(snes)
+        latency.apply_sale_status_overrides(retrofi)
+
+        self.assertEqual(snes["saleStatus"], "Actively sold")
+        self.assertEqual(snes["buyUrl"], latency.EIGHTBITDO_SNES_MOD_KIT_URL)
+        self.assertEqual(snes["link"], latency.EIGHTBITDO_SNES_MOD_KIT_URL)
+        self.assertEqual(retrofi["saleStatus"], "Discontinued")
+        self.assertEqual(retrofi["buyUrl"], latency.RETROFI_INFO_URL)
+        self.assertEqual(retrofi["link"], latency.RETROFI_INFO_URL)
+
     def test_reflex_ctrl_rows_are_controller_conversion(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

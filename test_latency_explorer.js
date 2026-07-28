@@ -207,7 +207,7 @@ test("open source firmware is labeled as open source in filters, tags, and detai
 });
 
 test("card titles use verified product or source URLs", () => {
-  assert.match(explorerSource, /const titleUrl = normalizeLatencyUrl\(item\.buyUrl \|\| item\.sourceUrl\)/);
+  assert.match(explorerSource, /const titleUrl = normalizeExternalProductUrl\(item\.buyUrl \|\| item\.sourceUrl\)/);
   assert.doesNotMatch(explorerSource, /item\.buyUrl \|\| item\.link/);
 });
 
@@ -292,6 +292,16 @@ test("Shopify uses one fully scoped CSS bundle", () => {
   assert.doesNotMatch(shopifyMarkup, /['"]reflex\.css['"]/);
   assert.doesNotMatch(shopifyStyles, /@import\s+url\(["']?reflex\.css/);
   assert.match(shopifyStyles, /\.input-latency-explorer-app\s*\{[^}]*--brand-primary:\s*#5000dc/s);
+});
+
+test("external Shopify product links avoid the ReStock same-store matcher", () => {
+  assert.match(explorerSource, /function normalizeExternalProductUrl\(value\)/);
+  assert.match(explorerSource, /url\.origin !== window\.location\.origin/);
+  assert.match(explorerSource, /"\/%70roducts\/"/);
+  assert.match(
+    explorerSource,
+    /normalizeExternalProductUrl\(item\.buyUrl \|\| item\.sourceUrl\)/,
+  );
 });
 
 test("hero title pane shows updated next to best average", () => {

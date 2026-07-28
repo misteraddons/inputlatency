@@ -161,6 +161,22 @@ function normalizeLatencyUrl(value) {
   return String(value || "").trim();
 }
 
+function normalizeExternalProductUrl(value) {
+  const normalized = normalizeLatencyUrl(value);
+  if (!normalized || typeof window === "undefined" || !window.location) return normalized;
+
+  try {
+    const url = new URL(normalized, window.location.href);
+    if (url.origin !== window.location.origin && url.pathname.startsWith("/products/")) {
+      // ReStock treats every literal /products/ link as a same-store product, even on another origin.
+      url.pathname = url.pathname.replace(/^\/products\//, "/%70roducts/");
+    }
+    return url.href;
+  } catch (error) {
+    return normalized;
+  }
+}
+
 function normalizeLatencyCanonicalPath() {
   if (typeof window === "undefined" || !window.location || !window.history) return;
   const canonicalPath = "/pages/latency";
@@ -799,7 +815,7 @@ function renderLatencyCard(item) {
   }
 
   const title = card.querySelector(".card-title");
-  const titleUrl = normalizeLatencyUrl(item.buyUrl || item.sourceUrl);
+  const titleUrl = normalizeExternalProductUrl(item.buyUrl || item.sourceUrl);
   if (titleUrl) {
     const titleLink = document.createElement("a");
     titleLink.className = "card-title-link";

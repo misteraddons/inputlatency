@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T00:22:36Z",
+  "generatedAt": "2026-07-28T00:35:07Z",
   "schemaVersion": 8,
   "sources": {
     "public": {
@@ -83,8 +83,8 @@
       "Wireless Controller": 25
     },
     "saleStatuses": {
-      "Actively sold": 124,
-      "Discontinued": 11,
+      "Actively sold": 123,
+      "Discontinued": 12,
       "Unknown": 41
     },
     "sourceStatuses": {
@@ -7692,9 +7692,9 @@
       "deviceNorm": "bootsector retrofi",
       "make": "bootsector",
       "model": "RetroFi",
-      "link": "https://brunofreitas.myshopify.com/products/retrofi-low-latency-wireless-multiplayer-joystick-adapter?variant=44157190013171",
+      "link": "https://www.brunofreitas.com/node/95",
       "amazon": "",
-      "buyUrl": "https://brunofreitas.myshopify.com/products/retrofi-low-latency-wireless-multiplayer-joystick-adapter?variant=44157190013171",
+      "buyUrl": "https://www.brunofreitas.com/node/95",
       "connection": "2.4 GHz USB",
       "connectionKind": "Wireless",
       "wirelessConnection": "",
@@ -7739,12 +7739,12 @@
       "notes": "",
       "tester": "",
       "originalSystem": "",
-      "saleStatus": "Actively sold",
+      "saleStatus": "Discontinued",
       "sourceStatus": "Closed Source",
       "isOpenSource": false,
       "sourceUrl": "",
       "joystickId": "",
-      "searchText": "bootsector - retrofi bootsector retrofi bootsector retrofi 2.4 ghz usb wireless 2.4ghz usb dinput wireless 2.4ghz dinput dinput controller adapter controller adapter published published controller adapter - - - platinum 01-05ms (platinum) actively sold closed source mister / pc buy link bootsector retrofi [2.4ghz usb] bootsector - retrofi bootsector retrofi [2.4ghz usb] 2.4 ghz usb wireless wireless 2.4ghz 2.4ghz usb dinput dinput dinput ['controller adapter'] controller adapter platinum controller adapter - - - published published actively sold closed source bootsector - retrofi bootsector retrofi bootsector retrofi 2.4 ghz usb wireless 2.4ghz usb dinput wireless 2.4ghz dinput dinput controller adapter published published controller adapter - - - platinum 01-05ms (platinum) actively sold closed source mister / pc buy link bootsector retrofi [2.4ghz usb]",
+      "searchText": "bootsector - retrofi bootsector retrofi bootsector retrofi 2.4 ghz usb wireless 2.4ghz usb dinput wireless 2.4ghz dinput dinput controller adapter controller adapter published published controller adapter - - - platinum 01-05ms (platinum) discontinued closed source mister / pc buy link bootsector retrofi [2.4ghz usb] bootsector - retrofi bootsector retrofi [2.4ghz usb] 2.4 ghz usb wireless wireless 2.4ghz 2.4ghz usb dinput dinput dinput ['controller adapter'] controller adapter platinum controller adapter - - - published published discontinued closed source bootsector - retrofi bootsector retrofi bootsector retrofi 2.4 ghz usb wireless 2.4ghz usb dinput wireless 2.4ghz dinput dinput controller adapter published published controller adapter - - - platinum 01-05ms (platinum) discontinued closed source mister / pc buy link bootsector retrofi [2.4ghz usb]",
       "controllerGroupKey": "published|bootsector retrofi",
       "modeVariantCount": 1,
       "modeVariants": [
@@ -7790,15 +7790,15 @@
           "notes": "",
           "tester": "",
           "originalSystem": "",
-          "saleStatus": "Actively sold",
+          "saleStatus": "Discontinued",
           "sourceStatus": "Closed Source",
           "isOpenSource": false,
           "sourceUrl": "",
-          "buyUrl": "https://brunofreitas.myshopify.com/products/retrofi-low-latency-wireless-multiplayer-joystick-adapter?variant=44157190013171",
-          "link": "https://brunofreitas.myshopify.com/products/retrofi-low-latency-wireless-multiplayer-joystick-adapter?variant=44157190013171",
+          "buyUrl": "https://www.brunofreitas.com/node/95",
+          "link": "https://www.brunofreitas.com/node/95",
           "amazon": "",
           "joystickId": "",
-          "searchText": "bootsector - retrofi bootsector retrofi bootsector retrofi 2.4 ghz usb wireless 2.4ghz usb dinput wireless 2.4ghz dinput dinput controller adapter published published controller adapter - - - platinum 01-05ms (platinum) actively sold closed source mister / pc buy link bootsector retrofi [2.4ghz usb]"
+          "searchText": "bootsector - retrofi bootsector retrofi bootsector retrofi 2.4 ghz usb wireless 2.4ghz usb dinput wireless 2.4ghz dinput dinput controller adapter published published controller adapter - - - platinum 01-05ms (platinum) discontinued closed source mister / pc buy link bootsector retrofi [2.4ghz usb]"
         }
       ]
     },
@@ -24034,9 +24034,9 @@
       "deviceNorm": "8bitdo snes conversion pcb",
       "make": "8BitDo",
       "model": "SNES Conversion PCB",
-      "link": "https://shop.8bitdo.com/products/mod-kit-for-snes-controller",
+      "link": "https://shop.8bitdo.com/products/8bitdo-mod-kit-for-original-snes-sfc-controller-old-edition",
       "amazon": "",
-      "buyUrl": "https://shop.8bitdo.com/products/mod-kit-for-snes-controller",
+      "buyUrl": "https://shop.8bitdo.com/products/8bitdo-mod-kit-for-original-snes-sfc-controller-old-edition",
       "connection": "Bluetooth",
       "connectionKind": "Wireless",
       "wirelessConnection": "",
@@ -24136,8 +24136,8 @@
           "sourceStatus": "Closed Source",
           "isOpenSource": false,
           "sourceUrl": "",
-          "buyUrl": "https://shop.8bitdo.com/products/mod-kit-for-snes-controller",
-          "link": "https://shop.8bitdo.com/products/mod-kit-for-snes-controller",
+          "buyUrl": "https://shop.8bitdo.com/products/8bitdo-mod-kit-for-original-snes-sfc-controller-old-edition",
+          "link": "https://shop.8bitdo.com/products/8bitdo-mod-kit-for-original-snes-sfc-controller-old-edition",
           "amazon": "",
           "joystickId": "05cc:05c4",
           "searchText": "8bitdo - snes conversion pcb 8bitdo snes conversion pcb 8bitdo snes conversion pcb bluetooth wireless bt (csr8510) macos macos wireless bt macos macos wireless controller published published controller 4 no 3.40 bronze 10-15ms (silver) actively sold closed source mister / pc 05cc:05c4 buy link 8bitdo snes conversion pcb [bt (csr8510) macos]"
@@ -24188,8 +24188,8 @@
           "sourceStatus": "Closed Source",
           "isOpenSource": false,
           "sourceUrl": "",
-          "buyUrl": "https://shop.8bitdo.com/products/mod-kit-for-snes-controller",
-          "link": "https://shop.8bitdo.com/products/mod-kit-for-snes-controller",
+          "buyUrl": "https://shop.8bitdo.com/products/8bitdo-mod-kit-for-original-snes-sfc-controller-old-edition",
+          "link": "https://shop.8bitdo.com/products/8bitdo-mod-kit-for-original-snes-sfc-controller-old-edition",
           "amazon": "",
           "joystickId": "054c:05c4",
           "searchText": "8bitdo - snes conversion pcb 8bitdo snes conversion pcb 8bitdo snes conversion pcb bluetooth wireless bt (csr8510) switch switch wireless bt switch switch wireless controller published published controller 4 no 3.40 copper 15-20ms (bronze) actively sold closed source mister / pc switch 054c:05c4 buy link 8bitdo snes conversion pcb [bt (csr8510) switch]"
@@ -24240,8 +24240,8 @@
           "sourceStatus": "Closed Source",
           "isOpenSource": false,
           "sourceUrl": "",
-          "buyUrl": "https://shop.8bitdo.com/products/mod-kit-for-snes-controller",
-          "link": "https://shop.8bitdo.com/products/mod-kit-for-snes-controller",
+          "buyUrl": "https://shop.8bitdo.com/products/8bitdo-mod-kit-for-original-snes-sfc-controller-old-edition",
+          "link": "https://shop.8bitdo.com/products/8bitdo-mod-kit-for-original-snes-sfc-controller-old-edition",
           "amazon": "",
           "joystickId": "045e:02e0",
           "searchText": "8bitdo - snes conversion pcb 8bitdo snes conversion pcb 8bitdo snes conversion pcb bluetooth wireless bt (csr8510) windows dinput wireless bt dinput dinput wireless controller published published controller 4 no 3.40 copper 20ms+ (rust) actively sold closed source mister / pc 045e:02e0 buy link 8bitdo snes conversion pcb [bt (csr8510) windows]"
@@ -24292,8 +24292,8 @@
           "sourceStatus": "Closed Source",
           "isOpenSource": false,
           "sourceUrl": "",
-          "buyUrl": "https://shop.8bitdo.com/products/mod-kit-for-snes-controller",
-          "link": "https://shop.8bitdo.com/products/mod-kit-for-snes-controller",
+          "buyUrl": "https://shop.8bitdo.com/products/8bitdo-mod-kit-for-original-snes-sfc-controller-old-edition",
+          "link": "https://shop.8bitdo.com/products/8bitdo-mod-kit-for-original-snes-sfc-controller-old-edition",
           "amazon": "",
           "joystickId": "2dc8:5103",
           "searchText": "8bitdo - snes conversion pcb 8bitdo snes conversion pcb 8bitdo snes conversion pcb bluetooth wireless bt (csr8510) android android wireless bt android android wireless controller published published controller 4 no 3.40 copper 20ms+ (rust) actively sold closed source mister / pc 2dc8:5103 buy link 8bitdo snes conversion pcb [bt (csr8510) android]"

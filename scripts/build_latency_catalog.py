@@ -385,6 +385,8 @@ REFLEX_ADAPT_URL = "https://misteraddons.com/products/reflex-adapt"
 REFLEX_CTRL_URL = "https://misteraddons.com/products/reflex-ctrl"
 RAPHNET_ADAPTER_URL = "https://www.raphnet-tech.com/products.php?category=Adapters"
 RETROUSB_USB_ADAPTER_URL = "https://retrousb.com/products/USB_adapter"
+EIGHTBITDO_SNES_MOD_KIT_URL = "https://shop.8bitdo.com/products/8bitdo-mod-kit-for-original-snes-sfc-controller-old-edition"
+RETROFI_INFO_URL = "https://www.brunofreitas.com/node/95"
 ULTIMARC_IPAC_URL = "https://www.ultimarc.com/control-interfaces/i-pacs/"
 ULTIMARC_IPAC_ULTIMATE_URL = "https://www.ultimarc.com/control-interfaces/i-pacs/i-pac-ultimate-i-o/"
 ULTIMARC_JPAC_URL = "https://www.ultimarc.com/control-interfaces/j-pac-en/"
@@ -781,6 +783,12 @@ def apply_sale_status_overrides(item: dict[str, Any]) -> None:
         set_item_sale_status(item, "Actively sold", RAPHNET_ADAPTER_URL, force_url=True)
     elif is_reflex_ctrl_name(name):
         set_item_sale_status(item, "Actively sold", REFLEX_CTRL_URL, force_url=True)
+    elif "8bitdo snes conversion pcb" in search:
+        set_item_sale_status(item, "Actively sold", EIGHTBITDO_SNES_MOD_KIT_URL, force_url=True)
+        item["link"] = EIGHTBITDO_SNES_MOD_KIT_URL
+    elif "bootsector retrofi" in search:
+        set_item_sale_status(item, "Discontinued", RETROFI_INFO_URL, force_url=True)
+        item["link"] = RETROFI_INFO_URL
     elif is_daemonbite_name(name):
         set_item_sale_status(item, "Discontinued")
     elif is_lload_name(name):
