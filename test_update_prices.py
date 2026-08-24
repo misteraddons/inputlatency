@@ -11,6 +11,38 @@ import update_prices  # noqa: E402
 
 
 class UpdatePricesTests(unittest.TestCase):
+    def test_find_header_column_is_case_insensitive(self):
+        self.assertEqual(
+            update_prices.find_header_column(["Device", " PRICE "], "Price"),
+            1,
+        )
+
+    def test_ensure_price_column_adds_managed_column(self):
+        worksheet = mock.Mock(col_count=4)
+
+        price_col = update_prices.ensure_price_column(
+            worksheet,
+            ["Device", "Amazon", "Link", "Mode"],
+            dry_run=False,
+        )
+
+        self.assertEqual(price_col, 4)
+        worksheet.add_cols.assert_called_once_with(1)
+        worksheet.update_cell.assert_called_once_with(1, 5, "Price")
+
+    def test_ensure_price_column_dry_run_does_not_modify_sheet(self):
+        worksheet = mock.Mock(col_count=4)
+
+        price_col = update_prices.ensure_price_column(
+            worksheet,
+            ["Device", "Amazon", "Link", "Mode"],
+            dry_run=True,
+        )
+
+        self.assertEqual(price_col, 4)
+        worksheet.add_cols.assert_not_called()
+        worksheet.update_cell.assert_not_called()
+
     def test_row_product_url_ignores_boolean_amazon_cell(self):
         row = ["Example Pad", "YES", "https://www.amazon.com/dp/B012345678", ""]
 

@@ -40,7 +40,7 @@ logging.basicConfig(
 log = logging.getLogger(__name__)
 
 SPREADSHEET_ID = "1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM"
-SHEET_NAME = "Sheet1"
+SHEET_NAME = "Detailed Results"
 CREATORS_API_URL = "https://creatorsapi.amazon/catalog/v1/getItems"
 CREATORS_TOKEN_ENDPOINTS = {
     "3.1": "https://api.amazon.com/auth/o2/token",
@@ -128,6 +128,29 @@ def collect_row_asins(
         if asin:
             row_asins[row_idx] = asin
     return row_asins
+
+
+def find_header_column(header: list[str], name: str) -> int | None:
+    target = name.strip().lower()
+    return next(
+        (index for index, value in enumerate(header) if value.strip().lower() == target),
+        None,
+    )
+
+
+def ensure_price_column(worksheet, header: list[str], dry_run: bool) -> int:
+    price_col = find_header_column(header, "Price")
+    if price_col is not None:
+        return price_col
+
+    price_col = len(header)
+    log.info("Price column is missing; adding it at column %d", price_col + 1)
+    if not dry_run:
+        required_columns = price_col + 1
+        if worksheet.col_count < required_columns:
+            worksheet.add_cols(required_columns - worksheet.col_count)
+        worksheet.update_cell(1, required_columns, "Price")
+    return price_col
 
 
 def get_sheet_client():
@@ -296,20 +319,9 @@ def main():
 
     header = all_values[0]
 
-    # Find relevant columns
-    def find_col(name: str) -> int | None:
-        for i, h in enumerate(header):
-            if h.strip().lower() == name.strip().lower():
-                return i
-        return None
-
-    amazon_col = find_col("Amazon")
-    link_col = find_col("Link")
-    price_col = find_col("Price")
-
-    if price_col is None:
-        log.error("No 'Price' column found in the spreadsheet header")
-        sys.exit(1)
+    amazon_col = find_header_column(header, "Amazon")
+    link_col = find_header_column(header, "Link")
+    price_col = ensure_price_column(worksheet, header, args.dry_run)
 
     if amazon_col is None and link_col is None:
         log.error("Neither 'Amazon' nor 'Link' column found")

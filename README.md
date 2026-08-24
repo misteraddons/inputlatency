@@ -41,7 +41,8 @@ npm test
 ### Scheduled Amazon price updates
 
 `.github/workflows/update-prices.yml` updates spreadsheet prices through Amazon's
-Creators API. Configure these repository Actions secrets before running it:
+Creators API. It maintains the `Price` column on the `Detailed Results` tab.
+Configure these repository Actions secrets before running it:
 
 - `AMAZON_CREATORS_CREDENTIAL_ID`
 - `AMAZON_CREATORS_CREDENTIAL_SECRET`
