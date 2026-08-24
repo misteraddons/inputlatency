@@ -38,6 +38,17 @@ npx playwright install chromium
 npm test
 ```
 
+### Scheduled Amazon price updates
+
+`.github/workflows/update-prices.yml` updates spreadsheet prices through Amazon's
+Creators API. Configure these repository Actions secrets before running it:
+
+- `AMAZON_CREATORS_CREDENTIAL_ID`
+- `AMAZON_CREATORS_CREDENTIAL_SECRET`
+- `AMAZON_CREATORS_CREDENTIAL_VERSION`
+- `AMAZON_PARTNER_TAG`
+- `GOOGLE_SERVICE_ACCOUNT_JSON`
+
 ## R latency report
 
 The older R report is generated from `rpubs/input.Rmd` and published from `docs/input.html`.

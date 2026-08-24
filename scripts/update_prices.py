@@ -2,18 +2,19 @@
 """
 Update prices in the MiSTer Controller Latency Google Sheet.
 
-Reads Amazon URLs from the spreadsheet, queries the Amazon Product
-Advertising API (PA-API 5.0) for current prices, and updates the
-Price column.
+Reads Amazon URLs from the spreadsheet, queries the Amazon Creators API
+for current prices, and updates the Price column.
 
 Requirements:
-  pip install gspread google-auth paapi5-python-sdk
+  pip install gspread google-auth
 
 Environment variables:
-  GOOGLE_SERVICE_ACCOUNT_JSON - path to Google service account JSON key file
-  AMAZON_ACCESS_KEY           - Amazon PA-API access key
-  AMAZON_SECRET_KEY           - Amazon PA-API secret key
+  GOOGLE_SERVICE_ACCOUNT_JSON - key file path or service account JSON document
+  AMAZON_CREATORS_CREDENTIAL_ID      - Creators API credential ID
+  AMAZON_CREATORS_CREDENTIAL_SECRET  - Creators API credential secret
+  AMAZON_CREATORS_CREDENTIAL_VERSION - Creators API credential version
   AMAZON_PARTNER_TAG          - Amazon Associates partner tag
+  AMAZON_MARKETPLACE          - Marketplace domain (default: www.amazon.com)
 
 Usage:
   python scripts/update_prices.py             # Update prices in the sheet
@@ -28,7 +29,7 @@ import re
 import sys
 import time
 from collections.abc import Callable
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 
@@ -40,6 +41,17 @@ log = logging.getLogger(__name__)
 
 SPREADSHEET_ID = "1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM"
 SHEET_NAME = "Sheet1"
+CREATORS_API_URL = "https://creatorsapi.amazon/catalog/v1/getItems"
+CREATORS_TOKEN_ENDPOINTS = {
+    "3.1": "https://api.amazon.com/auth/o2/token",
+    "3.2": "https://api.amazon.co.uk/auth/o2/token",
+    "3.3": "https://api.amazon.co.jp/auth/o2/token",
+}
+DEFAULT_MARKETPLACE = "www.amazon.com"
+CREATORS_PRICE_RESOURCES = (
+    "offersV2.listings.price",
+    "offersV2.listings.isBuyBoxWinner",
+)
 
 
 def extract_asin(url: str) -> str | None:
@@ -142,59 +154,128 @@ def get_sheet_client():
     return gspread.authorize(creds)
 
 
-def fetch_prices_paapi(asins: list[str]) -> dict[str, float]:
-    """Query Amazon PA-API 5.0 for prices. Returns {asin: price}."""
-    access_key = os.environ.get("AMAZON_ACCESS_KEY", "")
-    secret_key = os.environ.get("AMAZON_SECRET_KEY", "")
-    partner_tag = os.environ.get("AMAZON_PARTNER_TAG", "")
+def creators_token_endpoint(version: str) -> str:
+    normalized = str(version or "").strip().lower().removeprefix("v")
+    endpoint = CREATORS_TOKEN_ENDPOINTS.get(normalized)
+    if not endpoint:
+        supported = ", ".join(sorted(CREATORS_TOKEN_ENDPOINTS))
+        raise RuntimeError(f"Unsupported Creators API credential version {version!r}; expected {supported}")
+    return endpoint
 
-    if not all([access_key, secret_key, partner_tag]):
-        raise RuntimeError("Amazon PA-API credentials are not configured")
 
+def post_json(
+    url: str,
+    payload: dict,
+    headers: dict[str, str] | None = None,
+    opener: Callable = urlopen,
+) -> dict:
+    request_headers = {"Content-Type": "application/json"}
+    request_headers.update(headers or {})
+    request = Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers=request_headers,
+        method="POST",
+    )
     try:
-        from paapi5_python_sdk.api.default_api import DefaultApi
-        from paapi5_python_sdk.models.get_items_request import GetItemsRequest
-        from paapi5_python_sdk.models.get_items_resource import GetItemsResource
-        from paapi5_python_sdk.models.partner_type import PartnerType
-        from paapi5_python_sdk.rest import ApiException
-    except ImportError:
-        raise RuntimeError("paapi5-python-sdk is not installed")
+        with opener(request, timeout=30) as response:
+            return json.loads(response.read().decode("utf-8"))
+    except HTTPError as error:
+        detail = error.read().decode("utf-8", errors="replace")[:500]
+        raise RuntimeError(f"Amazon request failed with HTTP {error.code}: {detail}") from error
+    except (URLError, OSError, json.JSONDecodeError) as error:
+        raise RuntimeError(f"Amazon request failed: {error}") from error
 
-    api = DefaultApi(access_key=access_key, secret_key=secret_key, host="webservices.amazon.com", region="us-east-1")
-    resources = [GetItemsResource.OFFERSLISTINGSPRICE]
 
+def fetch_creators_access_token(
+    credential_id: str,
+    credential_secret: str,
+    credential_version: str,
+    request_json: Callable = post_json,
+) -> str:
+    response = request_json(
+        creators_token_endpoint(credential_version),
+        {
+            "grant_type": "client_credentials",
+            "client_id": credential_id,
+            "client_secret": credential_secret,
+            "scope": "creatorsapi::default",
+        },
+    )
+    token = str(response.get("access_token") or "").strip()
+    if not token:
+        raise RuntimeError("Amazon Creators API token response did not include access_token")
+    return token
+
+
+def extract_creators_prices(response: dict) -> dict[str, float]:
+    result = response.get("itemsResult") or response.get("itemResults") or {}
+    prices: dict[str, float] = {}
+    for item in result.get("items") or []:
+        asin = str(item.get("asin") or "").strip().upper()
+        listings = (item.get("offersV2") or {}).get("listings") or []
+        if not asin or not listings:
+            continue
+        listing = next((value for value in listings if value.get("isBuyBoxWinner") is True), listings[0])
+        amount = ((listing.get("price") or {}).get("money") or {}).get("amount")
+        if isinstance(amount, (int, float)) and not isinstance(amount, bool):
+            prices[asin] = float(amount)
+    return prices
+
+
+def fetch_prices_creators(
+    asins: list[str],
+    token_fetcher: Callable = fetch_creators_access_token,
+    request_json: Callable = post_json,
+    sleep: Callable[[float], None] = time.sleep,
+) -> dict[str, float]:
+    """Query Amazon Creators API for prices. Returns {asin: price}."""
+    credential_id = os.environ.get("AMAZON_CREATORS_CREDENTIAL_ID", "").strip()
+    credential_secret = os.environ.get("AMAZON_CREATORS_CREDENTIAL_SECRET", "").strip()
+    credential_version = os.environ.get("AMAZON_CREATORS_CREDENTIAL_VERSION", "").strip()
+    partner_tag = os.environ.get("AMAZON_PARTNER_TAG", "").strip()
+    marketplace = os.environ.get("AMAZON_MARKETPLACE", DEFAULT_MARKETPLACE).strip() or DEFAULT_MARKETPLACE
+    required = {
+        "AMAZON_CREATORS_CREDENTIAL_ID": credential_id,
+        "AMAZON_CREATORS_CREDENTIAL_SECRET": credential_secret,
+        "AMAZON_CREATORS_CREDENTIAL_VERSION": credential_version,
+        "AMAZON_PARTNER_TAG": partner_tag,
+    }
+    missing = [name for name, value in required.items() if not value]
+    if missing:
+        raise RuntimeError(f"Amazon Creators API credentials are not configured: {', '.join(missing)}")
+
+    access_token = token_fetcher(credential_id, credential_secret, credential_version)
     prices: dict[str, float] = {}
     failed_batches = 0
-    # PA-API allows up to 10 items per request
     for batch_start in range(0, len(asins), 10):
         batch = asins[batch_start : batch_start + 10]
         try:
-            request = GetItemsRequest(
-                partner_tag=partner_tag,
-                partner_type=PartnerType.ASSOCIATES,
-                item_ids=batch,
-                resources=resources,
+            response = request_json(
+                CREATORS_API_URL,
+                {
+                    "itemIds": batch,
+                    "itemIdType": "ASIN",
+                    "marketplace": marketplace,
+                    "partnerTag": partner_tag,
+                    "resources": list(CREATORS_PRICE_RESOURCES),
+                },
+                {
+                    "Authorization": f"Bearer {access_token}",
+                    "x-marketplace": marketplace,
+                },
             )
-            response = api.get_items(request)
-            if response.items_result and response.items_result.items:
-                for item in response.items_result.items:
-                    if item.offers and item.offers.listings:
-                        listing = item.offers.listings[0]
-                        if listing.price and listing.price.amount:
-                            prices[item.asin] = listing.price.amount
-        except ApiException as e:
-            log.error("PA-API error for batch %s: %s", batch, e)
-            failed_batches += 1
-        except Exception as e:
-            log.error("Unexpected error for batch %s: %s", batch, e)
+            prices.update(extract_creators_prices(response))
+        except RuntimeError as error:
+            log.error("Creators API error for batch %s: %s", batch, error)
             failed_batches += 1
 
         if batch_start + 10 < len(asins):
-            time.sleep(1)  # Rate limiting
+            sleep(1)
 
     batch_count = (len(asins) + 9) // 10
     if batch_count and failed_batches == batch_count:
-        raise RuntimeError("Every Amazon PA-API request failed")
+        raise RuntimeError("Every Amazon Creators API request failed")
     return prices
 
 
@@ -246,10 +327,10 @@ def main():
         raise RuntimeError("No Amazon ASINs could be resolved from the spreadsheet URLs")
 
     # Fetch prices
-    prices = fetch_prices_paapi(unique_asins)
+    prices = fetch_prices_creators(unique_asins)
     log.info("Fetched prices for %d / %d ASINs", len(prices), len(unique_asins))
     if not prices:
-        raise RuntimeError("Amazon PA-API returned no prices")
+        raise RuntimeError("Amazon Creators API returned no prices")
 
     # Apply updates
     updates = 0
