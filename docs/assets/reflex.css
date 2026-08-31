@@ -31,6 +31,12 @@
   --error-hover: #ff7ca3;
   --warning-bg: rgba(239, 255, 26, 0.12);
   --warning-border: rgba(239, 255, 26, 0.4);
+  --focus-ring: #efff1a;
+  --interactive-border-hover: rgba(255, 255, 255, 0.24);
+  --plot-grid: rgba(255, 255, 255, 0.14);
+  --plot-grid-soft: rgba(255, 255, 255, 0.07);
+  --plot-selection: rgba(255, 255, 255, 0.88);
+  --plot-selection-glow: rgba(255, 255, 255, 0.38);
   --radius-xs: 6px;
   --radius-sm: 8px;
   --radius-md: 10px;
@@ -83,15 +89,15 @@
   --brand-accent: #efff1a;
   --brand-secondary: var(--brand-accent);
   --brand-secondary-soft: var(--brand-primary);
-  --page-bg: #f2f1f6;
-  --page-bg-2: #f2f1f6;
-  --surface: #ffffff;
-  --surface-strong: #ece7fb;
-  --surface-soft: #f8f7fb;
-  --line: #d8d1e8;
-  --line-strong: #cfc5e7;
+  --page-bg: #d9dade;
+  --page-bg-2: #d9dade;
+  --surface: #f8f8fa;
+  --surface-strong: #f8f8fa;
+  --surface-soft: #efedf5;
+  --line: #a69db7;
+  --line-strong: #827492;
   --text: #1c1430;
-  --muted: #625879;
+  --muted: #493f58;
   --accent: var(--brand-primary);
   --accent-hover: var(--brand-primary-soft);
   --accent-soft: var(--brand-primary);
@@ -102,6 +108,12 @@
   --error-hover: #9e1749;
   --warning-bg: rgba(239, 255, 26, 0.34);
   --warning-border: rgba(80, 0, 220, 0.28);
+  --focus-ring: #5000dc;
+  --interactive-border-hover: var(--brand-primary);
+  --plot-grid: rgba(80, 0, 220, 0.22);
+  --plot-grid-soft: rgba(80, 0, 220, 0.12);
+  --plot-selection: #5000dc;
+  --plot-selection-glow: rgba(80, 0, 220, 0.22);
   --bg-primary: var(--page-bg);
   --bg-secondary: var(--surface-soft);
   --bg-card: var(--surface);
@@ -234,9 +246,9 @@ body:where([data-reflex-ui], .rx-app) {
 
 :where(.rx-field input:focus, .rx-field select:focus, .rx-field textarea:focus),
 :where(input.rx-control:focus, select.rx-control:focus, textarea.rx-control:focus) {
-  outline: 2px solid rgba(239, 255, 26, 0.35);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
-  border-color: rgba(239, 255, 26, 0.55);
+  border-color: var(--focus-ring);
 }
 
 :where(input[type="range"]) {
@@ -261,8 +273,13 @@ body:where([data-reflex-ui], .rx-app) {
 
 :where(.rx-button:hover, [data-reflex-ui] .btn:hover, .rx-app .btn:hover):not(:disabled) {
   background: var(--brand-primary-soft);
-  border-color: rgba(239, 255, 26, 0.35);
+  border-color: var(--focus-ring);
   transform: translateY(-1px);
+}
+
+:where(.rx-button:focus-visible, [data-reflex-ui] .btn:focus-visible, .rx-app .btn:focus-visible) {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 :where(.rx-button:disabled, [data-reflex-ui] .btn:disabled, .rx-app .btn:disabled) {
@@ -324,14 +341,14 @@ body:where([data-reflex-ui], .rx-app) {
 }
 
 .rx-theme-toggle button:focus-visible {
-  outline: 2px solid var(--brand-accent);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 
 :where(.rx-status, [data-reflex-ui] .status-banner, [data-reflex-ui] .warning-box, .rx-app .status-banner, .rx-app .warning-box) {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.035);
+  background: var(--surface-soft);
   color: var(--muted);
   padding: 12px 14px;
   line-height: 1.45;
