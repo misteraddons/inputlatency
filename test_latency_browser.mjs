@@ -80,7 +80,7 @@ async function assertThemeToggleContrast(page) {
   await darkButton.click();
   assert.equal(await lightButton.evaluate((button) => getComputedStyle(button).color), "rgb(197, 186, 255)");
   await lightButton.click();
-  assert.equal(await darkButton.evaluate((button) => getComputedStyle(button).color), "rgb(98, 88, 121)");
+  assert.equal(await darkButton.evaluate((button) => getComputedStyle(button).color), "rgb(73, 63, 88)");
   await darkButton.click();
 }
 
