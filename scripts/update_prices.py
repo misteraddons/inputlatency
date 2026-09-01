@@ -347,6 +347,7 @@ def main():
     # Apply updates
     updates = 0
     stale = 0
+    protected = 0
     for row_idx, asin in sorted(row_asins.items()):
         if asin in prices:
             new_price = f"${prices[asin]:.2f}"
@@ -357,13 +358,30 @@ def main():
                     log.info("[DRY RUN] Row %d (%s): %s -> %s", row_idx, device, current_price or "(empty)", new_price)
                 else:
                     # gspread uses 1-indexed columns
-                    worksheet.update_cell(row_idx, price_col + 1, new_price)
+                    try:
+                        worksheet.update_cell(row_idx, price_col + 1, new_price)
+                    except Exception as error:
+                        if "protected cell or object" not in str(error).lower():
+                            raise
+                        device = all_values[row_idx - 1][2] if len(all_values[row_idx - 1]) > 2 else f"row {row_idx}"
+                        log.warning(
+                            "Skipped protected Price cell at row %d (%s)",
+                            row_idx,
+                            device,
+                        )
+                        protected += 1
+                        continue
                     time.sleep(0.5)  # Rate limit Sheets API
                 updates += 1
         else:
             stale += 1
 
-    log.info("Updates: %d, No price available: %d", updates, stale)
+    log.info(
+        "Updates: %d, Protected cells skipped: %d, No price available: %d",
+        updates,
+        protected,
+        stale,
+    )
     if args.dry_run:
         log.info("Dry run complete — no changes written")
     else:
