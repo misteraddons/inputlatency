@@ -198,55 +198,51 @@ class UpdatePricesTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, "AMAZON_CREATORS_CREDENTIAL_ID"):
                 update_prices.fetch_prices_creators(["B012345678"])
 
-    def test_protected_price_cells_are_reported_without_aborting_other_updates(self):
+    def test_column_name_uses_a1_notation(self):
+        self.assertEqual(update_prices.column_name(1), "A")
+        self.assertEqual(update_prices.column_name(26), "Z")
+        self.assertEqual(update_prices.column_name(27), "AA")
+        self.assertEqual(update_prices.column_name(58), "BF")
+
+    def test_price_updates_are_batched_into_one_sheets_request(self):
         worksheet = mock.Mock()
-        worksheet.get_all_values.return_value = [
-            ["Device", "Amazon", "Link", "Price"],
-            ["Protected", "", "https://www.amazon.com/dp/B012345678", "$10.00"],
-            ["Writable", "", "https://www.amazon.com/dp/B087654321", "$20.00"],
-        ]
-        worksheet.update_cell.side_effect = [
-            Exception("APIError: [400]: You are trying to edit a protected cell or object"),
-            None,
-        ]
+        updated, protected = update_prices.apply_price_updates(
+            worksheet,
+            [(2, 58, "$11.00"), (3, 58, "$21.00")],
+        )
+
+        self.assertEqual((updated, protected), (2, 0))
+        worksheet.batch_update.assert_called_once_with(
+            [
+                {"range": "BF2", "values": [["$11.00"]]},
+                {"range": "BF3", "values": [["$21.00"]]},
+            ],
+            value_input_option="RAW",
+        )
+
+    def test_protected_price_column_is_reported_without_aborting(self):
+        worksheet = mock.Mock()
+        worksheet.batch_update.side_effect = Exception(
+            "APIError: [400]: You are trying to edit a protected cell or object"
+        )
 
         with (
-            mock.patch.object(update_prices, "get_sheet_client") as get_client,
-            mock.patch.object(
-                update_prices,
-                "fetch_prices_creators",
-                return_value={"B012345678": 11.0, "B087654321": 21.0},
-            ),
-            mock.patch.object(update_prices.time, "sleep"),
-            mock.patch.object(sys, "argv", ["update_prices.py"]),
             self.assertLogs(update_prices.log, level="WARNING") as captured,
         ):
-            get_client.return_value.open_by_key.return_value.worksheet.return_value = worksheet
-            update_prices.main()
+            updated, protected = update_prices.apply_price_updates(
+                worksheet,
+                [(2, 58, "$11.00"), (3, 58, "$21.00")],
+            )
 
-        self.assertEqual(worksheet.update_cell.call_count, 2)
-        self.assertIn("Skipped protected Price cell at row 2", "\n".join(captured.output))
+        self.assertEqual((updated, protected), (0, 2))
+        self.assertIn("Price column is protected", "\n".join(captured.output))
 
     def test_unexpected_sheet_write_errors_still_fail(self):
         worksheet = mock.Mock()
-        worksheet.get_all_values.return_value = [
-            ["Device", "Amazon", "Link", "Price"],
-            ["Example", "", "https://www.amazon.com/dp/B012345678", "$10.00"],
-        ]
-        worksheet.update_cell.side_effect = Exception("APIError: [503]: backend unavailable")
+        worksheet.batch_update.side_effect = Exception("APIError: [503]: backend unavailable")
 
-        with (
-            mock.patch.object(update_prices, "get_sheet_client") as get_client,
-            mock.patch.object(
-                update_prices,
-                "fetch_prices_creators",
-                return_value={"B012345678": 11.0},
-            ),
-            mock.patch.object(sys, "argv", ["update_prices.py"]),
-        ):
-            get_client.return_value.open_by_key.return_value.worksheet.return_value = worksheet
-            with self.assertRaisesRegex(Exception, "backend unavailable"):
-                update_prices.main()
+        with self.assertRaisesRegex(Exception, "backend unavailable"):
+            update_prices.apply_price_updates(worksheet, [(2, 58, "$11.00")])
 
 
 if __name__ == "__main__":

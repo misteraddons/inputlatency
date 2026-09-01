@@ -302,6 +302,49 @@ def fetch_prices_creators(
     return prices
 
 
+def column_name(column_number: int) -> str:
+    """Return the A1 column name for a 1-indexed column number."""
+    if column_number < 1:
+        raise ValueError("column_number must be at least 1")
+    result = ""
+    while column_number:
+        column_number, remainder = divmod(column_number - 1, 26)
+        result = chr(ord("A") + remainder) + result
+    return result
+
+
+def apply_price_updates(worksheet, pending_updates: list[tuple[int, int, str]]) -> tuple[int, int]:
+    """Apply price changes in one Sheets request and tolerate a protected Price column."""
+    if not pending_updates:
+        return 0, 0
+
+    payload = [
+        {
+            "range": f"{column_name(column_number)}{row_number}",
+            "values": [[new_price]],
+        }
+        for row_number, column_number, new_price in pending_updates
+    ]
+    try:
+        worksheet.batch_update(payload, value_input_option="RAW")
+    except Exception as error:
+        if "protected cell or object" not in str(error).lower():
+            raise
+        skipped = len(pending_updates)
+        log.warning(
+            "Price column is protected from the automation account; skipped %d pending updates",
+            skipped,
+        )
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            print(
+                "::warning title=Price column protected::"
+                f"Skipped {skipped} Amazon price updates. Add the Google service account "
+                "as an allowed editor of the Price column to enable writes."
+            )
+        return 0, skipped
+    return len(pending_updates), 0
+
+
 def main():
     parser = argparse.ArgumentParser(description="Update prices in the latency spreadsheet")
     parser.add_argument("--dry-run", action="store_true", help="Preview changes without writing")
@@ -348,6 +391,7 @@ def main():
     updates = 0
     stale = 0
     protected = 0
+    pending_updates = []
     for row_idx, asin in sorted(row_asins.items()):
         if asin in prices:
             new_price = f"${prices[asin]:.2f}"
@@ -356,25 +400,15 @@ def main():
                 if args.dry_run:
                     device = all_values[row_idx - 1][2] if len(all_values[row_idx - 1]) > 2 else f"row {row_idx}"
                     log.info("[DRY RUN] Row %d (%s): %s -> %s", row_idx, device, current_price or "(empty)", new_price)
+                    updates += 1
                 else:
-                    # gspread uses 1-indexed columns
-                    try:
-                        worksheet.update_cell(row_idx, price_col + 1, new_price)
-                    except Exception as error:
-                        if "protected cell or object" not in str(error).lower():
-                            raise
-                        device = all_values[row_idx - 1][2] if len(all_values[row_idx - 1]) > 2 else f"row {row_idx}"
-                        log.warning(
-                            "Skipped protected Price cell at row %d (%s)",
-                            row_idx,
-                            device,
-                        )
-                        protected += 1
-                        continue
-                    time.sleep(0.5)  # Rate limit Sheets API
-                updates += 1
+                    # gspread uses 1-indexed rows and columns.
+                    pending_updates.append((row_idx, price_col + 1, new_price))
         else:
             stale += 1
+
+    if not args.dry_run:
+        updates, protected = apply_price_updates(worksheet, pending_updates)
 
     log.info(
         "Updates: %d, Protected cells skipped: %d, No price available: %d",
