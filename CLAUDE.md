@@ -45,7 +45,7 @@ Shopify theme section input-latency-explorer  ->  misteraddons.com/pages/latency
 - The R render matches capture files to sheet `Device` names by normalized name (`normalize_capture_name` in `rpubs/input.Rmd`). Captures that do not match are listed in `results/raw_capture_unmatched.csv` and contribute no sample count or percentile data.
 - Capture filenames may carry a VID/PID suffix or a `-<samples>-<date>` run suffix; both are stripped before matching. Other spelling differences need an entry in `capture_name_aliases`.
 - GitHub Pages is not enabled for this repository. Everything under `docs/` is build output or a local preview; the live page loads its data inline from the theme asset.
-- Deployed theme assets are minified copies made outside this repository; the upload script sends the sources unchanged.
+- Publishing runs from the `mister_cores` repository: its `Publish Reflex Sites` workflow (manual dispatch) checks out this repo's `main` and runs `scripts/upload_shopify_theme_assets.py`. The script uploads sources unchanged; Shopify's CDN serves them minified.
 
 ## Commands
 
@@ -62,7 +62,7 @@ python -m unittest test_latency_catalog.py test_update_prices.py
 npm test          # node unit tests + Playwright smoke test of docs/latency.html
 ```
 
-Publishing: bump `latency_asset_revision` (and `latency_css_revision` when the stylesheet changed) in `shopify/sections/input-latency-explorer.liquid`, then run `scripts/upload_shopify_theme_assets.py` with `SHOPIFY_STORE_DOMAIN`, `SHOPIFY_THEME_ID` and `SHOPIFY_ADMIN_API_ACCESS_TOKEN` set. Uploading is a release action; do not run it as a side effect of a build.
+Publishing: bump `latency_asset_revision` (and `latency_css_revision` when the stylesheet changed) in `shopify/sections/input-latency-explorer.liquid`, merge to `main`, then dispatch `Publish Reflex Sites` in `mister_cores`, or run `scripts/upload_shopify_theme_assets.py` locally with `SHOPIFY_STORE_DOMAIN`, `SHOPIFY_THEME_ID` and `SHOPIFY_ADMIN_API_ACCESS_TOKEN` set. Uploading is a release action; do not run it as a side effect of a build.
 
 ## Price Updates
 
