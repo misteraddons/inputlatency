@@ -8,7 +8,18 @@ node_modules/
 # Local agent configuration
 /.claude/
 /AGENTS.md
-/CLAUDE.md
+
+# R session state and stale report builds
+/rpubs/.RData
+/rpubs/.Rhistory
+/rpubs/*.bak.Rmd
+/rpubs/input.html
+/rpubs/input_libs/
+*.icloud
+
+# Superseded revisioned stylesheets; only the one named in the section stays tracked
+/shopify/assets/input-latency-explorer-*.css
+!/shopify/assets/input-latency-explorer-20260830-2213.css
 
 # Local test and capture artifacts
 /output/playwright/
