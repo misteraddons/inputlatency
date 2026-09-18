@@ -52,9 +52,24 @@ Configure these repository Actions secrets before running it:
 
 The workflow writes prices only when the service account can edit the `Price`
 column. While that column is a protected range, the run still succeeds but logs
-"Price column is protected" and writes nothing. To enable writes, add the
-service account email (`client_email` in `GOOGLE_SERVICE_ACCOUNT_JSON`) as an
-editor of the protected range in the sheet.
+"Price column is protected" and writes nothing, which is the current state.
+
+To enable writes:
+
+1. Find the service account address. It ends in `.iam.gserviceaccount.com` and
+   appears in the sheet's Share dialog, because the account already has access
+   to read the sheet. It is also the `client_email` field of the
+   `GOOGLE_SERVICE_ACCOUNT_JSON` secret.
+2. In the sheet, open `Data` > `Protected sheets and ranges` and select the
+   protection covering the `Price` column on `Detailed Results`.
+3. Under `Set permissions` > `Restrict who can edit this range`, add that
+   address, then save.
+4. Re-run the workflow from the Actions tab. A working run logs
+   `Updates: <n>, Protected cells skipped: 0`.
+
+Prices are read from the Amazon Creators API, which returns a price only for
+items that currently have an offer. The 2026-09-13 run resolved 100 unique
+ASINs and got prices for 37 of them, so expect discontinued items to stay blank.
 
 Prices reach the explorer only after the data is rebuilt: run `Rscript render.R`
 (refreshes `results/latency_sheet_cache.csv`), rebuild the explorer data, then
