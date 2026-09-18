@@ -85,33 +85,46 @@ def is_ok(status: int | None) -> bool:
     return status is not None and 200 <= status < 400
 
 
-def check_link(url: str, timeout: int, retry_delay: float = 6.0) -> tuple[int | None, str, str]:
+def check_link(url: str, timeout: int, retry_delay: float = 10.0) -> tuple[int | None, str, str, bool]:
     """Return (status, final_url, note). A status of None means no response.
 
     Amazon's short-link service answers 404 when it is throttling, which is
-    indistinguishable from a deleted link, so a failure is always retried once
-    after a longer pause. Without this, a one second sweep reported six live
-    links as dead.
+    indistinguishable from a deleted link, so every failure is retried with a
+    generous pause. Hosts known to throttle get an extra attempt and are never
+    reported as confirmed, because no number of failures proves the link is gone
+    when the host lies under load.
     """
-    status, final_url, note = request_once(url, timeout)
-    if is_ok(status):
-        return status, final_url, note
-    time.sleep(retry_delay)
-    retry_status, retry_final, retry_note = request_once(url, timeout)
-    if is_ok(retry_status):
-        return retry_status, retry_final, "failed once, resolved on retry"
-    if host_is_unreliable(url):
-        return retry_status, retry_final, "this host throttles with an error status, verify by hand"
-    return retry_status, retry_final, retry_note or note
+    unreliable = host_is_unreliable(url)
+    attempts = 3 if unreliable else 2
+    status, final_url, note = None, url, ""
+    for attempt in range(1, attempts + 1):
+        status, final_url, note = request_once(url, timeout)
+        if is_ok(status):
+            return status, final_url, ("resolved on attempt %d" % attempt if attempt > 1 else ""), False
+        if attempt < attempts:
+            time.sleep(retry_delay)
+    if unreliable:
+        return status, final_url, f"host throttles with an error status; failed {attempts} times, open it by hand", False
+    if status in {401, 403, 429}:
+        # The server answered, it just refused a script. That says nothing about
+        # whether a person following the link would reach the product.
+        return status, final_url, "the site refuses scripted requests, open it by hand", False
+    return status, final_url, note, True
 
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Check explorer product links")
     parser.add_argument("--payload", type=Path, default=DEFAULT_PAYLOAD)
     parser.add_argument("--delay", type=float, default=1.0, help="seconds between requests")
+    parser.add_argument(
+        "--amazon-delay",
+        type=float,
+        default=10.0,
+        help="seconds between requests to hosts that throttle, such as amzn.to",
+    )
     parser.add_argument("--timeout", type=int, default=20)
     parser.add_argument("--limit", type=int, default=0, help="check only the first N links")
-    parser.add_argument("--retry-delay", type=float, default=6.0, help="pause before retrying a failure")
+    parser.add_argument("--retry-delay", type=float, default=10.0, help="pause before retrying a failure")
     parser.add_argument("--report", type=Path, help="write every result to this CSV")
     args = parser.parse_args()
 
@@ -123,43 +136,51 @@ def main() -> int:
 
     print(f"Checking {len(urls)} unique links from {len(payload.get('items') or [])} items")
     rows = []
-    problems = []
+    confirmed_broken = []
+    needs_a_human = []
     for index, url in enumerate(urls, start=1):
-        status, final_url, note = check_link(url, args.timeout, args.retry_delay)
+        status, final_url, note, confirmed = check_link(url, args.timeout, args.retry_delay)
         ok = is_ok(status)
         rows.append(
             {
                 "url": url,
                 "status": status if status is not None else "",
+                "confirmed": "yes" if confirmed else "",
                 "final_url": final_url,
                 "devices": "; ".join(sorted(set(links[url]))),
                 "note": note,
             }
         )
         if not ok:
-            problems.append(rows[-1])
+            (confirmed_broken if confirmed else needs_a_human).append(rows[-1])
             print(f"  [{index}/{len(urls)}] {status or 'no response'}  {url}  {note}".rstrip())
         if index < len(urls):
-            time.sleep(args.delay)
+            time.sleep(args.amazon_delay if host_is_unreliable(url) else args.delay)
 
     if args.report:
         args.report.parent.mkdir(parents=True, exist_ok=True)
         with args.report.open("w", newline="", encoding="utf-8") as handle:
-            writer = csv.DictWriter(handle, fieldnames=["url", "status", "final_url", "devices", "note"])
+            writer = csv.DictWriter(handle, fieldnames=["url", "status", "confirmed", "final_url", "devices", "note"])
             writer.writeheader()
             writer.writerows(rows)
         print(f"Wrote {args.report}")
 
-    print(f"\n{len(urls) - len(problems)} of {len(urls)} links resolved")
-    if problems:
-        print("Links to open by hand before changing anything:")
-        for row in problems:
+    print(f"\n{len(urls) - len(confirmed_broken) - len(needs_a_human)} of {len(urls)} links resolved")
+    if confirmed_broken:
+        print("")
+        print("Confirmed broken. These failed every attempt on hosts that answer honestly:")
+        for row in confirmed_broken:
             print(f"  {row['status'] or 'no response'}  {row['url']}  ({row['devices'][:60]})")
-        print(
-            "None of the above is proof that a link is dead. Storefronts and Amazon "
-            "short links return errors when they throttle, so open each one before "
-            "editing the spreadsheet."
-        )
+    else:
+        print("")
+        print("No link is confirmed broken.")
+
+    if needs_a_human:
+        print("")
+        print("Unconfirmed. These hosts throttle or block scripts, so open each one yourself:")
+        for row in needs_a_human:
+            print(f"  {row['status'] or 'no response'}  {row['url']}  ({row['devices'][:60]})")
+        print("Do not edit the spreadsheet from this list alone.")
     return 0
 
 
