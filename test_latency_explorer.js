@@ -349,8 +349,11 @@ test("rank badges use catalog-global ranks instead of filtered result ranks", ()
 });
 
 test("tile cards are compact enough for dense browsing", () => {
-  assert.match(explorerStyles, /contain-intrinsic-size:\s*2[0-5]\dpx/);
-  assert.match(explorerStyles, /height:\s*2[0-5]\dpx/);
+  // The tile height follows its content instead of being pinned, so assert the
+  // reserved estimate stays under the old fixed 236px and nothing re-pins it.
+  assert.match(explorerStyles, /contain-intrinsic-size:\s*1[5-9]\dpx/);
+  assert.match(explorerStyles, /\.latency-grid\.view-card \.latency-card \{[^}]*height:\s*auto/);
+  assert.doesNotMatch(explorerStyles, /\.latency-grid\.view-card \.latency-card \{[^}]*height:\s*2\d\dpx/);
 });
 
 test("tile cards reserve the subtitle line and show category before connection", () => {

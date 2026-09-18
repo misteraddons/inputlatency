@@ -2087,8 +2087,8 @@
   gap: 6px;
   width: 100%;
   color: var(--muted);
-  font: 700 0.68rem/1.2 var(--font-mono);
-  letter-spacing: 0.06em;
+  font: 700 0.76rem/1.2 var(--font-mono);
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
@@ -2511,8 +2511,9 @@
 }
 
 .input-latency-explorer-app .latency-grid.view-card .latency-card{
-  contain-intrinsic-size: 236px;
-  height: 236px;
+  contain-intrinsic-size: 178px;
+  height: auto;
+  min-height: 178px;
 }
 
 .input-latency-explorer-app .latency-grid.view-card .latency-card .card-frame{
@@ -2522,9 +2523,9 @@
     "subtitle"
     "metrics";
   grid-template-rows: auto auto auto;
-  gap: 7px;
-  min-height: 236px;
-  padding: 12px;
+  gap: 6px;
+  min-height: 0;
+  padding: 11px 12px;
 }
 
 .input-latency-explorer-app .latency-grid.view-card .latency-card .card-title,
@@ -2548,8 +2549,8 @@
 }
 
 .input-latency-explorer-app .latency-grid.view-card .latency-metric{
-  min-height: 46px;
-  padding: 7px 8px;
+  min-height: 42px;
+  padding: 6px 8px;
   border-radius: 9px;
 }
 
@@ -2559,7 +2560,7 @@
 
 .input-latency-explorer-app .latency-grid.view-card .latency-metric span{
   margin-top: 3px;
-  font-size: 0.62rem;
+  font-size: 0.72rem;
 }
 
 .input-latency-explorer-app .latency-grid.view-list{
@@ -2656,7 +2657,7 @@
   justify-content: center;
   min-height: 28px;
   padding: 5px 9px;
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   line-height: 1;
   letter-spacing: 0.03em;
 }
@@ -2735,8 +2736,8 @@
   padding: 0 12px 6px;
   border-bottom: 1px solid var(--line);
   color: var(--muted);
-  font: 700 0.68rem/1.05 var(--font-mono);
-  letter-spacing: 0.08em;
+  font: 700 0.76rem/1.05 var(--font-mono);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -2859,8 +2860,8 @@
 .input-latency-explorer-app .latency-metric span{
   margin-top: 4px;
   color: var(--muted);
-  font: 700 0.68rem/1.2 var(--font-mono);
-  letter-spacing: 0.06em;
+  font: 700 0.76rem/1.2 var(--font-mono);
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
@@ -2886,7 +2887,7 @@
 
 .input-latency-explorer-app .latency-grid.view-list .latency-metric span{
   margin-top: 3px;
-  font-size: 0.68rem;
+  font-size: 0.74rem;
   line-height: 1.05;
   letter-spacing: 0.04em;
 }
@@ -3158,7 +3159,7 @@
   }
 
   .input-latency-explorer-app .latency-grid.view-list .latency-metric span{
-    font-size: 0.64rem;
+    font-size: 0.72rem;
   }
 
   .input-latency-explorer-app .latency-mode-variant{
