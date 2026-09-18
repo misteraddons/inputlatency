@@ -54,7 +54,7 @@ async function assertTitlesFit(page) {
 
 async function assertRankBounds(page) {
   const cardCount = await page.locator(".latency-card").count();
-  const ranks = await page.locator(".tag-rank-overall").allTextContents();
+  const ranks = await page.locator(".latency-rank").allTextContents();
   const maxRank = Math.max(...ranks.map(parseRank));
   assert.equal(cardCount, expectedItemCount);
   assert.ok(maxRank <= cardCount, `Maximum overall rank ${maxRank} exceeds ${cardCount} consolidated results`);
@@ -176,11 +176,11 @@ try {
   await assertLightMedianContrast(page);
 
   const adaptCard = page.locator(".latency-card").filter({ has: page.locator(".card-title", { hasText: /^Reflex - Adapt$/ }) }).first();
-  const initialAdaptRank = parseRank(await adaptCard.locator(".tag-rank-overall").textContent());
+  const initialAdaptRank = parseRank(await adaptCard.locator(".latency-rank").textContent());
   await page.locator("#latencyCategorySelect").selectOption({ label: "Controller Adapter" });
   await page.locator("#latencyAdapterInputSelect").selectOption({ label: "N64 Controller" });
   const filteredAdaptCard = page.locator(".latency-card").filter({ has: page.locator(".card-title", { hasText: /^Reflex - Adapt$/ }) }).first();
-  assert.equal(parseRank(await filteredAdaptCard.locator(".tag-rank-overall").textContent()), initialAdaptRank);
+  assert.equal(parseRank(await filteredAdaptCard.locator(".latency-rank").textContent()), initialAdaptRank);
 
   await page.locator(".latency-recent-item").first().click();
   await page.locator(".latency-card.is-selected .latency-detail-panel:not([hidden])").waitFor();

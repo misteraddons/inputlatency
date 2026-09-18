@@ -2032,10 +2032,14 @@
 
 .input-latency-explorer-app .latency-page{
   --latency-median-color: rgba(230, 255, 30, 0.62);
+  --latency-stripe: rgba(255, 255, 255, 0.035);
+  --latency-row-line: rgba(255, 255, 255, 0.07);
 }
 
 .input-latency-explorer-app:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .latency-page{
   --latency-median-color: #5000dc;
+  --latency-stripe: rgba(16, 24, 40, 0.04);
+  --latency-row-line: rgba(16, 24, 40, 0.1);
 }
 
 .input-latency-explorer-app .latency-page .hero-stats{
@@ -2566,19 +2570,41 @@
 .input-latency-explorer-app .latency-grid.view-list{
   grid-template-columns: 1fr;
   align-items: stretch;
-  gap: 8px;
+  gap: 0;
+}
+
+/* Rows read as a striped table rather than a stack of bordered panels. */
+.input-latency-explorer-app .latency-grid.view-list .latency-card{
+  border: 0;
+  border-radius: 0;
+  border-bottom: 1px solid var(--latency-row-line);
+  background: transparent;
+}
+
+.input-latency-explorer-app .latency-grid.view-list .latency-card:nth-child(even){
+  background: var(--latency-stripe);
+}
+
+.input-latency-explorer-app .latency-grid.view-list .latency-card:hover{
+  background: var(--surface-soft);
+}
+
+.input-latency-explorer-app .latency-grid.view-list .latency-card.is-selected,
+.input-latency-explorer-app .latency-grid.view-list .latency-card.is-expanded{
+  background: var(--surface-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 .input-latency-explorer-app .latency-grid.view-list .latency-card{
-  contain-intrinsic-size: 56px;
+  contain-intrinsic-size: 52px;
 }
 
 .input-latency-explorer-app .latency-grid.view-list .latency-card .card-frame{
-  grid-template-columns: minmax(320px, 1fr) minmax(340px, 390px);
+  grid-template-columns: 54px minmax(280px, 1fr) 238px;
   grid-template-areas:
-    "title metrics"
-    "details details";
-  gap: 4px 16px;
+    "rank title metrics"
+    "details details details";
+  gap: 4px 14px;
   align-items: center;
   padding: 5px 12px;
   min-height: 48px;
@@ -2587,6 +2613,20 @@
 .input-latency-explorer-app .latency-title-row{
   grid-area: title;
   min-width: 0;
+}
+
+.input-latency-explorer-app .latency-rank{
+  grid-area: rank;
+  display: none;
+}
+
+.input-latency-explorer-app .latency-grid.view-list .latency-rank{
+  display: block;
+  align-self: center;
+  padding-right: 6px;
+  color: var(--muted);
+  font: 700 0.92rem/1.1 var(--font-mono);
+  text-align: right;
 }
 
 .input-latency-explorer-app .card-title-link{
@@ -2729,8 +2769,8 @@
 
 .input-latency-explorer-app .latency-list-header.is-visible{
   display: grid;
-  grid-template-columns: minmax(320px, 1fr) minmax(340px, 390px);
-  gap: 4px 16px;
+  grid-template-columns: 54px minmax(280px, 1fr) 238px;
+  gap: 4px 14px;
   align-items: center;
   margin-top: var(--section-gap);
   padding: 0 12px 6px;
@@ -2743,11 +2783,16 @@
 
 .input-latency-explorer-app .latency-list-header-metrics{
   display: grid;
-  grid-template-columns: 96px 118px minmax(110px, 1fr);
+  grid-template-columns: 96px minmax(118px, 1fr);
   gap: 8px;
   justify-self: end;
-  width: min(100%, 390px);
+  width: min(100%, 238px);
   padding-left: 9px;
+}
+
+.input-latency-explorer-app .latency-list-header-rank{
+  padding-right: 6px;
+  text-align: right;
 }
 
 .input-latency-explorer-app .latency-list-header.is-visible + .latency-grid{
@@ -2841,14 +2886,16 @@
   background: radial-gradient(circle at 32% 24%, #ffe0a3 0 18%, #e69a22 19% 62%, #8e4f13 100%);
 }
 
+/* Copper keeps the struck-token read of the tiers above it; rust is a
+   corroded shard, so the set stays faceted all the way down. */
 .input-latency-explorer-app .latency-tier-icon.tier-copper{
-  clip-path: none;
-  border-radius: 50%;
-  background: radial-gradient(circle at 32% 24%, #ffd0b6 0 18%, #f0642f 19% 62%, #883119 100%);
+  clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+  border-radius: 0;
+  background: radial-gradient(circle at 32% 24%, #ffd0b6 0 16%, #f0642f 17% 58%, #883119 100%);
 }
 
 .input-latency-explorer-app .latency-tier-icon.tier-rust{
-  clip-path: none;
+  clip-path: polygon(22% 6%, 58% 0, 94% 22%, 100% 58%, 78% 94%, 40% 100%, 8% 76%, 2% 36%);
   border-radius: 0;
   background: linear-gradient(135deg, #c43b30 0%, #8f1d24 58%, #421016 100%);
 }
@@ -2865,11 +2912,17 @@
   text-transform: uppercase;
 }
 
+/* Output mode is a filter and read DInput on three rows in four, so the
+   column is dropped from the list and kept in the tile view. */
+.input-latency-explorer-app .latency-grid.view-list .latency-metric.metric-mode{
+  display: none;
+}
+
 .input-latency-explorer-app .latency-grid.view-list .latency-card .latency-metrics{
-  grid-template-columns: 96px 118px minmax(110px, 1fr);
+  grid-template-columns: 96px minmax(118px, 1fr);
   gap: 8px;
   justify-self: end;
-  width: min(100%, 390px);
+  width: min(100%, 238px);
 }
 
 .input-latency-explorer-app .latency-grid.view-list .latency-metric{
@@ -3097,19 +3150,20 @@
   }
 
   .input-latency-explorer-app .latency-grid.view-list .latency-card .card-frame{
-    grid-template-columns: 1fr;
+    grid-template-columns: 42px minmax(0, 1fr);
     grid-template-areas:
-      "title"
-      "metrics"
-      "details";
+      "rank title"
+      "metrics metrics"
+      "details details";
     gap: 7px;
     padding: 8px 9px;
     min-height: auto;
   }
 
   .input-latency-explorer-app .latency-grid.view-list .latency-card .latency-metrics{
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
+    width: 100%;
   }
 
   .input-latency-explorer-app .latency-detail-grid{
@@ -3135,18 +3189,19 @@
   }
 
   .input-latency-explorer-app .latency-grid.view-list .latency-card .card-frame{
-    grid-template-columns: 1fr;
+    grid-template-columns: 38px minmax(0, 1fr);
     grid-template-areas:
-      "title"
-      "metrics"
-      "details";
+      "rank title"
+      "metrics metrics"
+      "details details";
     gap: 7px;
     padding: 8px 9px;
   }
 
   .input-latency-explorer-app .latency-grid.view-list .latency-card .latency-metrics{
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 6px;
+    width: 100%;
   }
 
   .input-latency-explorer-app .latency-grid.view-list .latency-metric{

@@ -715,12 +715,6 @@ function buildLatencyTags(item) {
       title: "Open source firmware is available",
     }));
   }
-  if (Number.isFinite(item.overallRank)) {
-    tags.push(createLatencyTag(`#${latencyNumberFormatter.format(item.overallRank)} Overall`, {
-      kind: "rank-overall",
-      title: "Ranked by average latency across all results",
-    }));
-  }
   if (Number.isFinite(item.modeRank) && item.rankMode) {
     tags.push(createLatencyTag(`#${latencyNumberFormatter.format(item.modeRank)} ${item.rankMode}`, {
       kind: "rank-mode",
@@ -829,6 +823,12 @@ function renderLatencyCard(item) {
     title.appendChild(titleLink);
   } else {
     title.textContent = item.name;
+  }
+
+  const rank = card.querySelector(".latency-rank");
+  if (rank) {
+    rank.textContent = Number.isFinite(item.overallRank) ? `#${latencyNumberFormatter.format(item.overallRank)}` : "";
+    rank.title = "Ranked by average latency across all results";
   }
 
   const subtitle = card.querySelector(".card-subtitle");

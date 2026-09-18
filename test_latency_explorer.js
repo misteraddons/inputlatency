@@ -344,7 +344,9 @@ test("rank badges use catalog-global ranks instead of filtered result ranks", ()
   assert.match(explorerSource, /modeRank:\s*item\.modeRank/);
   assert.doesNotMatch(explorerSource, /overallRank:\s*selected\.overallRank/);
   assert.doesNotMatch(explorerSource, /modeRank:\s*selected\.modeRank/);
-  assert.match(explorerSource, /title:\s*"Ranked by average latency across all results"/);
+  assert.match(explorerSource, /Ranked by average latency across all results/);
+  assert.match(explorerSource, /rank\.textContent = Number\.isFinite\(item\.overallRank\)/);
+  assert.doesNotMatch(explorerSource, /kind:\s*"rank-overall"/);
   assert.match(explorerSource, /title:\s*`Ranked by average latency within all \$\{item\.rankMode\} results`/);
 });
 
@@ -374,8 +376,10 @@ test("latency tiers have compact cartoon icon hooks", () => {
   assert.match(explorerStyles, /\.latency-tier-icon\.tier-gold[\s\S]*clip-path:\s*polygon/);
   assert.match(explorerStyles, /\.latency-tier-icon\.tier-bronze[\s\S]*clip-path:\s*polygon/);
   assert.match(explorerStyles, /\.latency-tier-icon\.tier-diamond[\s\S]*clip-path:\s*polygon\(22% 8%, 78% 8%, 98% 36%, 50% 98%, 2% 36%\)/);
-  assert.match(explorerStyles, /\.latency-tier-icon\.tier-copper[\s\S]*border-radius:\s*50%/);
-  assert.match(explorerStyles, /\.latency-tier-icon\.tier-rust[\s\S]*border-radius:\s*0/);
+  assert.match(explorerStyles, /\.latency-tier-icon\.tier-copper \{[^}]*clip-path:\s*polygon/);
+  assert.match(explorerStyles, /\.latency-tier-icon\.tier-rust \{[^}]*clip-path:\s*polygon/);
+  assert.match(explorerStyles, /\.latency-tier-icon\.tier-rust \{[^}]*border-radius:\s*0/);
+  assert.doesNotMatch(explorerStyles, /\.latency-tier-icon\.tier-copper \{[^}]*border-radius:\s*50%/);
   assert.doesNotMatch(explorerStyles, /\.latency-tier-icon\.tier-gold[\s\S]{0,120}border-radius:\s*50%/);
 });
 
@@ -396,7 +400,9 @@ test("rank badges and title links align consistently", () => {
 });
 
 test("list metrics stay compact enough for long title tag rows", () => {
-  assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-card \.card-frame \{[\s\S]*grid-template-columns:\s*minmax\(320px,\s*1fr\) minmax\(340px,\s*390px\)/);
-  assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-card \.latency-metrics \{[\s\S]*grid-template-columns:\s*96px 118px minmax\(110px,\s*1fr\)/);
-  assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-card \.latency-metrics \{[\s\S]*width:\s*min\(100%,\s*390px\)/);
+  assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-card \.card-frame \{[^}]*grid-template-columns:\s*54px minmax\(280px,\s*1fr\) 238px/);
+  assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-card \.latency-metrics \{[^}]*grid-template-columns:\s*96px minmax\(118px,\s*1fr\)/);
+  assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-card \.latency-metrics \{[^}]*width:\s*min\(100%,\s*238px\)/);
+  // Output mode is a filter, so the list drops the column and the tiles keep it.
+  assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-metric\.metric-mode \{[^}]*display:\s*none/);
 });
