@@ -544,21 +544,7 @@
   gap: 0;
 }
 
-/* Rows read as a striped table rather than a stack of bordered panels. */
-.latency-grid.view-list .latency-card {
-  border: 0;
-  border-radius: 0;
-  border-bottom: 1px solid var(--row-line);
-  background: transparent;
-}
-
-.latency-grid.view-list .latency-card:nth-child(even) {
-  background: var(--row-stripe);
-}
-
-.latency-grid.view-list .latency-card:hover {
-  background: var(--surface-soft);
-}
+/* The row treatment comes from .rx-list / .rx-list-row in reflex.css. */
 
 .latency-grid.view-list .latency-card.is-selected,
 .latency-grid.view-list .latency-card.is-expanded {
