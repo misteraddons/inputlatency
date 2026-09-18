@@ -40,8 +40,9 @@ The `Publish Reflex Sites` workflow in the `mister_cores` repository
 (`.github/workflows/publish-reflex-sites.yml`, manual dispatch) checks out this
 repository's `main` branch and runs `scripts/upload_shopify_theme_assets.py`
 from it, after uploading the core explorer. Running the script locally with
-`SHOPIFY_STORE_DOMAIN`, `SHOPIFY_THEME_ID` and `SHOPIFY_ADMIN_API_ACCESS_TOKEN`
-set does the same for this explorer alone.
+`SHOPIFY_STORE_DOMAIN` and `SHOPIFY_ADMIN_API_ACCESS_TOKEN` set does the same for
+this explorer alone. The script uploads to the published theme; a configured
+`SHOPIFY_THEME_ID` is only reported when it differs.
 
 The script uploads these files unchanged. Shopify's CDN serves theme JavaScript
 and CSS minified, which is why the live copies do not match these files byte

@@ -106,6 +106,6 @@ The live page is the `input-latency-explorer` Shopify section. To publish a new 
 
 1. Rebuild the data (see above) so `shopify/assets/input-latency-data.js` is current.
 2. Bump `latency_asset_revision` (and `latency_css_revision` when the stylesheet changed) at the top of `shopify/sections/input-latency-explorer.liquid`.
-3. Merge to `main`, then dispatch the `Publish Reflex Sites` workflow in the `mister_cores` repository, which runs `scripts/upload_shopify_theme_assets.py` from this repository's `main`. Running that script locally with `SHOPIFY_STORE_DOMAIN`, `SHOPIFY_THEME_ID` and `SHOPIFY_ADMIN_API_ACCESS_TOKEN` set uploads the same files.
+3. Merge to `main`, then dispatch the `Publish Reflex Sites` workflow in the `mister_cores` repository, which runs `scripts/upload_shopify_theme_assets.py` from this repository's `main`. Running that script locally with `SHOPIFY_STORE_DOMAIN` and `SHOPIFY_ADMIN_API_ACCESS_TOKEN` set uploads the same files. The script always targets the published theme; `SHOPIFY_THEME_ID` is optional and only reported when it differs.
 
 See `shopify/README.md` for the asset list.

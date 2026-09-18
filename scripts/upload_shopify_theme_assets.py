@@ -85,16 +85,33 @@ def api_request(method: str, base_url: str, token: str, path: str, payload: dict
         raise SystemExit(f"{method} {path} failed: HTTP {exc.code} {body[:1000]}") from exc
 
 
+def resolve_published_theme_id(base_url: str, token: str, configured_theme_id: str = "") -> str:
+    """Return the id of the published theme, which is the only one visitors see.
+
+    A configured theme id is reported when it differs, but never used: the live
+    theme changes whenever a duplicated theme is published, and uploads to the
+    old copy never reach the site.
+    """
+    response = api_request("GET", base_url, token, "/themes.json?fields=id,name,role")
+    main_themes = [theme for theme in response.get("themes", []) if theme.get("role") == "main"]
+    if len(main_themes) != 1:
+        raise SystemExit(f"Expected exactly one published Shopify theme, found {len(main_themes)}")
+    theme = main_themes[0]
+    theme_id = str(theme["id"])
+    print(f"Using published Shopify theme {theme_id} ({theme.get('name', 'unnamed')})")
+    if configured_theme_id and str(configured_theme_id) != theme_id:
+        print(f"Configured theme {configured_theme_id} is not published; using {theme_id} instead.")
+    return theme_id
+
+
 def main() -> int:
     args = parse_args()
     domain = shop_domain(args.shop)
-    if not args.theme_id:
-        raise SystemExit("Missing Shopify theme id. Set SHOPIFY_THEME_ID.")
     if not args.access_token:
         raise SystemExit("Missing Shopify Admin API token. Set SHOPIFY_ADMIN_API_ACCESS_TOKEN.")
 
     base_url = f"https://{domain}/admin/api/{args.api_version}"
-    api_request("GET", base_url, args.access_token, f"/themes/{args.theme_id}.json")
+    theme_id = resolve_published_theme_id(base_url, args.access_token, args.theme_id)
 
     for key, source in default_asset_uploads(args.shopify_root):
         source_path = args.shopify_root / source
@@ -103,7 +120,7 @@ def main() -> int:
             "PUT",
             base_url,
             args.access_token,
-            f"/themes/{args.theme_id}/assets.json",
+            f"/themes/{theme_id}/assets.json",
             {"asset": {"key": key, "value": value}},
         )
         print(f"Uploaded {key}")

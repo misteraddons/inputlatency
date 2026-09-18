@@ -42,6 +42,23 @@ class LatencyCatalogTests(unittest.TestCase):
             "assets/input-latency-explorer.js",
         )
 
+    def test_shopify_upload_targets_the_published_theme(self):
+        themes = {"themes": [
+            {"id": 124977479813, "name": "old copy", "role": "unpublished"},
+            {"id": 131207889029, "name": "live", "role": "main"},
+        ]}
+        with mock.patch.object(shopify_upload, "api_request", return_value=themes) as api_request:
+            theme_id = shopify_upload.resolve_published_theme_id("https://shop/admin/api/2024-01", "token", "124977479813")
+
+        self.assertEqual(theme_id, "131207889029")
+        api_request.assert_called_once_with("GET", "https://shop/admin/api/2024-01", "token", "/themes.json?fields=id,name,role")
+
+    def test_shopify_upload_refuses_ambiguous_published_theme(self):
+        for themes in ([], [{"id": 1, "role": "main"}, {"id": 2, "role": "main"}]):
+            with mock.patch.object(shopify_upload, "api_request", return_value={"themes": themes}):
+                with self.assertRaises(SystemExit):
+                    shopify_upload.resolve_published_theme_id("https://shop/admin/api/2024-01", "token")
+
     def private_header(self):
         return [
             "", "Device", "", "", "", "", "", "", "", "", "", "", "", "", "",
