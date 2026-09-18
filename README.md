@@ -50,6 +50,16 @@ Configure these repository Actions secrets before running it:
 - `AMAZON_PARTNER_TAG`
 - `GOOGLE_SERVICE_ACCOUNT_JSON`
 
+The workflow writes prices only when the service account can edit the `Price`
+column. While that column is a protected range, the run still succeeds but logs
+"Price column is protected" and writes nothing. To enable writes, add the
+service account email (`client_email` in `GOOGLE_SERVICE_ACCOUNT_JSON`) as an
+editor of the protected range in the sheet.
+
+Prices reach the explorer only after the data is rebuilt: run `Rscript render.R`
+(refreshes `results/latency_sheet_cache.csv`), rebuild the explorer data, then
+upload the theme assets.
+
 ## R latency report
 
 The older R report is generated from `rpubs/input.Rmd` into `docs/input.html`. It is a build output kept in the tree; GitHub Pages is not enabled for this repository, so nothing under `docs/` is served from `misteraddons.github.io`.
