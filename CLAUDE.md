@@ -4,53 +4,75 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a USB controller input latency testing system for MiSTer FPGA. It uses a closed-loop feedback system with an Arduino Pro Micro, DE10-nano, and IO board to measure controller latency in milliseconds.
+USB controller input latency measurements for MiSTer FPGA, in two halves:
 
-## Architecture
+1. A hardware test rig (Arduino Pro Micro + DE10-nano + custom hat) that measures button-to-detection latency in milliseconds and writes CSV captures.
+2. A publishing pipeline that turns the results spreadsheet and captures into the Input Latency Explorer at https://misteraddons.com/pages/latency.
 
-**Hardware Components:**
-- Arduino Pro Micro - triggers button presses and measures response time via interrupt
-- DE10-nano with MiSTer FPGA running `NES_Lag_Tester.rbf` core
-- Test PCB hat that replaces the IO board (connects Arduino, controller pins, and DE10-nano)
+## Hardware Rig
 
-**Data Flow:**
-1. Arduino triggers virtual button press on controller under test
-2. MiSTer's latency test core detects the input
-3. Arduino measures time delta via interrupt on pin 2
-4. Results output via serial (CSV format: `read, delay`)
+- Arduino Pro Micro triggers button presses on the controller under test and measures the response via an interrupt.
+- DE10-nano runs `test_core/NES_Lag_Tester.rbf`, which raises a User I/O pin when the USB press is detected.
+- `pcb/InputLatencyTester.zip` holds Gerbers for the hat that replaces the IO board.
+- Serial output at 115200 baud, CSV rows of `read, delay` (delay in ms).
 
-**Key Files:**
-- `arduino/MiSTer_USB_Latency_Test_Lemonici/` - Arduino firmware for latency measurement
-- `test_core/NES_Lag_Tester.rbf` - MiSTer FPGA core for detecting inputs
-- `captures/` - Raw CSV capture files from individual controller tests
-- `rpubs/input.Rmd` - R Markdown report that pulls from Google Sheets and generates visualizations
-- `pcb/InputLatencyTester.zip` - PCB design files for the test hat
+Firmware timing parameters in `arduino/MiSTer_USB_Latency_Test_Lemonici/*.ino`:
+- `delayPress = 16`: ms between button state toggles
+- `maxExtraDelayPress = 200`: ms to keep waiting for a slow controller before starting the next press
+- Pin 5: button trigger (pulls LOW); Pin 2: MiSTer response (interrupt, FALLING edge)
 
-## Working with the R Report
+Compile check without hardware:
+```
+arduino-cli compile --fqbn arduino:avr:leonardo arduino/MiSTer_USB_Latency_Test_Lemonici
+```
 
-The report in `rpubs/input.Rmd` uses these R packages:
-- tidyverse, ggplot2 - data manipulation and visualization
-- gsheet - pulls data from Google Sheets
-- DT, crosstalk - interactive data tables with filters
+## Data Pipeline
 
-Data source: https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/
+```
+Google Sheet  --(Rscript render.R)-->  results/latency_sheet_cache.csv
+captures/*.csv                          results/latency_cleaned_export.csv
+                                        results/raw_capture_unmatched.csv
+                                        docs/input.html (legacy R report)
+        |
+        v  scripts/build_latency_catalog.py --no-private --sheet-csv results/latency_sheet_cache.csv
+docs/data/latency.json, docs/data/latency.js, shopify/assets/input-latency-data.js
+        |
+        v  scripts/upload_shopify_theme_assets.py
+Shopify theme section input-latency-explorer  ->  misteraddons.com/pages/latency
+```
 
-**Rendering the report:**
+- Source sheet: https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/
+- The R render matches capture files to sheet `Device` names by normalized name (`normalize_capture_name` in `rpubs/input.Rmd`). Captures that do not match are listed in `results/raw_capture_unmatched.csv` and contribute no sample count or percentile data.
+- Capture filenames may carry a VID/PID suffix or a `-<samples>-<date>` run suffix; both are stripped before matching. Other spelling differences need an entry in `capture_name_aliases`.
+- GitHub Pages is not enabled for this repository. Everything under `docs/` is build output or a local preview; the live page loads its data inline from the theme asset.
+- Deployed theme assets are minified copies made outside this repository; the upload script sends the sources unchanged.
+
+## Commands
+
+R report (needs R 4.5 and pandoc; paths below are this machine's):
 ```
 Sys.setenv(RSTUDIO_PANDOC='C:/Users/Robot/AppData/Local/Pandoc')
 "C:\Program Files\R\R-4.5.2\bin\Rscript.exe" render.R
 ```
-- Rscript path: `C:\Program Files\R\R-4.5.2\bin\Rscript.exe`
-- Pandoc path: `C:\Users\Robot\AppData\Local\Pandoc`
-- User R library: set via `Sys.getenv('R_LIBS_USER')` or `C:\Users\Robot\AppData\Local\R\win-library\4.5`
-- Output: `docs/input.html`
 
-## Arduino Configuration
+Explorer data and tests:
+```
+python scripts/build_latency_catalog.py --no-private --sheet-csv results/latency_sheet_cache.csv
+python -m unittest test_latency_catalog.py test_update_prices.py
+npm test          # node unit tests + Playwright smoke test of docs/latency.html
+```
 
-Key timing parameters in the .ino file:
-- `delayPress = 16` - ms between button state toggles
-- `maxExtraDelayPress = 200` - timeout for slow controllers
-- Pin 5: button trigger (pulls LOW)
-- Pin 2: MiSTer response (interrupt, FALLING edge)
+Publishing: bump `latency_asset_revision` (and `latency_css_revision` when the stylesheet changed) in `shopify/sections/input-latency-explorer.liquid`, then run `scripts/upload_shopify_theme_assets.py` with `SHOPIFY_STORE_DOMAIN`, `SHOPIFY_THEME_ID` and `SHOPIFY_ADMIN_API_ACCESS_TOKEN` set. Uploading is a release action; do not run it as a side effect of a build.
 
-Serial output is 115200 baud, CSV format for easy import.
+## Price Updates
+
+`.github/workflows/update-prices.yml` runs `scripts/update_prices.py` weekly. It fills the sheet's `Price` column from the Amazon Creators API and needs the service account to be an editor of that column; while the column is protected, the run succeeds but writes nothing. Prices only reach the site after a render, a data rebuild and an upload.
+
+## Key Files
+
+- `rpubs/input.Rmd`, `render.R`: R report and capture matching
+- `scripts/build_latency_catalog.py`: explorer payload builder (name cleanup, classification, ranking)
+- `scripts/upload_shopify_theme_assets.py`: theme upload
+- `shopify/`: liquid section, page templates, generated assets
+- `docs/assets/latency.js` and `shopify/assets/input-latency-explorer.js`: identical explorer script
+- `captures/`: raw CSV captures, one file per device and mode
