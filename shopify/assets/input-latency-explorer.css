@@ -3186,34 +3186,6 @@
   color: var(--line-strong);
 }
 
-/* The three conditional filters are inert for most selections, so they sit
-   behind a disclosure and the primary row stays scannable. */
-.input-latency-explorer-app .latency-controls:not(.show-advanced) .control-block.is-advanced{
-  display: none;
-}
-
-.input-latency-explorer-app .control-block.control-advanced{
-  align-self: end;
-}
-
-.input-latency-explorer-app .control-advanced-toggle{
-  min-height: 44px;
-  padding: 10px 16px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: transparent;
-  color: var(--text);
-  font: 700 0.78rem/1 var(--font-mono);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.input-latency-explorer-app .control-advanced-toggle:hover{
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
 .input-latency-explorer-app .latency-plot-summary{
   display: flex;
   flex-direction: column;

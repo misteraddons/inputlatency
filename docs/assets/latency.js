@@ -39,8 +39,6 @@ const latencyRefs = {
   scatter: document.getElementById("latencyScatter"),
   tooltip: document.getElementById("latencyTooltip"),
   listHeader: document.getElementById("latencyListHeader"),
-  controlsPanel: document.querySelector(".latency-controls"),
-  advancedToggle: document.getElementById("latencyAdvancedToggle"),
   plotSection: document.getElementById("latencyPlotSection"),
 };
 
@@ -938,7 +936,6 @@ function syncLatencyListHeader(hasRows) {
   latencyRefs.listHeader.classList.toggle("is-visible", showHeader);
 }
 
-const LATENCY_ADVANCED_KEY = "latency-advanced-filters";
 const LATENCY_PLOT_KEY = "latency-plot-open";
 
 function readLatencyPreference(key) {
@@ -954,23 +951,6 @@ function writeLatencyPreference(key, value) {
     localStorage.setItem(key, value);
   } catch (error) {
   }
-}
-
-function applyLatencyAdvancedFilters(expanded) {
-  if (!latencyRefs.controlsPanel || !latencyRefs.advancedToggle) return;
-  latencyRefs.controlsPanel.classList.toggle("show-advanced", expanded);
-  latencyRefs.advancedToggle.setAttribute("aria-expanded", String(expanded));
-  latencyRefs.advancedToggle.textContent = expanded ? "Fewer filters" : "More filters";
-}
-
-function initLatencyAdvancedFilters() {
-  if (!latencyRefs.advancedToggle) return;
-  applyLatencyAdvancedFilters(readLatencyPreference(LATENCY_ADVANCED_KEY) === "1");
-  latencyRefs.advancedToggle.addEventListener("click", () => {
-    const expanded = latencyRefs.advancedToggle.getAttribute("aria-expanded") !== "true";
-    applyLatencyAdvancedFilters(expanded);
-    writeLatencyPreference(LATENCY_ADVANCED_KEY, expanded ? "1" : "0");
-  });
 }
 
 function initLatencyPlotDisclosure() {
@@ -2065,7 +2045,6 @@ latencyRefs.heroStats.addEventListener("click", (event) => {
 syncLatencySortDirectionToggle();
 syncLatencyViewToggle();
 syncLatencyXZoomControl(0);
-initLatencyAdvancedFilters();
 initLatencyPlotDisclosure();
 showLatencyStatus("Loading latency data...");
 loadLatencyData();

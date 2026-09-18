@@ -178,8 +178,6 @@ try {
   const adaptCard = page.locator(".latency-card").filter({ has: page.locator(".card-title", { hasText: /^Reflex - Adapt$/ }) }).first();
   const initialAdaptRank = parseRank(await adaptCard.locator(".tag-rank-overall").textContent());
   await page.locator("#latencyCategorySelect").selectOption({ label: "Controller Adapter" });
-  // The conditional filters sit behind the More filters disclosure.
-  await page.locator("#latencyAdvancedToggle").click();
   await page.locator("#latencyAdapterInputSelect").selectOption({ label: "N64 Controller" });
   const filteredAdaptCard = page.locator(".latency-card").filter({ has: page.locator(".card-title", { hasText: /^Reflex - Adapt$/ }) }).first();
   assert.equal(parseRank(await filteredAdaptCard.locator(".tag-rank-overall").textContent()), initialAdaptRank);
