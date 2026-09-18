@@ -2600,10 +2600,10 @@
 }
 
 .input-latency-explorer-app .latency-grid.view-list .latency-card .card-frame{
-  grid-template-columns: 54px minmax(280px, 1fr) 238px;
+  grid-template-columns: 54px minmax(300px, 1.2fr) 238px minmax(190px, 1fr);
   grid-template-areas:
-    "rank title metrics"
-    "details details details";
+    "rank title metrics tags"
+    "details details details details";
   gap: 4px 14px;
   align-items: center;
   padding: 5px 12px;
@@ -2645,7 +2645,7 @@
 
 .input-latency-explorer-app .latency-grid.view-list .latency-card .card-title{
   display: block;
-  flex: 0 1 340px;
+  flex: 1 1 auto;
   align-self: center;
   overflow: visible;
   font-size: 1.08rem;
@@ -2676,9 +2676,9 @@
   display: none;
 }
 
-.input-latency-explorer-app .latency-grid.view-list .latency-title-row .card-tags{
+.input-latency-explorer-app .latency-grid.view-list .card-tags{
+  grid-area: tags;
   display: flex;
-  flex: 1 1 auto;
   margin-left: 0;
   align-self: center;
   align-items: center;
@@ -2689,9 +2689,9 @@
   min-height: 26px;
 }
 
-.input-latency-explorer-app .latency-grid.view-list .latency-title-row .card-tags span,
-.input-latency-explorer-app .latency-grid.view-list .latency-title-row .card-tags a,
-.input-latency-explorer-app .latency-grid.view-list .latency-title-row .card-tags button{
+.input-latency-explorer-app .latency-grid.view-list .card-tags span,
+.input-latency-explorer-app .latency-grid.view-list .card-tags a,
+.input-latency-explorer-app .latency-grid.view-list .card-tags button{
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -2769,7 +2769,7 @@
 
 .input-latency-explorer-app .latency-list-header.is-visible{
   display: grid;
-  grid-template-columns: 54px minmax(280px, 1fr) 238px;
+  grid-template-columns: 54px minmax(300px, 1.2fr) 238px minmax(190px, 1fr);
   gap: 4px 14px;
   align-items: center;
   margin-top: var(--section-gap);
@@ -2785,7 +2785,7 @@
   display: grid;
   grid-template-columns: 96px minmax(118px, 1fr);
   gap: 8px;
-  justify-self: end;
+  justify-self: start;
   width: min(100%, 238px);
   padding-left: 9px;
 }
@@ -2921,7 +2921,7 @@
 .input-latency-explorer-app .latency-grid.view-list .latency-card .latency-metrics{
   grid-template-columns: 96px minmax(118px, 1fr);
   gap: 8px;
-  justify-self: end;
+  justify-self: start;
   width: min(100%, 238px);
 }
 
@@ -3153,6 +3153,7 @@
     grid-template-columns: 42px minmax(0, 1fr);
     grid-template-areas:
       "rank title"
+      "tags tags"
       "metrics metrics"
       "details details";
     gap: 7px;
@@ -3192,6 +3193,7 @@
     grid-template-columns: 38px minmax(0, 1fr);
     grid-template-areas:
       "rank title"
+      "tags tags"
       "metrics metrics"
       "details details";
     gap: 7px;

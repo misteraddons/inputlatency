@@ -394,13 +394,14 @@ test("hero affiliate disclosure matches adjacent hero link text size", () => {
 test("rank badges and title links align consistently", () => {
   assert.match(explorerSource, /`#\$\{latencyNumberFormatter\.format\(item\.overallRank\)\} Overall`/);
   assert.doesNotMatch(explorerSource, /#\$\{latencyNumberFormatter\.format\(item\.overallRank\)\} overall/);
-  assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-title-row \.card-tags \{[\s\S]*margin-left:\s*0/);
-  assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-title-row \.card-tags \{[\s\S]*justify-content:\s*flex-start/);
+  assert.match(explorerStyles, /\.latency-grid\.view-list \.card-tags \{[^}]*grid-area:\s*tags/);
+  assert.match(explorerStyles, /\.latency-grid\.view-list \.card-tags \{[^}]*justify-content:\s*flex-start/);
   assert.match(explorerStyles, /\.card-title-link \{[\s\S]*width:\s*fit-content/);
 });
 
 test("list metrics stay compact enough for long title tag rows", () => {
-  assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-card \.card-frame \{[^}]*grid-template-columns:\s*54px minmax\(280px,\s*1fr\) 238px/);
+  assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-card \.card-frame \{[^}]*grid-template-columns:\s*54px minmax\(300px,\s*1\.2fr\) 238px minmax\(190px,\s*1fr\)/);
+  assert.doesNotMatch(explorerSource, /kind:\s*"mode-count"/);
   assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-card \.latency-metrics \{[^}]*grid-template-columns:\s*96px minmax\(118px,\s*1fr\)/);
   assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-card \.latency-metrics \{[^}]*width:\s*min\(100%,\s*238px\)/);
   // Output mode is a filter, so the list drops the column and the tiles keep it.

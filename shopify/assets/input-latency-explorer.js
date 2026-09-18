@@ -695,12 +695,6 @@ function createLatencyTag(label, options = {}) {
 
 function buildLatencyTags(item) {
   const tags = [];
-  if (Number.isFinite(item.modeVariantCount) && item.modeVariantCount > 1) {
-    tags.push(createLatencyTag(`${latencyNumberFormatter.format(item.modeVariantCount)} variants`, {
-      kind: "mode-count",
-      title: "Measured variants available in the expanded details",
-    }));
-  }
   if (item.connectionTag) {
     tags.push(createLatencyTag(item.connectionTag, {
       kind: "connection",
