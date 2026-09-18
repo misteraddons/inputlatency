@@ -202,7 +202,10 @@ test("open source firmware is labeled as open source in filters, tags, and detai
   assert.match(explorerSource, /LATENCY_SOURCE_STATUS_ORDER = \["Open Source", "Closed Source"\]/);
   assert.match(explorerSource, /createLatencyTag\("Open Source"/);
   assert.match(explorerSource, /value:\s*"Open Source"/);
-  assert.match(explorerSource, /createLatencyDetailItem\("Firmware", getLatencySourceStatus\(item\)/);
+  assert.match(explorerSource, /\["Firmware", getLatencySourceStatus\(item\)/);
+  // Detail fields are built as tuples so empty ones can be filtered out.
+  assert.match(explorerSource, /function isEmptyLatencyDetailValue/);
+  assert.match(explorerSource, /\.filter\(\(\[, value\]\) => !isEmptyLatencyDetailValue\(value\)\)/);
   assert.doesNotMatch(explorerSource, /Open Source Firmware/);
 });
 

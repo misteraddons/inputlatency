@@ -1203,6 +1203,31 @@ dat_raw <- tryCatch({
 })
 
 if (!is.null(dat_raw) && nrow(dat_raw) > 0) {
+  # A live fetch overwrites the cache wholesale, so a row that exists only in
+  # the cache disappears without trace. That is how the Classic2USB 3DO result
+  # was lost. Name anything that is about to be dropped.
+  if (file.exists(cache_csv)) {
+    previous <- tryCatch(
+      read.csv(cache_csv, stringsAsFactors = FALSE, check.names = FALSE, na.strings = c("", "NA")),
+      error = function(e) NULL
+    )
+    if (!is.null(previous) && "Device" %in% names(previous) && "Device" %in% names(dat_raw)) {
+      dropped <- setdiff(
+        stats::na.omit(trimws(as.character(previous$Device))),
+        stats::na.omit(trimws(as.character(dat_raw$Device)))
+      )
+      dropped <- dropped[nzchar(dropped)]
+      if (length(dropped) > 0) {
+        warning(
+          "The live sheet no longer has ", length(dropped),
+          " device row(s) that the cache held; they will disappear from the report: ",
+          paste(dropped, collapse = "; "),
+          call. = FALSE, immediate. = TRUE
+        )
+      }
+    }
+  }
+
   write.csv(dat_raw, cache_csv, row.names = FALSE, na = "")
   if (file.exists(cache_csv)) {
     data_source_cached_at <- as.POSIXct(file.info(cache_csv)$mtime)

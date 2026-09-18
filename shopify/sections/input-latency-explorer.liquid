@@ -72,7 +72,7 @@
     <section class="controls-panel latency-controls">
       <div class="control-block control-search">
         <label for="latencySearchInput">Search</label>
-        <input id="latencySearchInput" type="search" placeholder="Search by controller, make, connection, category, tier, or notes">
+        <input id="latencySearchInput" type="search" placeholder="Search controllers, makes, tiers, notes">
       </div>
       <div class="control-block control-select">
         <label for="latencyCategorySelect">Category</label>
@@ -133,6 +133,8 @@
         <div class="sort-control-row">
           <select id="latencySortSelect">
             <option value="average">Average latency</option>
+            <option value="same-frame">Same-frame probability</option>
+            <option value="name">Device name</option>
             <option value="date-added">Date added</option>
           </select>
           <button class="sort-direction-button" id="latencySortDirectionToggle" type="button" aria-pressed="false" title="Toggle descending sort">
@@ -201,7 +203,7 @@
       <span class="latency-list-header-tags"></span>
     </div>
 
-    <section class="core-grid latency-grid" id="latencyGrid" aria-live="polite"></section>
+    <section class="core-grid latency-grid" id="latencyGrid" aria-live="polite" aria-label="Latency results"></section>
 
     <template id="latencyCardTemplate">
       <article class="core-card latency-card">

@@ -2629,6 +2629,25 @@
   text-align: right;
 }
 
+/* Every row expands, but only these expand into a table of measured modes,
+   so they carry a quiet marker rather than a chip. */
+.input-latency-explorer-app .latency-grid.view-list .latency-card.has-variants .card-title::after{
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 8px;
+  vertical-align: 2px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid var(--muted);
+  opacity: 0.75;
+}
+
+.input-latency-explorer-app .latency-grid.view-list .latency-card.has-variants.is-expanded .card-title::after{
+  transform: rotate(180deg);
+}
+
 .input-latency-explorer-app .card-title-link{
   width: fit-content;
   max-width: 100%;

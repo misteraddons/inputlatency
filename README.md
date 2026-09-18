@@ -38,6 +38,27 @@ npx playwright install chromium
 npm test
 ```
 
+The Python set includes a check that `docs/data/latency.json` still matches a
+rebuild from `results/latency_sheet_cache.csv`, so a stale committed payload
+fails before it reaches the site.
+
+### Checks that reach outside the repo
+
+Neither runs in CI, because both depend on services outside this repository.
+
+```bash
+npm run verify:published        # load the live page and check it rendered this build
+python scripts/check_product_links.py --report build/links.csv
+```
+
+`verify_published_explorer.mjs` fails when the published page renders no cards,
+shows the status banner, throws from the explorer assets, or serves a payload
+older than the one in this checkout. Run it after publishing.
+
+`check_product_links.py` requests every buy and source link in the payload and
+reports anything that does not resolve. A 403 usually means the vendor is
+filtering scripts rather than that the link is dead, so check those by hand.
+
 ### Scheduled Amazon price updates
 
 `.github/workflows/update-prices.yml` updates spreadsheet prices through Amazon's

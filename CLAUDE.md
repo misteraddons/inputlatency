@@ -66,6 +66,11 @@ python -m unittest test_latency_catalog.py test_update_prices.py
 npm test          # node unit tests + Playwright smoke test of docs/latency.html
 ```
 
+After publishing, `npm run verify:published` loads the live page and fails if it
+renders nothing, shows the status banner, throws from the explorer assets, or
+serves an older payload than this checkout. `scripts/check_product_links.py`
+reports buy and source links that no longer resolve.
+
 Publishing: bump `latency_asset_revision` (and `latency_css_revision` when the stylesheet changed) in `shopify/sections/input-latency-explorer.liquid`, merge to `main`, then dispatch `Publish Reflex Sites` in `mister_cores`, or run `scripts/upload_shopify_theme_assets.py` locally with `SHOPIFY_STORE_DOMAIN` and `SHOPIFY_ADMIN_API_ACCESS_TOKEN` set. The script uploads to the published theme, not to a configured `SHOPIFY_THEME_ID`. Uploading is a release action; do not run it as a side effect of a build.
 
 ## Price Updates

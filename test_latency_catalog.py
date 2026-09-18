@@ -13,6 +13,24 @@ import build_latency_catalog as latency  # noqa: E402
 import upload_shopify_theme_assets as shopify_upload  # noqa: E402
 
 
+class PayloadFreshnessTests(unittest.TestCase):
+    """The committed payload must still be what its committed inputs produce."""
+
+    def test_committed_payload_matches_a_rebuild_from_the_committed_cache(self):
+        repo = Path(__file__).resolve().parent
+        sheet_rows = latency.read_sheet_rows_from_path(repo / "results" / "latency_sheet_cache.csv")
+        rebuilt = latency.build_latency_payload(repo, None, sheet_rows=sheet_rows)
+        committed = json.loads((repo / "docs" / "data" / "latency.json").read_text(encoding="utf-8"))
+        rebuilt.pop("generatedAt", None)
+        committed.pop("generatedAt", None)
+        self.assertEqual(
+            rebuilt,
+            committed,
+            "docs/data/latency.json no longer matches a rebuild from results/latency_sheet_cache.csv. "
+            "Re-run scripts/build_latency_catalog.py and commit the result.",
+        )
+
+
 class LatencyCatalogTests(unittest.TestCase):
     def write_csv(self, path, rows):
         path.parent.mkdir(parents=True, exist_ok=True)

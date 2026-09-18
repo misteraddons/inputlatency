@@ -718,6 +718,12 @@ function buildLatencyTags(item) {
   return tags;
 }
 
+const EMPTY_LATENCY_DETAIL_VALUES = new Set(["", "-", "--", "N/A", "n/a"]);
+
+function isEmptyLatencyDetailValue(value) {
+  return value === null || value === undefined || EMPTY_LATENCY_DETAIL_VALUES.has(String(value).trim());
+}
+
 function createLatencyDetailItem(label, value, kind = "") {
   const item = document.createElement("div");
   item.className = `latency-detail-item ${kind}`.trim();
@@ -794,6 +800,10 @@ function renderLatencyCard(item) {
   card.classList.add(`tier-${sanitizeLatencyClass(item.averageTier)}`);
   card.classList.add(`result-${sanitizeLatencyClass(item.resultType)}`);
   card.classList.add("is-expandable");
+  if (Number.isFinite(item.modeVariantCount) && item.modeVariantCount > 1) {
+    card.classList.add("has-variants");
+    card.dataset.variantCount = String(item.modeVariantCount);
+  }
   card.dataset.itemId = item.id || "";
   card.dataset.displayVariantId = item.displayVariantId || "";
   card.tabIndex = 0;
@@ -838,36 +848,41 @@ function renderLatencyCard(item) {
 
   const details = card.querySelector(".latency-detail-panel");
   const detailGrid = card.querySelector(".latency-detail-grid");
-  const detailItems = [
-    createLatencyDetailItem("99th", formatLatencyMs(item.p99Ms), "detail-p99"),
-    createLatencyDetailItem("Same Frame from Avg", formatLatencyPercent(item.sameFramePct), "detail-modeled"),
-    createLatencyDetailItem(
+  // Fields with nothing to report are left out rather than printed as N/A,
+  // which keeps the panel to the rows that actually carry data.
+  const detailFields = [
+    ["99th", formatLatencyMs(item.p99Ms), "detail-p99"],
+    ["Same Frame from Avg", formatLatencyPercent(item.sameFramePct), "detail-modeled"],
+    [
       item.hasRawCapture ? "Observed Same Frame" : "Source Same Frame",
       formatLatencyPercent(item.observedSameFramePct),
       item.hasRawCapture ? "detail-raw" : "detail-modeled",
-    ),
-    createLatencyDetailItem("Samples", item.sampleCount ? latencyNumberFormatter.format(item.sampleCount) : "-", "detail-samples"),
-    createLatencyDetailItem("Stats Source", getLatencyDetailSource(item), item.hasRawCapture ? "detail-raw" : "detail-modeled"),
-    createLatencyDetailItem("Date Added", formatLatencyDateAdded(item), "detail-date"),
-    createLatencyDetailItem("Category", item.category || "-", "detail-category"),
-    createLatencyDetailItem("Controller Adapter Input", formatLatencyAdapterInputs(item), "detail-adapter-input"),
-    createLatencyDetailItem("Sale Status", getLatencySaleStatus(item), "detail-sale-status"),
-    createLatencyDetailItem("Firmware", getLatencySourceStatus(item), "detail-source-status"),
-    createLatencyDetailItem("Connection", item.connection || item.connectionKind || "-", "detail-connection"),
-    createLatencyDetailItem("Input Mode", simplifyLatencyModeLabel(item.modeRaw || item.modeDisplay || item.modeLabel) || "-", "detail-mode"),
-    createLatencyDetailItem("Output Mode", formatLatencyOutputModes(item), "detail-mode"),
-    createLatencyDetailItem("Face Buttons", getLatencyFaceButtons(item) || "N/A", "detail-face-buttons"),
-    createLatencyDetailItem("Home Button", getLatencyHomeButton(item) || "N/A", "detail-home-button"),
-    createLatencyDetailItem("VID:PID", normalizeLatencyLabel(item.joystickId) || "N/A", "detail-vid-pid"),
-    createLatencyDetailItem("Weight", formatLatencyWeight(item), "detail-weight"),
+    ],
+    ["Samples", item.sampleCount ? latencyNumberFormatter.format(item.sampleCount) : "-", "detail-samples"],
+    ["Stats Source", getLatencyDetailSource(item), item.hasRawCapture ? "detail-raw" : "detail-modeled"],
+    ["Date Added", formatLatencyDateAdded(item), "detail-date"],
+    ["Category", item.category || "-", "detail-category"],
+    ["Controller Adapter Input", formatLatencyAdapterInputs(item), "detail-adapter-input"],
+    ["Sale Status", getLatencySaleStatus(item), "detail-sale-status"],
+    ["Firmware", getLatencySourceStatus(item), "detail-source-status"],
+    ["Connection", item.connection || item.connectionKind || "-", "detail-connection"],
+    ["Input Mode", simplifyLatencyModeLabel(item.modeRaw || item.modeDisplay || item.modeLabel) || "-", "detail-mode"],
+    ["Output Mode", formatLatencyOutputModes(item), "detail-mode"],
+    ["Face Buttons", getLatencyFaceButtons(item) || "N/A", "detail-face-buttons"],
+    ["Home Button", getLatencyHomeButton(item) || "N/A", "detail-home-button"],
+    ["VID:PID", normalizeLatencyLabel(item.joystickId) || "N/A", "detail-vid-pid"],
+    ["Weight", formatLatencyWeight(item), "detail-weight"],
   ];
   if (isFiniteLatencyNumber(item.measuredAverageMs)) {
-    detailItems.push(createLatencyDetailItem("Measured Total", formatLatencyMs(item.measuredAverageMs), "detail-raw"));
+    detailFields.push(["Measured Total", formatLatencyMs(item.measuredAverageMs), "detail-raw"]);
   }
   if (isFiniteLatencyNumber(item.adapterAverageMs)) {
     const adapterLabel = item.adapterMode ? `${formatLatencyMs(item.adapterAverageMs)} ${item.adapterMode}` : formatLatencyMs(item.adapterAverageMs);
-    detailItems.push(createLatencyDetailItem("Adapter Baseline", adapterLabel, "detail-modeled"));
+    detailFields.push(["Adapter Baseline", adapterLabel, "detail-modeled"]);
   }
+  const detailItems = detailFields
+    .filter(([, value]) => !isEmptyLatencyDetailValue(value))
+    .map(([label, value, kind]) => createLatencyDetailItem(label, value, kind));
   detailGrid.append(...detailItems);
   const modeVariantItem = latencyState.selectedItemId === item.id && latencyState.selectedDisplayVariantId
     ? { ...item, displayVariantId: latencyState.selectedDisplayVariantId }
@@ -1689,6 +1704,8 @@ function scheduleLatencyScatterResize() {
 }
 
 function latencySortValue(item, sortMode) {
+  if (sortMode === "name") return item.name || "";
+  if (sortMode === "same-frame") return item.sameFramePct ?? Number.NEGATIVE_INFINITY;
   return item.averageMs ?? Number.POSITIVE_INFINITY;
 }
 
