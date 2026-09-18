@@ -10,7 +10,7 @@ The purpose of this setup is to measure the latency of a USB controller using an
 
 ## Input Latency Explorer
 
-The current interactive explorer is published from `docs/latency.html`. It uses the generated payload in `docs/data/latency.json` and the static assets in `docs/assets/`.
+The public explorer is the Shopify section at https://misteraddons.com/pages/latency, built from the files under `shopify/`. `docs/latency.html` is a local preview of the same explorer; it loads the generated payload in `docs/data/latency.json` and the static assets in `docs/assets/`.
 
 ### Explorer files
 
@@ -52,7 +52,7 @@ Configure these repository Actions secrets before running it:
 
 ## R latency report
 
-The older R report is generated from `rpubs/input.Rmd` and published from `docs/input.html`.
+The older R report is generated from `rpubs/input.Rmd` into `docs/input.html`. It is a build output kept in the tree; GitHub Pages is not enabled for this repository, so nothing under `docs/` is served from `misteraddons.github.io`.
 
 ### Where the HTML lives
 
@@ -65,8 +65,7 @@ Workflow:
 
 1. Edit `rpubs/input.Rmd`
 2. Run `Rscript render.R`
-3. Commit and push `docs/input.html` (and `docs/input_libs/` updates when present)
-4. GitHub Pages serves the content from the `docs/` folder on the default branch
+3. Commit `docs/input.html` (and `docs/input_libs/` updates when present)
 
 ### Build
 
@@ -91,14 +90,12 @@ Rscript render.R
   - `results/raw_capture_unmatched.csv`
   - `results/database_without_raw_capture.csv`
 
-### Publish to `misteraddons.com`
+### Publish the explorer to `misteraddons.com`
 
-Recommended setup is a subdomain (for example: `inputlatency.misteraddons.com`) pointed to this repo's GitHub Pages site.
+The live page is the `input-latency-explorer` Shopify section. To publish a new build:
 
-1. In GitHub repo settings, open Pages and set source to default branch + `/docs`.
-2. Set custom domain to `inputlatency.misteraddons.com`.
-3. Add `docs/CNAME` with one line:
-   - `inputlatency.misteraddons.com`
-4. In DNS for `misteraddons.com`, create:
-   - `CNAME` record: `inputlatency` -> `misteraddons.github.io`
-5. After DNS propagates, enable HTTPS in GitHub Pages.
+1. Rebuild the data (see above) so `shopify/assets/input-latency-data.js` is current.
+2. Bump `latency_asset_revision` (and `latency_css_revision` when the stylesheet changed) at the top of `shopify/sections/input-latency-explorer.liquid`.
+3. Run `python scripts/upload_shopify_theme_assets.py` with `SHOPIFY_STORE_DOMAIN`, `SHOPIFY_THEME_ID` and `SHOPIFY_ADMIN_API_ACCESS_TOKEN` set in the environment.
+
+See `shopify/README.md` for the asset list.

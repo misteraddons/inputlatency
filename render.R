@@ -1,4 +1,4 @@
-# Render the latency report to docs/ for GitHub Pages hosting
+# Render the latency report to docs/
 # Run this script from the repository root directory
 #
 # Usage:
@@ -43,4 +43,3 @@ if (file.exists(output_file)) {
 }
 
 message("Done! Output saved to docs/input.html")
-message("GitHub Pages URL: https://misteraddons.github.io/inputlatency/")
