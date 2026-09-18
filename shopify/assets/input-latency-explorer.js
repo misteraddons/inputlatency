@@ -911,8 +911,9 @@ function renderLatencyCard(item) {
 
 function renderLatencyItems(items) {
   latencyRefs.grid.innerHTML = "";
-  latencyRefs.grid.classList.remove("view-list", "view-card");
+  latencyRefs.grid.classList.remove("view-list", "view-card", "rx-list");
   latencyRefs.grid.classList.add(latencyState.viewMode === "tiles" ? "view-card" : "view-list");
+  if (latencyState.viewMode !== "tiles") latencyRefs.grid.classList.add("rx-list");
   if (latencyState.selectedItemId && !items.some((item) => item.id === latencyState.selectedItemId)) {
     latencyState.selectedItemId = "";
     latencyState.selectedDisplayVariantId = "";

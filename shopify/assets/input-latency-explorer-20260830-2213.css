@@ -22,6 +22,10 @@
   --surface-soft: #120c2a;
   --line: rgba(239, 255, 26, 0.14);
   --line-strong: rgba(255, 255, 255, 0.12);
+  --row-line: rgba(255, 255, 255, 0.07);
+  --row-stripe: rgba(255, 255, 255, 0.035);
+  --row-line: rgba(255, 255, 255, 0.07);
+  --row-stripe: rgba(255, 255, 255, 0.035);
   --text: #f7f4ff;
   --muted: #c5baff;
   --accent: var(--brand-accent);
@@ -99,6 +103,10 @@
   --surface-soft: #efedf5;
   --line: #a69db7;
   --line-strong: #827492;
+  --row-line: rgba(16, 24, 40, 0.1);
+  --row-stripe: rgba(16, 24, 40, 0.04);
+  --row-line: rgba(16, 24, 40, 0.1);
+  --row-stripe: rgba(16, 24, 40, 0.04);
   --text: #1c1430;
   --muted: #493f58;
   --accent: var(--brand-primary);
@@ -357,6 +365,32 @@
   line-height: 1.45;
 }
 
+/*
+  Shared list treatment: rows read as a striped table rather than a stack of
+  bordered panels. Put .rx-list on the container and .rx-list-row on each row.
+  The row class is repeated on purpose. An app's own card rule gains a class
+  when its stylesheet is scoped for embedding, which would otherwise tie with
+  this rule and win on load order, leaving the row bordered.
+*/
+.input-latency-explorer-app .rx-list{
+  gap: 0;
+}
+
+.input-latency-explorer-app .rx-list .rx-list-row.rx-list-row{
+  border: 0;
+  border-radius: 0;
+  border-bottom: 1px solid var(--row-line);
+  background: transparent;
+}
+
+.input-latency-explorer-app .rx-list .rx-list-row.rx-list-row:nth-child(even){
+  background: var(--row-stripe);
+}
+
+.input-latency-explorer-app .rx-list .rx-list-row.rx-list-row:hover{
+  background: var(--surface-soft);
+}
+
 .input-latency-explorer-app :where(.rx-status-accent){
   border-color: var(--warning-border);
   background: var(--warning-bg);
@@ -384,6 +418,32 @@
   font: 700 0.72rem/1.2 var(--font-mono);
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+/*
+  Shared list treatment: rows read as a striped table rather than a stack of
+  bordered panels. Put .rx-list on the container and .rx-list-row on each row.
+  The row class is repeated on purpose. An app's own card rule gains a class
+  when its stylesheet is scoped for embedding, which would otherwise tie with
+  this rule and win on load order, leaving the row bordered.
+*/
+.input-latency-explorer-app .rx-list{
+  gap: 0;
+}
+
+.input-latency-explorer-app .rx-list .rx-list-row.rx-list-row{
+  border: 0;
+  border-radius: 0;
+  border-bottom: 1px solid var(--row-line);
+  background: transparent;
+}
+
+.input-latency-explorer-app .rx-list .rx-list-row.rx-list-row:nth-child(even){
+  background: var(--row-stripe);
+}
+
+.input-latency-explorer-app .rx-list .rx-list-row.rx-list-row:hover{
+  background: var(--surface-soft);
 }
 
 .input-latency-explorer-app :where(.rx-table){
@@ -2032,14 +2092,10 @@
 
 .input-latency-explorer-app .latency-page{
   --latency-median-color: rgba(230, 255, 30, 0.62);
-  --latency-stripe: rgba(255, 255, 255, 0.035);
-  --latency-row-line: rgba(255, 255, 255, 0.07);
 }
 
 .input-latency-explorer-app:where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .latency-page{
   --latency-median-color: #5000dc;
-  --latency-stripe: rgba(16, 24, 40, 0.04);
-  --latency-row-line: rgba(16, 24, 40, 0.1);
 }
 
 .input-latency-explorer-app .latency-page .hero-stats{
@@ -2573,21 +2629,7 @@
   gap: 0;
 }
 
-/* Rows read as a striped table rather than a stack of bordered panels. */
-.input-latency-explorer-app .latency-grid.view-list .latency-card{
-  border: 0;
-  border-radius: 0;
-  border-bottom: 1px solid var(--latency-row-line);
-  background: transparent;
-}
-
-.input-latency-explorer-app .latency-grid.view-list .latency-card:nth-child(even){
-  background: var(--latency-stripe);
-}
-
-.input-latency-explorer-app .latency-grid.view-list .latency-card:hover{
-  background: var(--surface-soft);
-}
+/* The row treatment comes from .rx-list / .rx-list-row in reflex.css. */
 
 .input-latency-explorer-app .latency-grid.view-list .latency-card.is-selected,
 .input-latency-explorer-app .latency-grid.view-list .latency-card.is-expanded{

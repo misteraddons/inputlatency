@@ -10,6 +10,31 @@ const explorerMarkup = fs.readFileSync("docs/latency.html", "utf8");
 const shopifyMarkup = fs.readFileSync("shopify/sections/input-latency-explorer.liquid", "utf8");
 const explorerAssets = `${explorerSource}\n${explorerStyles}`;
 
+test("the docs and Shopify copies of the explorer stay in step", () => {
+  // These drifted once: a pull request added the shared row class to the docs
+  // copy only, and every existing test still passed.
+  const shopifySource = fs.readFileSync("shopify/assets/input-latency-explorer.js", "utf8");
+  assert.equal(
+    shopifySource,
+    explorerSource,
+    "shopify/assets/input-latency-explorer.js must be a byte-for-byte copy of docs/assets/latency.js",
+  );
+
+  // The row template and the results grid carry the same classes on both sides.
+  for (const marker of [/class="core-card latency-card rx-list-row"/, /id="latencyGrid"/, /id="latencyListHeader"/]) {
+    assert.match(explorerMarkup, marker);
+    assert.match(shopifyMarkup, marker);
+  }
+});
+
+test("the striped row treatment comes from the shared Reflex layer", () => {
+  assert.match(reflexStyles, /\.rx-list \.rx-list-row\.rx-list-row \{[^}]*border-bottom:\s*1px solid var\(--row-line\)/);
+  assert.match(reflexStyles, /--row-stripe:/);
+  // The latency layer must not keep a private copy of the same treatment.
+  assert.doesNotMatch(explorerStyles, /--latency-stripe/);
+  assert.doesNotMatch(explorerStyles, /\.latency-grid\.view-list \.latency-card \{[^}]*border-bottom/);
+});
+
 test("latency map dot click pins selection instead of filtering search", () => {
   assert.match(explorerSource, /selectedItemId/);
   assert.match(explorerSource, /function selectLatencyScatterPoint/);

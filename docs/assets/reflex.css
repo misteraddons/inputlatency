@@ -21,6 +21,8 @@
   --line-strong: rgba(255, 255, 255, 0.12);
   --row-line: rgba(255, 255, 255, 0.07);
   --row-stripe: rgba(255, 255, 255, 0.035);
+  --row-line: rgba(255, 255, 255, 0.07);
+  --row-stripe: rgba(255, 255, 255, 0.035);
   --text: #f7f4ff;
   --muted: #c5baff;
   --accent: var(--brand-accent);
@@ -98,6 +100,8 @@
   --surface-soft: #efedf5;
   --line: #a69db7;
   --line-strong: #827492;
+  --row-line: rgba(16, 24, 40, 0.1);
+  --row-stripe: rgba(16, 24, 40, 0.04);
   --row-line: rgba(16, 24, 40, 0.1);
   --row-stripe: rgba(16, 24, 40, 0.04);
   --text: #1c1430;
@@ -356,6 +360,32 @@ body:where([data-reflex-ui], .rx-app) {
   color: var(--muted);
   padding: 12px 14px;
   line-height: 1.45;
+}
+
+/*
+  Shared list treatment: rows read as a striped table rather than a stack of
+  bordered panels. Put .rx-list on the container and .rx-list-row on each row.
+  The row class is repeated on purpose. An app's own card rule gains a class
+  when its stylesheet is scoped for embedding, which would otherwise tie with
+  this rule and win on load order, leaving the row bordered.
+*/
+.rx-list {
+  gap: 0;
+}
+
+.rx-list .rx-list-row.rx-list-row {
+  border: 0;
+  border-radius: 0;
+  border-bottom: 1px solid var(--row-line);
+  background: transparent;
+}
+
+.rx-list .rx-list-row.rx-list-row:nth-child(even) {
+  background: var(--row-stripe);
+}
+
+.rx-list .rx-list-row.rx-list-row:hover {
+  background: var(--surface-soft);
 }
 
 :where(.rx-status-accent) {
