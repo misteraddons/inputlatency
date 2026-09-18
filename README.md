@@ -56,8 +56,12 @@ shows the status banner, throws from the explorer assets, or serves a payload
 older than the one in this checkout. Run it after publishing.
 
 `check_product_links.py` requests every buy and source link in the payload and
-reports anything that does not resolve. A 403 usually means the vendor is
-filtering scripts rather than that the link is dead, so check those by hand.
+reports anything that does not resolve. Treat its output as a shortlist to open
+by hand, never as proof. Amazon answers 404 from `amzn.to` when it is
+throttling, so a sweep at one second spacing reported eight live links as dead;
+all eight resolved on later runs. The script retries every failure once and
+flags short-link and storefront hosts as needing a human. A 403 is almost always
+bot filtering rather than a dead link.
 
 ### Scheduled Amazon price updates
 
