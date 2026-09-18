@@ -390,25 +390,26 @@ body:where([data-reflex-ui], .rx-app) {
 /*
   Shared list treatment: rows read as a striped table rather than a stack of
   bordered panels. Put .rx-list on the container and .rx-list-row on each row.
-  The two-class selector is what lets it outrank an app's own card border, so
-  the row carries a class instead of being matched as a child.
+  The row class is repeated on purpose. An app's own card rule gains a class
+  when its stylesheet is scoped for embedding, which would otherwise tie with
+  this rule and win on load order, leaving the row bordered.
 */
 .rx-list {
   gap: 0;
 }
 
-.rx-list .rx-list-row {
+.rx-list .rx-list-row.rx-list-row {
   border: 0;
   border-radius: 0;
   border-bottom: 1px solid var(--row-line);
   background: transparent;
 }
 
-.rx-list .rx-list-row:nth-child(even) {
+.rx-list .rx-list-row.rx-list-row:nth-child(even) {
   background: var(--row-stripe);
 }
 
-.rx-list .rx-list-row:hover {
+.rx-list .rx-list-row.rx-list-row:hover {
   background: var(--surface-soft);
 }
 
