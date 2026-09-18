@@ -377,14 +377,18 @@ test("latency tiers have compact cartoon icon hooks", () => {
 });
 
 test("hero affiliate disclosure matches adjacent hero link text size", () => {
-  assert.match(explorerStyles, /\.hero-linkline\.latency-affiliate-note \{[\s\S]*font-size:\s*0\.98rem/);
+  assert.match(explorerStyles, /\.hero-metaline \.latency-affiliate-note \{[\s\S]*font-size:\s*0\.98rem/);
   assert.doesNotMatch(explorerStyles, /\.latency-affiliate-note \{[^}]*font-size:\s*0\.82rem/);
+  for (const markup of [explorerMarkup, shopifyMarkup]) {
+    assert.match(markup, /class="hero-linkline hero-metaline"/);
+  }
 });
 
 test("rank badges and title links align consistently", () => {
   assert.match(explorerSource, /`#\$\{latencyNumberFormatter\.format\(item\.overallRank\)\} Overall`/);
   assert.doesNotMatch(explorerSource, /#\$\{latencyNumberFormatter\.format\(item\.overallRank\)\} overall/);
-  assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-title-row \.card-tags \{[\s\S]*margin-left:\s*auto/);
+  assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-title-row \.card-tags \{[\s\S]*margin-left:\s*0/);
+  assert.match(explorerStyles, /\.latency-grid\.view-list \.latency-title-row \.card-tags \{[\s\S]*justify-content:\s*flex-start/);
   assert.match(explorerStyles, /\.card-title-link \{[\s\S]*width:\s*fit-content/);
 });
 

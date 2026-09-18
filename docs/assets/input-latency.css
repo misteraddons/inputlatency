@@ -22,13 +22,13 @@
   padding: var(--panel-padding);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, 0.035);
+  background: var(--surface);
 }
 
 .latency-plot-header {
   display: flex;
   align-items: start;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 18px;
   margin-bottom: 12px;
 }
@@ -99,7 +99,7 @@
   overflow-x: auto;
   overflow-y: hidden;
   opacity: 0;
-  scrollbar-color: var(--accent) rgba(255, 255, 255, 0.18);
+  scrollbar-color: var(--accent) var(--line-strong);
   scrollbar-width: thin;
   transition: opacity 140ms ease;
 }
@@ -110,11 +110,11 @@
 
 .latency-pan-scrollbar::-webkit-scrollbar-track {
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.18);
+  background: var(--line-strong);
 }
 
 .latency-pan-scrollbar::-webkit-scrollbar-thumb {
-  border: 2px solid rgba(255, 255, 255, 0.18);
+  border: 2px solid var(--line-strong);
   border-radius: 999px;
   background: var(--accent);
 }
@@ -142,12 +142,12 @@
 
 .latency-axis-layer line {
   vector-effect: non-scaling-stroke;
-  stroke: rgba(255, 255, 255, 0.14);
+  stroke: var(--plot-grid);
   stroke-width: 1;
 }
 
 .latency-axis-y-tick line {
-  stroke: rgba(255, 255, 255, 0.07);
+  stroke: var(--plot-grid-soft);
 }
 
 .latency-axis-layer text,
@@ -204,9 +204,9 @@
 .latency-point:focus,
 .latency-point.is-active,
 .latency-point.is-selected {
-  stroke: rgba(255, 255, 255, 0.88);
+  stroke: var(--plot-selection);
   stroke-width: 2.5;
-  filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.38));
+  filter: drop-shadow(0 0 7px var(--plot-selection-glow));
 }
 
 .latency-point.tier-diamond {
@@ -280,8 +280,8 @@
   margin: 18px 0 0;
 }
 
-.hero-linkline.latency-affiliate-note {
-  margin-top: 10px;
+.hero-metaline .latency-affiliate-note {
+  margin: 0;
   color: var(--text);
   font-size: 0.98rem;
   line-height: inherit;
@@ -291,7 +291,7 @@
   margin-top: 14px;
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-soft);
 }
 
 .latency-methodology summary {
@@ -310,6 +310,12 @@
 
 .latency-methodology summary::-webkit-details-marker {
   display: none;
+}
+
+.latency-methodology summary:focus-visible,
+.latency-recent-panel summary:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
 }
 
 .latency-methodology summary::after {
@@ -534,10 +540,11 @@
 .latency-grid.view-list {
   grid-template-columns: 1fr;
   align-items: stretch;
+  gap: 8px;
 }
 
 .latency-grid.view-list .latency-card {
-  contain-intrinsic-size: 86px;
+  contain-intrinsic-size: 56px;
 }
 
 .latency-grid.view-list .latency-card .card-frame {
@@ -545,10 +552,10 @@
   grid-template-areas:
     "title metrics"
     "details details";
-  gap: 5px 16px;
+  gap: 4px 16px;
   align-items: center;
-  padding: 8px 12px;
-  min-height: 70px;
+  padding: 5px 12px;
+  min-height: 48px;
 }
 
 .latency-title-row {
@@ -565,14 +572,14 @@
   display: flex;
   align-items: center;
   align-content: center;
-  gap: 8px 10px;
+  gap: 6px 10px;
   flex-wrap: wrap;
-  min-height: 50px;
+  min-height: 32px;
 }
 
 .latency-grid.view-list .latency-card .card-title {
   display: block;
-  flex: 1 1 300px;
+  flex: 0 1 340px;
   align-self: center;
   overflow: visible;
   font-size: 1.08rem;
@@ -605,15 +612,15 @@
 
 .latency-grid.view-list .latency-title-row .card-tags {
   display: flex;
-  flex: 0 1 auto;
-  margin-left: auto;
+  flex: 1 1 auto;
+  margin-left: 0;
   align-self: center;
   align-items: center;
   align-content: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 6px;
   flex-wrap: wrap;
-  min-height: 30px;
+  min-height: 26px;
 }
 
 .latency-grid.view-list .latency-title-row .card-tags span,
@@ -686,6 +693,39 @@
 
 .latency-grid.view-list .latency-card .card-subtitle {
   display: none;
+}
+
+/* Printed once above the list instead of repeating AVERAGE / TIER / MODE under
+   every row. Mirrors the list row grid so each heading sits over its column. */
+.latency-list-header {
+  display: none;
+}
+
+.latency-list-header.is-visible {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(340px, 390px);
+  gap: 4px 16px;
+  align-items: center;
+  margin-top: var(--section-gap);
+  padding: 0 12px 6px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font: 700 0.68rem/1.05 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.latency-list-header-metrics {
+  display: grid;
+  grid-template-columns: 96px 118px minmax(110px, 1fr);
+  gap: 8px;
+  justify-self: end;
+  width: min(100%, 390px);
+  padding-left: 9px;
+}
+
+.latency-list-header.is-visible + .latency-grid {
+  margin-top: 8px;
 }
 
 .latency-card .latency-metrics {
@@ -807,8 +847,9 @@
 }
 
 .latency-grid.view-list .latency-metric {
-  min-height: 50px;
-  padding: 7px 9px;
+  position: relative;
+  min-height: 34px;
+  padding: 4px 9px;
   border-radius: 9px;
   justify-items: start;
 }
@@ -839,6 +880,12 @@
   gap: 10px;
   padding-top: 4px;
   cursor: pointer;
+}
+
+/* The host theme's section styles override the hidden attribute, which leaves
+   an empty bordered bar above the results while the banner is dismissed. */
+.status-banner[hidden] {
+  display: none;
 }
 
 .latency-detail-panel[hidden],
@@ -915,12 +962,12 @@
   padding: 8px 10px;
   border: 1px solid var(--line);
   border-radius: 9px;
-  background: rgba(255, 255, 255, 0.025);
+  background: var(--surface-soft);
 }
 
 .latency-mode-variant.is-current {
-  border-color: rgba(230, 255, 30, 0.3);
-  background: rgba(230, 255, 30, 0.08);
+  border-color: var(--warning-border);
+  background: var(--warning-bg);
 }
 
 .latency-mode-variant strong,
@@ -1098,3 +1145,104 @@
   }
 }
 
+
+/* --- Streamlined list, hero meta line and disclosures --------------------- */
+
+/* Three single-line paragraphs collapsed into one row of page metadata. */
+.hero-linkline.hero-metaline {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 10px;
+}
+
+.hero-meta-sep {
+  color: var(--line-strong);
+}
+
+/* The three conditional filters are inert for most selections, so they sit
+   behind a disclosure and the primary row stays scannable. */
+.latency-controls:not(.show-advanced) .control-block.is-advanced {
+  display: none;
+}
+
+.control-block.control-advanced {
+  align-self: end;
+}
+
+.control-advanced-toggle {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text);
+  font: 700 0.78rem/1 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.control-advanced-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.latency-plot-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.latency-plot-summary::-webkit-details-marker {
+  display: none;
+}
+
+.latency-plot-summary::after {
+  content: "Hide chart";
+  color: var(--muted);
+  font: 700 0.7rem/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.latency-plot-section:not([open]) .latency-plot-summary::after {
+  content: "Show chart";
+}
+
+.latency-plot-summary h2 {
+  margin: 0;
+}
+
+/* Above this width the list reads as a table, so the per-row labels give way
+   to one column header and stay available to screen readers only. */
+@media (min-width: 1101px) {
+  .latency-grid.view-list .latency-metric span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 1100px) {
+  .latency-list-header.is-visible {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  /* The shared layer drops the page gutter to 10px, which puts text close to
+     the edge on a phone. */
+  .latency-page {
+    --page-gutter: 16px;
+  }
+}

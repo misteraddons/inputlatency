@@ -39,14 +39,12 @@
         <h1>Input Latency Explorer</h1>
         <p class="hero-byline">By Mister Addons</p>
         <p class="hero-text">Browse controller latency measurements - recorded on MiSTer FPGA, but applicable to devices that poll USB at 1 ms.</p>
-        <p class="hero-linkline latency-affiliate-note">Amazon product links on this page are affiliate links.</p>
-        <p class="hero-linkline">
-          Source data:
-          <a href="https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/edit?gid=0#gid=0" target="_blank" rel="noreferrer noopener">Open the input latency spreadsheet</a>.
-        </p>
-        <p class="hero-linkline">
-          Looking for core releases instead?
-          <a href="https://misteraddons.com/pages/cores">Open the MiSTer Core Explorer</a>.
+        <p class="hero-linkline hero-metaline">
+          <a href="https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/edit?gid=0#gid=0" target="_blank" rel="noreferrer noopener">Source spreadsheet</a>
+          <span class="hero-meta-sep" aria-hidden="true">/</span>
+          <a href="https://misteraddons.com/pages/cores">MiSTer Core Explorer</a>
+          <span class="hero-meta-sep" aria-hidden="true">/</span>
+          <span class="latency-affiliate-note">Amazon product links on this page are affiliate links.</span>
         </p>
         <div class="hero-stats latency-hero-stats" id="latencyHeroStats"></div>
         <details class="latency-methodology">
@@ -80,19 +78,19 @@
           <option value="">All categories</option>
         </select>
       </div>
-      <div class="control-block control-select is-disabled">
+      <div class="control-block control-select is-disabled is-advanced">
         <label for="latencyFaceButtonsSelect">Face Buttons</label>
         <select id="latencyFaceButtonsSelect" disabled>
           <option value="">All face buttons</option>
         </select>
       </div>
-      <div class="control-block control-select is-disabled">
+      <div class="control-block control-select is-disabled is-advanced">
         <label for="latencyHomeButtonSelect">Home Button</label>
         <select id="latencyHomeButtonSelect" disabled>
           <option value="">Any home button</option>
         </select>
       </div>
-      <div class="control-block control-select is-disabled">
+      <div class="control-block control-select is-disabled is-advanced">
         <label for="latencyAdapterInputSelect">Controller Adapter Input</label>
         <select id="latencyAdapterInputSelect" disabled>
           <option value="">Select Controller Adapter</option>
@@ -140,6 +138,9 @@
           </button>
         </div>
       </div>
+      <div class="control-block control-advanced">
+        <button class="control-advanced-toggle" id="latencyAdvancedToggle" type="button" aria-expanded="false" aria-controls="latencyFaceButtonsSelect latencyHomeButtonSelect latencyAdapterInputSelect">More filters</button>
+      </div>
       <div class="control-block control-view">
         <label for="latencyViewToggle">View</label>
         <div class="segmented-toggle" id="latencyViewToggle" role="tablist" aria-label="Latency result view">
@@ -149,12 +150,12 @@
       </div>
     </section>
 
-    <section class="latency-plot-section" aria-labelledby="latencyPlotTitle">
+    <details class="latency-plot-section" id="latencyPlotSection" aria-labelledby="latencyPlotTitle" open>
+      <summary class="latency-plot-summary">
+        <p class="meta-kicker">Latency map</p>
+        <h2 id="latencyPlotTitle">Compare average latency and consistency</h2>
+      </summary>
       <div class="latency-plot-header">
-        <div>
-          <p class="meta-kicker">Latency map</p>
-          <h2 id="latencyPlotTitle">Compare average latency and consistency</h2>
-        </div>
         <div class="latency-plot-tools">
           <div class="latency-zoom-control">
             <div class="latency-zoom-header">
@@ -187,9 +188,18 @@
         <div id="latencyXPanTrack" class="latency-pan-track"></div>
       </div>
       <p class="latency-plot-note">Each point is an input device. X is average latency on a logarithmic scale; Y is same-frame probability derived from average latency. Hovering over dense areas fans points horizontally and lifts them in a tapered arc for selection.</p>
-    </section>
+    </details>
 
     <section class="status-banner" id="latencyStatusBanner" aria-live="polite" hidden>Loading latency data...</section>
+
+    <div class="latency-list-header" id="latencyListHeader" aria-hidden="true">
+      <span class="latency-list-header-title">Device</span>
+      <span class="latency-list-header-metrics">
+        <span>Average</span>
+        <span>Tier</span>
+        <span>Mode</span>
+      </span>
+    </div>
 
     <section class="core-grid latency-grid" id="latencyGrid" aria-live="polite"></section>
 

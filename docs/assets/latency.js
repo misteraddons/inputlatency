@@ -38,6 +38,10 @@ const latencyRefs = {
   xZoomLabel: document.getElementById("latencyXZoomLabel"),
   scatter: document.getElementById("latencyScatter"),
   tooltip: document.getElementById("latencyTooltip"),
+  listHeader: document.getElementById("latencyListHeader"),
+  controlsPanel: document.querySelector(".latency-controls"),
+  advancedToggle: document.getElementById("latencyAdvancedToggle"),
+  plotSection: document.getElementById("latencyPlotSection"),
 };
 
 const latencyNumberFormatter = new Intl.NumberFormat("en-US");
@@ -916,6 +920,7 @@ function renderLatencyItems(items) {
     empty.className = "empty-state";
     empty.textContent = "No latency results match the selected filters.";
     latencyRefs.grid.appendChild(empty);
+    syncLatencyListHeader(false);
     return;
   }
 
@@ -924,6 +929,61 @@ function renderLatencyItems(items) {
     fragment.appendChild(renderLatencyCard(item));
   }
   latencyRefs.grid.appendChild(fragment);
+  syncLatencyListHeader(true);
+}
+
+function syncLatencyListHeader(hasRows) {
+  if (!latencyRefs.listHeader) return;
+  const showHeader = hasRows && latencyState.viewMode !== "tiles";
+  latencyRefs.listHeader.classList.toggle("is-visible", showHeader);
+}
+
+const LATENCY_ADVANCED_KEY = "latency-advanced-filters";
+const LATENCY_PLOT_KEY = "latency-plot-open";
+
+function readLatencyPreference(key) {
+  try {
+    return localStorage.getItem(key);
+  } catch (error) {
+    return null;
+  }
+}
+
+function writeLatencyPreference(key, value) {
+  try {
+    localStorage.setItem(key, value);
+  } catch (error) {
+  }
+}
+
+function applyLatencyAdvancedFilters(expanded) {
+  if (!latencyRefs.controlsPanel || !latencyRefs.advancedToggle) return;
+  latencyRefs.controlsPanel.classList.toggle("show-advanced", expanded);
+  latencyRefs.advancedToggle.setAttribute("aria-expanded", String(expanded));
+  latencyRefs.advancedToggle.textContent = expanded ? "Fewer filters" : "More filters";
+}
+
+function initLatencyAdvancedFilters() {
+  if (!latencyRefs.advancedToggle) return;
+  applyLatencyAdvancedFilters(readLatencyPreference(LATENCY_ADVANCED_KEY) === "1");
+  latencyRefs.advancedToggle.addEventListener("click", () => {
+    const expanded = latencyRefs.advancedToggle.getAttribute("aria-expanded") !== "true";
+    applyLatencyAdvancedFilters(expanded);
+    writeLatencyPreference(LATENCY_ADVANCED_KEY, expanded ? "1" : "0");
+  });
+}
+
+function initLatencyPlotDisclosure() {
+  const plot = latencyRefs.plotSection;
+  if (!plot) return;
+  if (readLatencyPreference(LATENCY_PLOT_KEY) === "0") {
+    plot.open = false;
+  }
+  plot.addEventListener("toggle", () => {
+    writeLatencyPreference(LATENCY_PLOT_KEY, plot.open ? "1" : "0");
+    // The scatter is sized from its rendered box, which is zero while collapsed.
+    if (plot.open) renderLatencyScatter(latencyState.filtered);
+  });
 }
 
 function toggleLatencyCard(card, force) {
@@ -2005,5 +2065,7 @@ latencyRefs.heroStats.addEventListener("click", (event) => {
 syncLatencySortDirectionToggle();
 syncLatencyViewToggle();
 syncLatencyXZoomControl(0);
+initLatencyAdvancedFilters();
+initLatencyPlotDisclosure();
 showLatencyStatus("Loading latency data...");
 loadLatencyData();
