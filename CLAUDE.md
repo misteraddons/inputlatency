@@ -26,6 +26,9 @@ Compile check without hardware:
 arduino-cli compile --fqbn arduino:avr:leonardo arduino/MiSTer_USB_Latency_Test_Lemonici
 ```
 
+`docs/internal/firmware-timeout-test.md` holds the unrun hardware test plan for
+the slow-controller timeout fix.
+
 ## Data Pipeline
 
 ```
