@@ -1140,6 +1140,30 @@ make_device_slug <- function(x) {
     stringr::str_replace_all(" ", "-")
 }
 
+# Capture filenames are matched to sheet device names after normalization.
+# Some carry tokens the sheet omits: a trailing USB VID/PID ("[2dc8_310a]",
+# "045e_028e", "25630575"), a run suffix with sample count and date
+# ("-2000-20260719"), or the filler word "via" in a mode suffix. Spellings
+# that differ from the sheet in other ways are mapped explicitly.
+capture_name_aliases <- c(
+  "Hori Fighting commander Octa (AB03-001)" = "Hori Fighting Commander Octa (AB03-001) [Wired USB]",
+  "AliExpress Gamecube Wireless [2.4GHz via Reflex Adapt]" = "AliExpress - Gamecube Wireless [2.4GHz]",
+  "Reflex [3DO 1P]" = "Reflex - Reflex [3DO 1P]",
+  "Reflex [3DO 2P]" = "Reflex - Reflex [3DO 2P]",
+  "Reflex [3DO 3P]" = "Reflex - Reflex [3DO 3P]",
+  "RetroUSB NES Wireless Gamepad [CH1 Reflex Adapt]" = "RetroUSB - NES Wireless Gamepad [CH1]",
+  "RetroUSB NES Wireless Gamepad [CH2 Reflex Adapt]" = "RetroUSB - NES Wireless Gamepad [CH2]",
+  "RetroUSB NES Wireless Gamepad [CH3 Reflex Adapt]" = "RetroUSB - NES Wireless Gamepad [CH3]"
+)
+
+normalize_capture_name <- function(x) {
+  dplyr::coalesce(unname(capture_name_aliases[x]), x) %>%
+    stringr::str_remove("-\\d+-\\d{8}$") %>%
+    stringr::str_remove(stringr::regex("[\\s-]*\\[?\\s*[0-9a-f]{4}[_:]?[0-9a-f]{4}\\s*\\]?$", ignore_case = TRUE)) %>%
+    stringr::str_replace_all(stringr::regex("\\bvia\\b", ignore_case = TRUE), " ") %>%
+    normalize_device_name()
+}
+
 # Color palettes for consistent styling
 connection_colors <- c(
   "Wired" = "#A8BE00",
@@ -1316,7 +1340,7 @@ load_csv_with_device <- function(file_path) {
 raw_data <- lapply(csv_files, load_csv_with_device) %>%
   bind_rows() %>%
   filter(!is.na(delay)) %>%
-  mutate(DeviceNorm = normalize_device_name(Device))
+  mutate(DeviceNorm = normalize_capture_name(Device))
 
 frame_ms <- 100 / 6
 
@@ -1376,7 +1400,7 @@ if (nrow(raw_stats) > 0) {
     arrange(RawMean, Device) %>%
     transmute(
       Device,
-      DeviceNorm = normalize_device_name(Device)
+      DeviceNorm = normalize_capture_name(Device)
     )
   raw_device_index$DeviceSlug <- make.unique(make_device_slug(raw_device_index$Device), sep = "-")
   raw_device_index$Tokens <- strsplit(raw_device_index$DeviceNorm, " ", fixed = TRUE)
