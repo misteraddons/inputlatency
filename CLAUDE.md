@@ -47,6 +47,7 @@ Shopify theme section input-latency-explorer  ->  misteraddons.com/pages/latency
 - Source sheet: https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/
 - The R render matches capture files to sheet `Device` names by normalized name (`normalize_capture_name` in `rpubs/input.Rmd`). Captures that do not match are listed in `results/raw_capture_unmatched.csv` and contribute no sample count or percentile data.
 - Capture filenames may carry a VID/PID suffix or a `-<samples>-<date>` run suffix; both are stripped before matching. Other spelling differences need an entry in `capture_name_aliases`.
+- `captures/Reflex Adapt Classic2USB [N64 JoybusNew]-2000-20260719.csv` has no sheet row on purpose and is not published. Leave it listed as unmatched rather than adding a row for it.
 - GitHub Pages is not enabled for this repository. Everything under `docs/` is build output or a local preview; the live page loads its data inline from the theme asset.
 - Publishing runs from the `mister_cores` repository: its `Publish Reflex Sites` workflow (manual dispatch) checks out this repo's `main` and runs `scripts/upload_shopify_theme_assets.py`. The script uploads sources unchanged; Shopify's CDN serves them minified.
 
