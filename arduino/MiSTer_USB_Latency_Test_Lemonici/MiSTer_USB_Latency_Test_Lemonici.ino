@@ -13,7 +13,7 @@ int pinMister = 2; // Registers press (needs to be an interrupt pin)
  
 int delayPress = 16; // Time between HIGH and LOW toggles
 
-// Additional time to wait if a press is taking too long to respond
+// Additional time (in ms) to wait if a press is taking too long to respond
 // If you see mostly awful values (with ~233ms max) with a few really good ones (<1ms) you may want to increase this
 int maxExtraDelayPress = 200; 
 
@@ -53,7 +53,7 @@ void loop() {
   
   // Wait out the additional time if the last press still hasn't registered
   while (!pressRegistered) {
-    if (micros() - extraDelayStartTime >= maxExtraDelayPress) {
+    if (micros() - extraDelayStartTime >= (unsigned long) maxExtraDelayPress * 1000UL) {
       pressRegistered = true;
     }
   }
