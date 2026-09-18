@@ -7,14 +7,10 @@
 
 .latency-page {
   --latency-median-color: rgba(230, 255, 30, 0.62);
-  --latency-stripe: rgba(255, 255, 255, 0.035);
-  --latency-row-line: rgba(255, 255, 255, 0.07);
 }
 
 :where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .latency-page {
   --latency-median-color: #5000dc;
-  --latency-stripe: rgba(16, 24, 40, 0.04);
-  --latency-row-line: rgba(16, 24, 40, 0.1);
 }
 
 .latency-page .hero-stats {
@@ -548,21 +544,7 @@
   gap: 0;
 }
 
-/* Rows read as a striped table rather than a stack of bordered panels. */
-.latency-grid.view-list .latency-card {
-  border: 0;
-  border-radius: 0;
-  border-bottom: 1px solid var(--latency-row-line);
-  background: transparent;
-}
-
-.latency-grid.view-list .latency-card:nth-child(even) {
-  background: var(--latency-stripe);
-}
-
-.latency-grid.view-list .latency-card:hover {
-  background: var(--surface-soft);
-}
+/* The row treatment comes from .rx-list / .rx-list-row in reflex.css. */
 
 .latency-grid.view-list .latency-card.is-selected,
 .latency-grid.view-list .latency-card.is-expanded {

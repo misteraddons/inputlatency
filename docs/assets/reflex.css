@@ -19,6 +19,8 @@
   --surface-soft: #120c2a;
   --line: rgba(239, 255, 26, 0.14);
   --line-strong: rgba(255, 255, 255, 0.12);
+  --row-line: rgba(255, 255, 255, 0.07);
+  --row-stripe: rgba(255, 255, 255, 0.035);
   --text: #f7f4ff;
   --muted: #c5baff;
   --accent: var(--brand-accent);
@@ -96,6 +98,8 @@
   --surface-soft: #efedf5;
   --line: #a69db7;
   --line-strong: #827492;
+  --row-line: rgba(16, 24, 40, 0.1);
+  --row-stripe: rgba(16, 24, 40, 0.04);
   --text: #1c1430;
   --muted: #493f58;
   --accent: var(--brand-primary);
@@ -381,6 +385,31 @@ body:where([data-reflex-ui], .rx-app) {
   font: 700 0.72rem/1.2 var(--font-mono);
   letter-spacing: 0.06em;
   text-transform: uppercase;
+}
+
+/*
+  Shared list treatment: rows read as a striped table rather than a stack of
+  bordered panels. Put .rx-list on the container and .rx-list-row on each row.
+  The two-class selector is what lets it outrank an app's own card border, so
+  the row carries a class instead of being matched as a child.
+*/
+.rx-list {
+  gap: 0;
+}
+
+.rx-list .rx-list-row {
+  border: 0;
+  border-radius: 0;
+  border-bottom: 1px solid var(--row-line);
+  background: transparent;
+}
+
+.rx-list .rx-list-row:nth-child(even) {
+  background: var(--row-stripe);
+}
+
+.rx-list .rx-list-row:hover {
+  background: var(--surface-soft);
 }
 
 :where(.rx-table) {
