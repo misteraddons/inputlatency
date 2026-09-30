@@ -21,8 +21,6 @@
   --line-strong: rgba(255, 255, 255, 0.12);
   --row-line: rgba(255, 255, 255, 0.07);
   --row-stripe: rgba(255, 255, 255, 0.035);
-  --row-line: rgba(255, 255, 255, 0.07);
-  --row-stripe: rgba(255, 255, 255, 0.035);
   --text: #f7f4ff;
   --muted: #c5baff;
   --accent: var(--brand-accent);
@@ -93,27 +91,25 @@
   --brand-accent: #efff1a;
   --brand-secondary: var(--brand-accent);
   --brand-secondary-soft: var(--brand-primary);
-  --page-bg: #d9dade;
-  --page-bg-2: #d9dade;
-  --surface: #f8f8fa;
-  --surface-strong: #f8f8fa;
-  --surface-soft: #efedf5;
-  --line: #a69db7;
-  --line-strong: #827492;
-  --row-line: rgba(16, 24, 40, 0.1);
-  --row-stripe: rgba(16, 24, 40, 0.04);
-  --row-line: rgba(16, 24, 40, 0.1);
-  --row-stripe: rgba(16, 24, 40, 0.04);
+  --page-bg: #c6c5cf;
+  --page-bg-2: #c6c5cf;
+  --surface: #dedde5;
+  --surface-strong: #dedde5;
+  --surface-soft: #d5d3de;
+  --line: #978ea8;
+  --line-strong: #6e6280;
+  --row-line: rgba(16, 24, 40, 0.12);
+  --row-stripe: rgba(16, 24, 40, 0.05);
   --text: #1c1430;
-  --muted: #493f58;
+  --muted: #3a3150;
   --accent: var(--brand-primary);
   --accent-hover: var(--brand-primary-soft);
   --accent-soft: var(--brand-primary);
   --accent-contrast: #ffffff;
   --success: var(--brand-accent);
   --warning: #b18f00;
-  --error: #c91f5d;
-  --error-hover: #9e1749;
+  --error: #a8154a;
+  --error-hover: #8c1240;
   --warning-bg: rgba(239, 255, 26, 0.34);
   --warning-border: rgba(80, 0, 220, 0.28);
   --focus-ring: #5000dc;
@@ -180,7 +176,7 @@ body:where([data-reflex-ui], .rx-app) {
 :where(.rx-hero, header.rx-hero) {
   padding: var(--hero-padding);
   border: 1px solid var(--line);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
   background: var(--surface-strong);
 }
 
@@ -218,8 +214,8 @@ body:where([data-reflex-ui], .rx-app) {
   margin: 0 0 var(--space-4);
   padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--line);
-  color: var(--accent-soft);
-  font: 700 1.1rem/1.25 var(--font-display);
+  color: var(--text);
+  font: 600 1.05rem/1.25 var(--font-display);
 }
 
 :where(.rx-grid) {
@@ -234,9 +230,9 @@ body:where([data-reflex-ui], .rx-app) {
 }
 
 :where(.rx-field label, .rx-label) {
-  color: var(--accent-soft);
-  font: 700 0.72rem/1.2 var(--font-mono);
-  letter-spacing: 0.08em;
+  color: var(--muted);
+  font: 600 0.72rem/1.2 var(--font-body);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -248,7 +244,7 @@ body:where([data-reflex-ui], .rx-app) {
   border-radius: var(--radius-sm);
   background: var(--surface-soft);
   color: var(--text);
-  font: 600 0.95rem/1.2 var(--font-body);
+  font: 500 0.95rem/1.2 var(--font-body);
   padding: 10px 12px;
 }
 
@@ -273,27 +269,19 @@ body:where([data-reflex-ui], .rx-app) {
   background: var(--brand-primary);
   color: #fff;
   cursor: pointer;
-  font: 700 var(--button-font-size) / 1 var(--font-body);
+  font: 600 var(--button-font-size) / 1 var(--font-body);
   padding: 11px 18px;
   text-decoration: none;
-  transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 
 :where(.rx-button:hover, [data-reflex-ui] .btn:hover, .rx-app .btn:hover):not(:disabled) {
   background: var(--brand-primary-soft);
-  border-color: var(--focus-ring);
-  transform: translateY(-1px);
+  border-color: var(--brand-primary-soft);
 }
 
 :where(.rx-button:focus-visible, [data-reflex-ui] .btn:focus-visible, .rx-app .btn:focus-visible) {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
-}
-
-:where(.rx-button:disabled, [data-reflex-ui] .btn:disabled, .rx-app .btn:disabled) {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
 }
 
 :where(.rx-button-secondary, [data-reflex-ui] .btn-secondary, .rx-app .btn-secondary) {
@@ -305,6 +293,13 @@ body:where([data-reflex-ui], .rx-app) {
 :where(.rx-button-danger, [data-reflex-ui] .btn-danger, .rx-app .btn-danger) {
   background: var(--error);
   border-color: rgba(255, 92, 138, 0.45);
+}
+
+:where(.rx-button:disabled, [data-reflex-ui] .btn:disabled, .rx-app .btn:disabled) {
+  border-color: var(--line);
+  background: var(--surface-soft);
+  color: var(--muted);
+  cursor: not-allowed;
 }
 
 :where(.rx-button-sm, [data-reflex-ui] .btn-sm, .rx-app .btn-sm) {
@@ -323,9 +318,9 @@ body:where([data-reflex-ui], .rx-app) {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 4px;
+  padding: 3px;
   border: 1px solid var(--line-strong);
-  border-radius: 999px;
+  border-radius: var(--radius-sm);
   background: var(--surface-soft);
 }
 
@@ -333,11 +328,11 @@ body:where([data-reflex-ui], .rx-app) {
   min-width: 62px;
   min-height: 32px;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-xs);
   background: transparent;
   color: var(--muted);
   cursor: pointer;
-  font: 700 0.72rem/1 var(--font-mono);
+  font: 600 0.72rem/1 var(--font-body);
   letter-spacing: 0.06em;
   padding: 8px 10px;
   text-transform: uppercase;
@@ -412,35 +407,9 @@ body:where([data-reflex-ui], .rx-app) {
   display: block;
   margin-top: 6px;
   color: var(--muted);
-  font: 700 0.72rem/1.2 var(--font-mono);
+  font: 600 0.72rem/1.2 var(--font-body);
   letter-spacing: 0.06em;
   text-transform: uppercase;
-}
-
-/*
-  Shared list treatment: rows read as a striped table rather than a stack of
-  bordered panels. Put .rx-list on the container and .rx-list-row on each row.
-  The row class is repeated on purpose. An app's own card rule gains a class
-  when its stylesheet is scoped for embedding, which would otherwise tie with
-  this rule and win on load order, leaving the row bordered.
-*/
-.rx-list {
-  gap: 0;
-}
-
-.rx-list .rx-list-row.rx-list-row {
-  border: 0;
-  border-radius: 0;
-  border-bottom: 1px solid var(--row-line);
-  background: transparent;
-}
-
-.rx-list .rx-list-row.rx-list-row:nth-child(even) {
-  background: var(--row-stripe);
-}
-
-.rx-list .rx-list-row.rx-list-row:hover {
-  background: var(--surface-soft);
 }
 
 :where(.rx-table) {
@@ -458,8 +427,8 @@ body:where([data-reflex-ui], .rx-app) {
 }
 
 :where(.rx-table th) {
-  color: var(--accent-soft);
-  font: 700 0.72rem/1.2 var(--font-mono);
+  color: var(--muted);
+  font: 600 0.72rem/1.2 var(--font-body);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
