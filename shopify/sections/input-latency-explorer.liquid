@@ -18,21 +18,35 @@
 <section class="input-latency-explorer-app" data-reflex-theme-scope data-reflex-theme="midnight" data-latency-url="{{ section.settings.latency_url | escape }}">
   <script>
     (function (scope) {
+      // Same names as the toggle script after the section; set here so the first paint is right.
+      var themes = { midnight: ['midnight', 'midnight-light'], amber: ['amber', 'amber-light'], reflex: ['reflex', 'reflex-light'], green: ['', 'lab'], white: ['white', 'white-light'] };
+      var colour = 'midnight';
+      var light = false;
       try {
-        var theme = localStorage.getItem('reflex-theme');
-        if (theme === 'lab' || theme === 'light') {
-          scope.setAttribute('data-reflex-theme', 'midnight-light');
-        }
+        colour = localStorage.getItem('reflex-svc-colour') || 'midnight';
+        var saved = localStorage.getItem('reflex-theme');
+        light = saved === 'lab' || saved === 'light';
       } catch (error) {
       }
+      if (!Object.prototype.hasOwnProperty.call(themes, colour)) colour = 'midnight';
+      var name = themes[colour][light ? 1 : 0];
+      if (name) scope.setAttribute('data-reflex-theme', name);
+      else scope.removeAttribute('data-reflex-theme');
     })(document.currentScript.parentElement);
   </script>
-  <div class="svc latency-svc" data-svc-bezel="{% if section.settings.show_bezel == false %}off{% else %}on{% endif %}">
+  <div class="svc latency-svc"{% if section.settings.show_bezel %} data-svc-bezel="on"{% endif %}>
     <div class="svc-frame"><div class="svc-screen">
       <div>
         <header class="svc-top">
           <div class="svc-wordmark"><h1>Latency</h1><span>Input latency explorer</span></div>
           <div class="svc-row">
+            <select id="latencyThemeColour" class="latency-theme" aria-label="Theme colour">
+              <option value="midnight">Theme: Midnight</option>
+              <option value="amber">Theme: Amber</option>
+              <option value="reflex">Theme: Reflex</option>
+              <option value="green">Theme: Green</option>
+              <option value="white">Theme: White</option>
+            </select>
             <button type="button" id="latencyThemeToggle" data-reflex-theme-option="lab">Light</button>
             <a class="latency-action" href="https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/edit?gid=0#gid=0" target="_blank" rel="noreferrer noopener">Source Sheet</a>
             <a class="latency-action svc-primary" href="{{ core_link_url }}">Core Explorer</a>
@@ -158,36 +172,33 @@
 
 <script>
   (function initReflexThemeToggle() {
-    var storageKey = 'reflex-theme';
+    // Light stays in reflex-theme (dark/lab), shared with older pages; the colour is
+    // reflex-svc-colour, shared with the Core Explorer. Names follow Reflex-CSS docs/service-menu.md.
+    var themes = { midnight: ['midnight', 'midnight-light'], amber: ['amber', 'amber-light'], reflex: ['reflex', 'reflex-light'], green: ['', 'lab'], white: ['white', 'white-light'] };
     var scope = document.currentScript.previousElementSibling;
     var toggle = scope.querySelector('[data-reflex-theme-option]');
+    var picker = scope.querySelector('#latencyThemeColour');
+    var normalizeLight = function (theme) { return theme === 'lab' || theme === 'light' ? 'lab' : 'dark'; };
+    var normalizeColour = function (colour) { return Object.prototype.hasOwnProperty.call(themes, colour) ? colour : 'midnight'; };
+    var read = function (key) { try { return localStorage.getItem(key); } catch (error) { return null; } };
+    var write = function (key, value) { try { localStorage.setItem(key, value); } catch (error) { } };
+    var light = normalizeLight(read('reflex-theme'));
+    var colour = normalizeColour(read('reflex-svc-colour'));
 
-    function normalize(theme) {
-      return theme === 'lab' || theme === 'light' ? 'lab' : 'dark';
+    function applyTheme() {
+      var name = themes[colour][light === 'lab' ? 1 : 0];
+      if (name) scope.setAttribute('data-reflex-theme', name);
+      else scope.removeAttribute('data-reflex-theme');
+      picker.value = colour;
+      toggle.setAttribute('data-reflex-theme-option', light === 'lab' ? 'dark' : 'lab');
+      toggle.textContent = light === 'lab' ? 'Dark' : 'Light';
+      write('reflex-theme', light);
+      write('reflex-svc-colour', colour);
     }
 
-    // The storefront preference stays dark/lab, shared with the Core Explorer;
-    // this page shows them as the service-menu midnight themes.
-    function applyTheme(theme) {
-      var activeTheme = normalize(theme);
-      scope.setAttribute('data-reflex-theme', activeTheme === 'lab' ? 'midnight-light' : 'midnight');
-      toggle.setAttribute('data-reflex-theme-option', activeTheme === 'lab' ? 'dark' : 'lab');
-      toggle.textContent = activeTheme === 'lab' ? 'Dark' : 'Light';
-      try {
-        localStorage.setItem(storageKey, activeTheme);
-      } catch (error) {
-      }
-    }
-
-    var savedTheme = 'dark';
-    try {
-      savedTheme = localStorage.getItem(storageKey) || 'dark';
-    } catch (error) {
-    }
-    applyTheme(savedTheme);
-    toggle.addEventListener('click', function () {
-      applyTheme(toggle.getAttribute('data-reflex-theme-option'));
-    });
+    applyTheme();
+    toggle.addEventListener('click', function () { light = normalizeLight(toggle.getAttribute('data-reflex-theme-option')); applyTheme(); });
+    picker.addEventListener('change', function () { colour = normalizeColour(picker.value); applyTheme(); });
   })();
 </script>
 
@@ -240,7 +251,7 @@
       "type": "checkbox",
       "id": "show_bezel",
       "label": "Show the monitor bezel",
-      "default": true
+      "default": false
     }
   ],
   "presets": [

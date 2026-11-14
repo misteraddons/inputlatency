@@ -2062,7 +2062,8 @@
   Set data-reflex-theme on the .svc element or any ancestor: amber, white,
   reflex, midnight; the light versions are lab (green), amber-light,
   white-light, reflex-light and midnight-light. No attribute is green dark.
-  data-svc-bezel="off" drops the monitor bezel. 4 px spacing, 40 px controls.
+  The screen is flat by default; data-svc-bezel="on" adds the monitor bezel.
+  4 px spacing, 40 px controls.
 */
 
 .input-latency-explorer-app .svc{
@@ -2124,8 +2125,8 @@
 }
 .input-latency-explorer-app:where([data-reflex-theme="reflex-light"], [data-reflex-theme="midnight-light"]) .svc,
 .input-latency-explorer-app .svc:is([data-reflex-theme="reflex-light"], [data-reflex-theme="midnight-light"]){
-  color-scheme: light; --svc-room: #d9d2ea; --svc-bezel: #e6e0f3; --svc-bezel-2: #cfc6e6; --svc-label: #2a1f4a;
-  --svc-glow: none; --svc-vignette: rgba(30, 0, 60, 0.12);
+  color-scheme: light; --svc-room: #c9c8cf; --svc-bezel: #e4e3e9; --svc-bezel-2: #d0cfd6; --svc-label: #2a1f4a;
+  --svc-glow: none; --svc-vignette: rgba(30, 0, 60, 0.10);
 }
 .input-latency-explorer-app:where([data-reflex-theme="lab"]) .svc,
 .input-latency-explorer-app .svc[data-reflex-theme="lab"]{
@@ -2142,16 +2143,22 @@
   --svc-screen: #e8eef5; --svc-panel: #d8e0ea; --svc-scan: rgba(0, 0, 0, 0.05); --svc-ink: #0b0d10; --svc-muted: #3a4552;
   --svc-dim: #9aa6b4; --svc-hi: #0b0d10; --svc-on-hi: #e8eef5; --svc-danger: #b3261e; --svc-on-danger: #ffffff; --svc-focus: #0b0d10;
 }
+/* The brand light themes: gray screen, purple text, Reflex yellow for highlights only. */
 .input-latency-explorer-app:where([data-reflex-theme="reflex-light"]) .svc,
 .input-latency-explorer-app .svc[data-reflex-theme="reflex-light"]{
-  --svc-screen: #dfff00; --svc-panel: #d0f000; --svc-scan: rgba(40, 0, 90, 0.06); --svc-ink: #4200b5; --svc-muted: #5b3fa8;
-  --svc-dim: #9f8be0; --svc-hi: #4200b5; --svc-on-hi: #dfff00; --svc-danger: #a8154a; --svc-on-danger: #ffffff; --svc-focus: #4200b5;
+  --svc-screen: #d6d6dc; --svc-panel: #c9c8d0; --svc-scan: rgba(40, 0, 90, 0.05); --svc-ink: #4200b5; --svc-muted: #5b3fa8;
+  --svc-dim: #948fa8; --svc-hi: #dfff00; --svc-on-hi: #4200b5; --svc-danger: #8f0f3d; --svc-on-danger: #ffffff; --svc-focus: #4200b5;
 }
 .input-latency-explorer-app:where([data-reflex-theme="midnight-light"]) .svc,
 .input-latency-explorer-app .svc[data-reflex-theme="midnight-light"]{
-  --svc-screen: #dfff00; --svc-panel: #d0f000; --svc-scan: rgba(20, 0, 50, 0.06); --svc-ink: #1a0640; --svc-muted: #3a2470;
-  --svc-dim: #8f8a3a; --svc-hi: #1a0640; --svc-on-hi: #dfff00; --svc-danger: #a8154a; --svc-on-danger: #ffffff; --svc-focus: #1a0640;
+  --svc-screen: #cfcfd6; --svc-panel: #c2c1ca; --svc-scan: rgba(20, 0, 50, 0.05); --svc-ink: #1a0640; --svc-muted: #3a2470;
+  --svc-dim: #8d8a9c; --svc-hi: #dfff00; --svc-on-hi: #1a0640; --svc-danger: #8f0f3d; --svc-on-danger: #ffffff; --svc-focus: #1a0640;
 }
+
+/* The one rule outside .svc: keep the window's scrollbar space on pages that use the layer, so switching
+   between a short and a long menu page never shifts the screen sideways. In the scoped Shopify bundles it
+   lands on the section, where it does nothing. */
+.input-latency-explorer-app:has(.svc){ scrollbar-gutter: stable; }
 
 /* Base: elements inside the layer. Zero-specificity element selectors keep every svc- class above them. */
 .input-latency-explorer-app .svc,
@@ -2172,19 +2179,20 @@
 .input-latency-explorer-app .svc :where(a){ color: var(--svc-ink); }
 .input-latency-explorer-app .svc :where(button, input, select, textarea, summary, tr):focus-visible{ outline: 2px solid var(--svc-focus); outline-offset: 2px; }
 
-/* Monitor: bezel, screen, header, ident line, menu + page, key hints. */
-.input-latency-explorer-app .svc-frame{
-  max-width: 1200px; margin: 0 auto; padding: 22px 22px 14px; border-radius: 34px;
+/* Monitor: a flat, square screen by default; data-svc-bezel="on" on .svc puts it in a rounded monitor
+   bezel. Inside: header, ident line, menu + page, key hints. */
+.input-latency-explorer-app .svc-frame{ max-width: 1200px; margin: 0 auto; }
+.input-latency-explorer-app .svc-screen{
+  display: grid; grid-template-rows: auto 1fr auto; min-height: 640px; overflow: hidden;
+  background-color: var(--svc-screen); background-image: repeating-linear-gradient(180deg, transparent 0 2px, var(--svc-scan) 2px 3px);
+  box-shadow: inset 0 0 0 2px var(--svc-dim); text-shadow: var(--svc-glow);
+}
+.input-latency-explorer-app .svc[data-svc-bezel="on"] .svc-frame{
+  padding: 22px 22px 14px; border-radius: 34px;
   background-color: var(--svc-bezel); background-image: linear-gradient(180deg, var(--svc-bezel) 0%, var(--svc-bezel-2) 100%);
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45), inset 0 2px 0 rgba(255, 255, 255, 0.08);
 }
-.input-latency-explorer-app .svc-screen{
-  display: grid; grid-template-rows: auto 1fr auto; min-height: 640px; overflow: hidden; border-radius: 22px;
-  background-color: var(--svc-screen); background-image: repeating-linear-gradient(180deg, transparent 0 2px, var(--svc-scan) 2px 3px);
-  box-shadow: inset 0 0 80px var(--svc-vignette), inset 0 0 0 2px rgba(0, 0, 0, 0.6); text-shadow: var(--svc-glow);
-}
-.input-latency-explorer-app .svc[data-svc-bezel="off"] .svc-frame{ padding: 0; border-radius: 0; background: none; box-shadow: none; }
-.input-latency-explorer-app .svc[data-svc-bezel="off"] .svc-screen{ border-radius: 0; box-shadow: inset 0 0 0 2px var(--svc-dim); }
+.input-latency-explorer-app .svc[data-svc-bezel="on"] .svc-screen{ border-radius: 22px; box-shadow: inset 0 0 80px var(--svc-vignette), inset 0 0 0 2px rgba(0, 0, 0, 0.6); }
 .input-latency-explorer-app .svc-top{ display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--svc-s3) var(--svc-s5); padding: var(--svc-s4) var(--svc-s5); border-bottom: 2px solid var(--svc-dim); }
 .input-latency-explorer-app .svc-wordmark{ display: flex; align-items: baseline; gap: var(--svc-s3); }
 .input-latency-explorer-app .svc .svc-wordmark h1{ font-size: 22px; letter-spacing: 0.3em; }
@@ -2377,8 +2385,9 @@
 }
 @media (max-width: 560px) {
   .input-latency-explorer-app .svc{ padding-top: var(--svc-s2); }
-  .input-latency-explorer-app .svc-frame{ padding: 10px 10px 8px; border-radius: 20px; }
-  .input-latency-explorer-app .svc-screen{ min-height: 0; border-radius: 14px; }
+  .input-latency-explorer-app .svc-screen{ min-height: 0; }
+  .input-latency-explorer-app .svc[data-svc-bezel="on"] .svc-frame{ padding: 10px 10px 8px; border-radius: 20px; }
+  .input-latency-explorer-app .svc[data-svc-bezel="on"] .svc-screen{ border-radius: 14px; }
   .input-latency-explorer-app .svc-top,
 .input-latency-explorer-app .svc-body,
 .input-latency-explorer-app .svc-hint,
@@ -3682,8 +3691,9 @@
 
 /* Service-menu explorer. The page shell is ".svc.latency-svc" and
    service-menu.css draws it; these rules cover what the layer leaves to the
-   page: links styled as buttons, upper-case tier words, clickable recent rows,
-   and the latency map's fixed height, pan bar and zoom readout. */
+   page: links styled as buttons, the header theme picker, upper-case tier
+   words, clickable recent rows, and the latency map's fixed height, pan bar
+   and zoom readout. */
 .input-latency-explorer-app .latency-svc{
   min-height: 100vh;
 }
@@ -3716,6 +3726,15 @@
   padding: 0 8px;
   border-width: 1px;
   font-size: 11px;
+}
+
+/* The theme picker sits in the header row with the buttons, so it takes their
+   width rule and lettering rather than the layer's full-width select. */
+.input-latency-explorer-app .latency-svc .latency-theme{
+  width: auto;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .input-latency-explorer-app .latency-svc a:focus-visible{

@@ -1280,8 +1280,9 @@
 
 /* Service-menu explorer. The page shell is ".svc.latency-svc" and
    service-menu.css draws it; these rules cover what the layer leaves to the
-   page: links styled as buttons, upper-case tier words, clickable recent rows,
-   and the latency map's fixed height, pan bar and zoom readout. */
+   page: links styled as buttons, the header theme picker, upper-case tier
+   words, clickable recent rows, and the latency map's fixed height, pan bar
+   and zoom readout. */
 .latency-svc {
   min-height: 100vh;
 }
@@ -1314,6 +1315,15 @@
   padding: 0 8px;
   border-width: 1px;
   font-size: 11px;
+}
+
+/* The theme picker sits in the header row with the buttons, so it takes their
+   width rule and lettering rather than the layer's full-width select. */
+.latency-svc .latency-theme {
+  width: auto;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .latency-svc a:focus-visible {

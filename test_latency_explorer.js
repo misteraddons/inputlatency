@@ -119,16 +119,38 @@ test("tiers are words, and Copper and Rust read in the warning colour", () => {
   assert.match(explorerStyles, /\.latency-svc \.latency-tier \{\s*text-transform: uppercase;/);
 });
 
-test("the theme toggle keeps the shared reflex-theme value and shows it as midnight", () => {
+test("visitors pick one of five colours and Light, stored as Reflex-CSS docs/service-menu.md describes", () => {
+  const themeTable = /midnight: \[(["'])midnight\1, \1midnight-light\1\], amber: \[\1amber\1, \1amber-light\1\], reflex: \[\1reflex\1, \1reflex-light\1\], green: \[\1\1, \1lab\1\], white: \[\1white\1, \1white-light\1\]/g;
   for (const markup of bothMarkups) {
-    assert.match(markup, /localStorage\.getItem\(["']reflex-theme["']\)/);
-    assert.match(markup, /activeTheme === ["']lab["'] \? ["']midnight-light["'] : ["']midnight["']/);
-    assert.match(markup, /localStorage\.setItem\(storageKey, activeTheme\)/);
-    assert.match(markup, /data-reflex-theme-option="lab">Light<\/button>/);
+    // The colour select sits in the header next to the Light button, Midnight first.
+    const picker = between(markup, '<select id="latencyThemeColour"', "</select>");
+    assert.deepEqual([...picker.matchAll(/<option value="(\w+)">/g)].map((match) => match[1]), ["midnight", "amber", "reflex", "green", "white"]);
+    assert.match(markup, /<\/select>\s*<button type="button" id="latencyThemeToggle" data-reflex-theme-option="lab">Light<\/button>/);
+
+    // The first-paint script and the toggle script carry the same name table.
+    assert.equal(markup.match(themeTable)?.length, 2);
+    assert.match(markup, /localStorage\.getItem\((["'])reflex-svc-colour\1\)/);
+    assert.match(markup, /read\((["'])reflex-theme\1\)/);
+    assert.match(markup, /write\((["'])reflex-theme\1, light\)/);
+    assert.match(markup, /write\((["'])reflex-svc-colour\1, colour\)/);
+    // Anything other than the five colours reads as midnight.
+    assert.match(markup, /hasOwnProperty\.call\(themes, colour\) \? colour : (["'])midnight\1/);
+    // Green dark is the layer's default, so the attribute goes.
+    assert.match(markup, /removeAttribute\((["'])data-reflex-theme\1\)/);
   }
   // Shopify themes the section, never the storefront's document root.
   assert.doesNotMatch(shopifyMarkup, /document\.documentElement/);
   assert.match(shopifyMarkup, /data-reflex-theme-scope data-reflex-theme="midnight"/);
+  assert.match(explorerStyles, /\.latency-svc \.latency-theme \{\s*width: auto;/);
+});
+
+test("the screen is flat unless the Shopify bezel setting is ticked", () => {
+  assert.match(explorerMarkup, /<div class="svc latency-svc">/);
+  assert.doesNotMatch(explorerMarkup, /data-svc-bezel/);
+  assert.match(shopifyMarkup, /<div class="svc latency-svc"\{% if section\.settings\.show_bezel %\} data-svc-bezel="on"\{% endif %\}>/);
+  assert.doesNotMatch(shopifyMarkup, /data-svc-bezel="off"/);
+  const setting = between(shopifyMarkup, '"id": "show_bezel"', "}");
+  assert.match(setting, /"default": false/);
 });
 
 test("methodology keeps the measurement description and its links", () => {

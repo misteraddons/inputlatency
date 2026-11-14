@@ -76,7 +76,7 @@ async function assertThemeToggle(page) {
 
   await toggle.click();
   assert.equal(await toggle.textContent(), "Dark");
-  assert.equal(await screenColor(page), "rgb(223, 255, 0)");
+  assert.equal(await screenColor(page), "rgb(207, 207, 214)");
   assert.equal(await page.evaluate(() => localStorage.getItem("reflex-theme")), "lab");
   assert.equal(await page.locator("[data-reflex-theme-scope]").first().getAttribute("data-reflex-theme"), "midnight-light");
 
@@ -84,6 +84,52 @@ async function assertThemeToggle(page) {
   assert.equal(await toggle.textContent(), "Light");
   assert.equal(await screenColor(page), "rgb(26, 6, 64)");
   assert.equal(await page.evaluate(() => localStorage.getItem("reflex-theme")), "dark");
+}
+
+async function themeState(page) {
+  return page.evaluate(() => ({
+    theme: document.querySelector("[data-reflex-theme-scope]").getAttribute("data-reflex-theme"),
+    colour: localStorage.getItem("reflex-svc-colour"),
+    light: localStorage.getItem("reflex-theme"),
+    picker: document.getElementById("latencyThemeColour").value,
+  }));
+}
+
+async function assertThemePicker(page) {
+  const picker = page.locator("#latencyThemeColour");
+  const toggle = page.locator("#latencyThemeToggle");
+  assert.deepEqual(await themeState(page), { theme: "midnight", colour: "midnight", light: "dark", picker: "midnight" });
+
+  await picker.selectOption("amber");
+  assert.deepEqual(await themeState(page), { theme: "amber", colour: "amber", light: "dark", picker: "amber" });
+  assert.equal(await screenColor(page), "rgb(20, 11, 2)");
+  await toggle.click();
+  assert.deepEqual(await themeState(page), { theme: "amber-light", colour: "amber", light: "lab", picker: "amber" });
+
+  // Green's light theme is the Prism dashboard's "lab"; its dark theme is the layer default with no attribute.
+  await picker.selectOption("green");
+  assert.equal((await themeState(page)).theme, "lab");
+  await toggle.click();
+  assert.equal((await themeState(page)).theme, null);
+  assert.equal(await screenColor(page), "rgb(4, 20, 10)");
+
+  // The choice survives a reload; an unknown colour falls back to midnight.
+  await picker.selectOption("white");
+  await page.reload({ waitUntil: "networkidle" });
+  await waitForRows(page);
+  assert.deepEqual(await themeState(page), { theme: "white", colour: "white", light: "dark", picker: "white" });
+  await page.evaluate(() => localStorage.setItem("reflex-svc-colour", "purple"));
+  await page.reload({ waitUntil: "networkidle" });
+  await waitForRows(page);
+  assert.deepEqual(await themeState(page), { theme: "midnight", colour: "midnight", light: "dark", picker: "midnight" });
+}
+
+async function assertFlatScreen(page) {
+  const frame = await page.locator(".svc-frame").evaluate((node) => ({
+    padding: getComputedStyle(node).paddingTop,
+    radius: getComputedStyle(node.querySelector(".svc-screen")).borderTopLeftRadius,
+  }));
+  assert.deepEqual(frame, { padding: "0px", radius: "0px" });
 }
 
 async function assertTierWords(page) {
@@ -258,7 +304,9 @@ try {
 
   await assertRankBounds(page);
   assert.equal(await page.locator('#latencyRows tr.js-row[aria-expanded="true"] td').first().textContent(), "1");
+  await assertFlatScreen(page);
   await assertThemeToggle(page);
+  await assertThemePicker(page);
   await assertTierWords(page);
   await assertFiltersKeepGlobalRanks(page);
   await assertSorting(page);
@@ -282,6 +330,7 @@ try {
   await shopifyPage.evaluate(() => document.fonts.ready);
   await assertRankBounds(shopifyPage);
   await assertShopifyIsolation(shopifyPage);
+  await assertFlatScreen(shopifyPage);
   await assertThemeToggle(shopifyPage);
   await assertTierWords(shopifyPage);
   await assertExternalProductLinksAvoidRestockMatcher(shopifyPage);

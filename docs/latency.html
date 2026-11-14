@@ -11,13 +11,19 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <script>
     (function () {
-      var theme = "midnight";
+      // Same names as the toggle script at the end of the page; set here so the first paint is right.
+      var themes = { midnight: ["midnight", "midnight-light"], amber: ["amber", "amber-light"], reflex: ["reflex", "reflex-light"], green: ["", "lab"], white: ["white", "white-light"] };
+      var colour = "midnight";
+      var light = false;
       try {
+        colour = localStorage.getItem("reflex-svc-colour") || "midnight";
         var saved = localStorage.getItem("reflex-theme");
-        if (saved === "lab" || saved === "light") theme = "midnight-light";
+        light = saved === "lab" || saved === "light";
       } catch (error) {
       }
-      document.documentElement.setAttribute("data-reflex-theme", theme);
+      if (!Object.prototype.hasOwnProperty.call(themes, colour)) colour = "midnight";
+      var name = themes[colour][light ? 1 : 0];
+      if (name) document.documentElement.setAttribute("data-reflex-theme", name);
     })();
   </script>
   <link rel="stylesheet" href="./assets/reflex.css">
@@ -26,12 +32,19 @@
   <link rel="stylesheet" href="./assets/input-latency.css?v=latency-assets-20261113">
 </head>
 <body data-reflex-theme-scope>
-  <div class="svc latency-svc" data-svc-bezel="on">
+  <div class="svc latency-svc">
     <div class="svc-frame"><div class="svc-screen">
       <div>
         <header class="svc-top">
           <div class="svc-wordmark"><h1>Latency</h1><span>Input latency explorer</span></div>
           <div class="svc-row">
+            <select id="latencyThemeColour" class="latency-theme" aria-label="Theme colour">
+              <option value="midnight">Theme: Midnight</option>
+              <option value="amber">Theme: Amber</option>
+              <option value="reflex">Theme: Reflex</option>
+              <option value="green">Theme: Green</option>
+              <option value="white">Theme: White</option>
+            </select>
             <button type="button" id="latencyThemeToggle" data-reflex-theme-option="lab">Light</button>
             <a class="latency-action" href="https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/edit?gid=0#gid=0" target="_blank" rel="noreferrer noopener">Source Sheet</a>
             <a class="latency-action svc-primary" href="https://misteraddons.com/pages/cores">Core Explorer</a>
@@ -156,31 +169,35 @@
 
   <script>
     (function initReflexThemeToggle() {
-      var storageKey = "reflex-theme";
+      // Light stays in reflex-theme (dark/lab), shared with older pages; the colour is
+      // reflex-svc-colour, shared with the Core Explorer. Names follow Reflex-CSS docs/service-menu.md.
+      var themes = { midnight: ["midnight", "midnight-light"], amber: ["amber", "amber-light"], reflex: ["reflex", "reflex-light"], green: ["", "lab"], white: ["white", "white-light"] };
       var scopes = [document.documentElement].concat(Array.prototype.slice.call(document.querySelectorAll("[data-reflex-theme-scope]")));
       var toggle = document.getElementById("latencyThemeToggle");
-      var normalize = function (theme) { return theme === "lab" || theme === "light" ? "lab" : "dark"; };
+      var picker = document.getElementById("latencyThemeColour");
+      var normalizeLight = function (theme) { return theme === "lab" || theme === "light" ? "lab" : "dark"; };
+      var normalizeColour = function (colour) { return Object.prototype.hasOwnProperty.call(themes, colour) ? colour : "midnight"; };
+      var read = function (key) { try { return localStorage.getItem(key); } catch (error) { return null; } };
+      var write = function (key, value) { try { localStorage.setItem(key, value); } catch (error) { } };
+      var light = normalizeLight(read("reflex-theme"));
+      var colour = normalizeColour(read("reflex-svc-colour"));
 
-      function applyTheme(theme) {
-        var activeTheme = normalize(theme);
+      function applyTheme() {
+        var name = themes[colour][light === "lab" ? 1 : 0];
         scopes.forEach(function (scope) {
-          scope.setAttribute("data-reflex-theme", activeTheme === "lab" ? "midnight-light" : "midnight");
+          if (name) scope.setAttribute("data-reflex-theme", name);
+          else scope.removeAttribute("data-reflex-theme");
         });
-        toggle.setAttribute("data-reflex-theme-option", activeTheme === "lab" ? "dark" : "lab");
-        toggle.textContent = activeTheme === "lab" ? "Dark" : "Light";
-        try {
-          localStorage.setItem(storageKey, activeTheme);
-        } catch (error) {
-        }
+        picker.value = colour;
+        toggle.setAttribute("data-reflex-theme-option", light === "lab" ? "dark" : "lab");
+        toggle.textContent = light === "lab" ? "Dark" : "Light";
+        write("reflex-theme", light);
+        write("reflex-svc-colour", colour);
       }
 
-      var savedTheme = "dark";
-      try {
-        savedTheme = localStorage.getItem(storageKey) || "dark";
-      } catch (error) {
-      }
-      applyTheme(savedTheme);
-      toggle.addEventListener("click", function () { applyTheme(toggle.getAttribute("data-reflex-theme-option")); });
+      applyTheme();
+      toggle.addEventListener("click", function () { light = normalizeLight(toggle.getAttribute("data-reflex-theme-option")); applyTheme(); });
+      picker.addEventListener("change", function () { colour = normalizeColour(picker.value); applyTheme(); });
     })();
 
     (function loadLatencyScripts() {
