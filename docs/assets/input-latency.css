@@ -6,7 +6,7 @@
 
 
 .latency-page {
-  --latency-median-color: rgba(230, 255, 30, 0.62);
+  --latency-median-color: rgba(223, 255, 0, 0.62);
 }
 
 :where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .latency-page {
@@ -400,7 +400,7 @@
   min-height: 116px;
   padding: 11px 12px;
   border: 1px solid var(--line-strong);
-  border-left: 3px solid rgba(230, 255, 30, 0.44);
+  border-left: 3px solid rgba(223, 255, 0, 0.44);
   border-radius: 8px;
   background: var(--surface-soft);
 }
@@ -685,8 +685,8 @@
 }
 
 .card-tags .tag-rank-overall {
-  border-color: rgba(230, 255, 30, 0.28);
-  background: rgba(230, 255, 30, 0.08);
+  border-color: rgba(223, 255, 0, 0.28);
+  background: rgba(223, 255, 0, 0.08);
   color: #f7ffd1;
 }
 
@@ -710,7 +710,7 @@
 
 :where([data-reflex-theme="light"], [data-reflex-theme="lab"], .rx-theme-light, .rx-theme-lab) .card-tags .tag-rank-overall {
   border-color: rgba(140, 122, 0, 0.34);
-  background: rgba(239, 255, 26, 0.32);
+  background: rgba(223, 255, 0, 0.32);
   color: #5f5200;
 }
 
@@ -926,7 +926,7 @@
 }
 
 .latency-card.is-expanded {
-  border-color: rgba(230, 255, 30, 0.24);
+  border-color: rgba(223, 255, 0, 0.24);
 }
 
 .latency-detail-panel {
@@ -1275,5 +1275,111 @@
      the edge on a phone. */
   .latency-page {
     --page-gutter: 16px;
+  }
+}
+
+/* Service-menu explorer. The page shell is ".svc.latency-svc" and
+   service-menu.css draws it; these rules cover what the layer leaves to the
+   page: links styled as buttons, upper-case tier words, clickable recent rows,
+   and the latency map's fixed height, pan bar and zoom readout. */
+.latency-svc {
+  min-height: 100vh;
+}
+
+.latency-svc .latency-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--svc-ctl);
+  padding: 0 14px;
+  border-width: 2px;
+  border-style: solid;
+  font: 700 13px/1.2 var(--svc-mono);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.latency-svc .latency-action:not(.svc-primary) {
+  border-color: var(--svc-muted);
+  color: var(--svc-ink);
+}
+
+.latency-svc .latency-action:not(.svc-primary):hover {
+  background: var(--svc-panel);
+}
+
+.latency-svc .latency-action.svc-sm {
+  min-height: 28px;
+  padding: 0 8px;
+  border-width: 1px;
+  font-size: 11px;
+}
+
+.latency-svc a:focus-visible {
+  outline: 2px solid var(--svc-focus);
+  outline-offset: 2px;
+}
+
+.latency-svc .latency-tier {
+  text-transform: uppercase;
+}
+
+.latency-svc .latency-more-count {
+  color: var(--svc-ink);
+}
+
+.latency-svc .latency-status {
+  padding: var(--svc-s2) var(--svc-s3);
+  border: 2px dashed var(--svc-dim);
+}
+
+.latency-svc .svc-table tr.latency-jump {
+  cursor: pointer;
+}
+
+.latency-svc .svc-table tr.latency-jump:hover td {
+  background: var(--svc-panel);
+}
+
+.latency-svc .svc-detail .latency-modes {
+  margin-top: 6px;
+}
+
+.latency-svc .svc-detail .latency-note {
+  margin-top: var(--svc-s3);
+}
+
+.latency-svc .svc-chart svg.latency-chart {
+  height: 340px;
+  cursor: crosshair;
+}
+
+.latency-svc .latency-pan {
+  height: 14px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-color: var(--svc-muted) transparent;
+}
+
+.latency-svc .latency-pan:not(.is-zoomed) {
+  display: none;
+}
+
+.latency-svc .latency-pan-fill {
+  height: 1px;
+}
+
+.latency-svc .latency-zoom .svc-rangeline {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.latency-svc .latency-zoom output {
+  min-width: 6ch;
+}
+
+@media (max-width: 560px) {
+  .latency-svc .svc-chart svg.latency-chart {
+    height: 280px;
   }
 }

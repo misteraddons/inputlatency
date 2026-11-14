@@ -2,263 +2,185 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Input Latency Explorer</title>
   <meta name="description" content="Filter and compare controller latency measurements recorded on MiSTer FPGA.">
   <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   <script>
     (function () {
+      var theme = "midnight";
       try {
-        const theme = localStorage.getItem("reflex-theme");
-        if (theme === "lab" || theme === "light") {
-          document.documentElement.setAttribute("data-reflex-theme", "lab");
-        }
+        var saved = localStorage.getItem("reflex-theme");
+        if (saved === "lab" || saved === "light") theme = "midnight-light";
       } catch (error) {
       }
+      document.documentElement.setAttribute("data-reflex-theme", theme);
     })();
   </script>
   <link rel="stylesheet" href="./assets/reflex.css">
   <link rel="stylesheet" href="./assets/mister-explorer.css">
-  <link rel="stylesheet" href="./assets/input-latency.css?v=latency-assets-20260611-1350">
+  <link rel="stylesheet" href="./assets/service-menu.css">
+  <link rel="stylesheet" href="./assets/input-latency.css?v=latency-assets-20261113">
 </head>
 <body data-reflex-theme-scope>
-  <div class="page-noise" aria-hidden="true"></div>
-  <main class="page-shell latency-page">
-    <div class="rx-theme-toolbar">
-      <div class="rx-theme-toggle" role="group" aria-label="Color theme">
-        <button type="button" data-reflex-theme-option="dark" aria-pressed="true">Dark</button>
-        <button type="button" data-reflex-theme-option="lab" aria-pressed="false">Light</button>
-      </div>
-    </div>
-
-    <section class="hero">
-      <div class="hero-copy">
-        <h1>Input Latency Explorer</h1>
-        <p class="hero-byline">By Mister Addons</p>
-        <p class="hero-text">Browse controller latency measurements - recorded on MiSTer FPGA, but applicable to devices that poll USB at 1 ms.</p>
-        <p class="hero-linkline hero-metaline">
-          <a href="https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/edit?gid=0#gid=0" target="_blank" rel="noreferrer noopener">Source spreadsheet</a>
-          <span class="hero-meta-sep" aria-hidden="true">/</span>
-          <a href="https://misteraddons.com/pages/cores">MiSTer Core Explorer</a>
-          <span class="hero-meta-sep" aria-hidden="true">/</span>
-          <span class="latency-affiliate-note">Amazon product links on this page are affiliate links.</span>
-        </p>
-        <div class="hero-stats latency-hero-stats" id="latencyHeroStats"></div>
-        <details class="latency-methodology">
-          <summary>Testing Methodology</summary>
-          <div class="latency-methodology-body">
-            <p>Each input device is measured on MiSTer at a 1 ms USB polling interval. An ATMega 32u4 microcontroller is wired directly to a button on the controller PCB, then commands randomized button presses by pulling that button line to ground and releasing it.</p>
-            <p>The controller is connected to MiSTer over USB or its wireless receiver. A custom MiSTer NES core raises a signal on a User I/O pin when the USB button press is detected, and the microcontroller records the elapsed time from commanded press to MiSTer detection.</p>
-            <p>CSV captures are summarized with R to calculate average latency, distribution statistics, sample count, and percentile data when raw captures are available. MiSTer was chosen for deterministic FPGA GPIO and a low-latency USB stack; at 1 ms polling, the theoretical average floor is 0.5 ms, with the fastest measured devices landing around 0.7 ms.</p>
-            <p>Tester files are available in the <a href="https://github.com/misteraddons/inputlatency" target="_blank" rel="noreferrer noopener">inputlatency GitHub repository</a>, including the <a href="https://github.com/misteraddons/inputlatency/blob/main/test_core/NES_Lag_Tester.rbf" target="_blank" rel="noreferrer noopener">NES_Lag_Tester.rbf MiSTer core</a>. The current source spreadsheet is available in <a href="https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/edit?gid=0#gid=0" target="_blank" rel="noreferrer noopener">Google Sheets</a>.</p>
+  <div class="svc latency-svc" data-svc-bezel="on">
+    <div class="svc-frame"><div class="svc-screen">
+      <div>
+        <header class="svc-top">
+          <div class="svc-wordmark"><h1>Latency</h1><span>Input latency explorer</span></div>
+          <div class="svc-row">
+            <button type="button" id="latencyThemeToggle" data-reflex-theme-option="lab">Light</button>
+            <a class="latency-action" href="https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/edit?gid=0#gid=0" target="_blank" rel="noreferrer noopener">Source Sheet</a>
+            <a class="latency-action svc-primary" href="https://misteraddons.com/pages/cores">Core Explorer</a>
           </div>
-        </details>
-      </div>
-    </section>
-
-    <details class="latency-recent-panel" id="latencyRecentPanel" open>
-      <summary>
-        <span>Most Recent 5</span>
-        <strong id="latencyRecentSummary">Loading</strong>
-      </summary>
-      <div class="latency-recent-list" id="latencyRecentList"></div>
-    </details>
-
-    <section class="controls-panel latency-controls">
-      <div class="control-block control-search">
-        <label for="latencySearchInput">Search</label>
-        <input id="latencySearchInput" type="search" placeholder="Search controllers, makes, tiers, notes">
-      </div>
-      <div class="control-block control-select">
-        <label for="latencyCategorySelect">Category</label>
-        <select id="latencyCategorySelect">
-          <option value="">All categories</option>
-        </select>
-      </div>
-      <div class="control-block control-select is-disabled">
-        <label for="latencyFaceButtonsSelect">Face Buttons</label>
-        <select id="latencyFaceButtonsSelect" disabled>
-          <option value="">All face buttons</option>
-        </select>
-      </div>
-      <div class="control-block control-select is-disabled">
-        <label for="latencyHomeButtonSelect">Home Button</label>
-        <select id="latencyHomeButtonSelect" disabled>
-          <option value="">Any home button</option>
-        </select>
-      </div>
-      <div class="control-block control-select is-disabled">
-        <label for="latencyAdapterInputSelect">Controller Adapter Input</label>
-        <select id="latencyAdapterInputSelect" disabled>
-          <option value="">Select Controller Adapter</option>
-        </select>
-      </div>
-      <div class="control-block control-select">
-        <label for="latencyModeSelect">Output Mode</label>
-        <select id="latencyModeSelect">
-          <option value="">All output modes</option>
-        </select>
-      </div>
-      <div class="control-block control-select">
-        <label for="latencyConnectionSelect">Connection</label>
-        <select id="latencyConnectionSelect">
-          <option value="">All connections</option>
-        </select>
-      </div>
-      <div class="control-block control-select">
-        <label for="latencyTierSelect">Latency Tier (Average)</label>
-        <select id="latencyTierSelect">
-          <option value="">All tiers</option>
-        </select>
-      </div>
-      <div class="control-block control-select">
-        <label for="latencySaleStatusSelect">Sale Status</label>
-        <select id="latencySaleStatusSelect">
-          <option value="">All sale statuses</option>
-        </select>
-      </div>
-      <div class="control-block control-select">
-        <label for="latencySourceStatusSelect">Firmware</label>
-        <select id="latencySourceStatusSelect">
-          <option value="">All firmware</option>
-        </select>
-      </div>
-      <div class="control-block control-select control-sort">
-        <label for="latencySortSelect">Sort</label>
-        <div class="sort-control-row">
-          <select id="latencySortSelect">
-            <option value="average">Average latency</option>
-            <option value="same-frame">Same-frame probability</option>
-            <option value="name">Device name</option>
-            <option value="date-added">Date added</option>
-          </select>
-          <button class="sort-direction-button" id="latencySortDirectionToggle" type="button" aria-pressed="false" title="Toggle descending sort">
-            Ascending
-          </button>
+        </header>
+        <div class="svc-ident">
+          <strong>MiSTer FPGA Input Latency</strong>
+          <span id="latencyIdentCount">Loading</span>
+          <span>Best: <strong id="latencyIdentBest">-</strong></span>
+          <span>Median: <span id="latencyIdentMedian">-</span></span>
+          <span>Updated: <span id="latencyIdentUpdated">-</span></span>
+          <span>Amazon links are affiliate links</span>
         </div>
       </div>
-      <div class="control-block control-view">
-        <label for="latencyViewToggle">View</label>
-        <div class="segmented-toggle" id="latencyViewToggle" role="tablist" aria-label="Latency result view">
-          <button class="segmented-option is-active" type="button" data-latency-view-mode="list" aria-pressed="true">List</button>
-          <button class="segmented-option" type="button" data-latency-view-mode="tiles" aria-pressed="false">Tiles</button>
-        </div>
-      </div>
-    </section>
 
-    <details class="latency-plot-section" id="latencyPlotSection" aria-labelledby="latencyPlotTitle" open>
-      <summary class="latency-plot-summary">
-        <p class="meta-kicker">Latency map</p>
-        <h2 id="latencyPlotTitle">Compare average latency and consistency</h2>
-      </summary>
-      <div class="latency-plot-header">
-        <div class="latency-plot-tools">
-          <div class="latency-zoom-control">
-            <div class="latency-zoom-header">
-              <label class="latency-zoom-label" for="latencyXZoomSlider">
-                <span>Latency Window</span>
-                <strong id="latencyXZoomLabel">All</strong>
-              </label>
-              <details class="meta-help latency-tier-guide" id="latencyPlotTierGuide">
-                <summary>Tier Guide</summary>
-                <div class="meta-help-panel">
-                  <p><code>Diamond</code> average latency is at or below 1 ms.</p>
-                  <p><code>Platinum</code> is above 1 ms and at or below 2 ms.</p>
-                  <p><code>Gold</code> is above 2 ms and at or below 5 ms.</p>
-                  <p><code>Silver</code> is above 5 ms and at or below 10 ms.</p>
-                  <p><code>Bronze</code> is above 10 ms and at or below 16.67 ms, the one-frame boundary at 60 Hz.</p>
-                  <p><code>Copper</code> is above 16.67 ms and at or below 33.33 ms, the two-frame boundary at 60 Hz.</p>
-                  <p><code>Rust</code> is above 33.33 ms.</p>
-                </div>
-              </details>
+      <div class="svc-body">
+        <nav class="svc-menu" id="latencyMenu" role="tablist" aria-orientation="vertical" aria-label="Latency menu">
+          <button type="button" role="tab" id="latencyTabRanking" aria-controls="latencyPageRanking" aria-selected="true" data-page="latencyPageRanking">Ranking</button>
+          <button type="button" role="tab" id="latencyTabMap" aria-controls="latencyPageMap" aria-selected="false" data-page="latencyPageMap" tabindex="-1">Latency Map</button>
+          <button type="button" role="tab" id="latencyTabRecent" aria-controls="latencyPageRecent" aria-selected="false" data-page="latencyPageRecent" tabindex="-1">Recent</button>
+          <button type="button" role="tab" id="latencyTabBest" aria-controls="latencyPageBest" aria-selected="false" data-page="latencyPageBest" tabindex="-1">Best by Category</button>
+          <button type="button" role="tab" id="latencyTabMethod" aria-controls="latencyPageMethod" aria-selected="false" data-page="latencyPageMethod" tabindex="-1">Methodology</button>
+        </nav>
+
+        <section class="svc-page" id="latencyPageRanking" role="tabpanel" aria-labelledby="latencyTabRanking">
+          <div class="svc-title"><h2>Ranking</h2><span class="svc-meta" id="latencyCount">-</span></div>
+          <div class="svc-toolbar">
+            <div class="svc-search">
+              <input id="latencySearchInput" type="search" placeholder="Search devices, makers, tiers" aria-label="Search devices">
+              <select id="latencySortSelect" aria-label="Sort">
+                <option value="average">Sort: Average latency</option>
+                <option value="same-frame">Sort: Same-frame chance</option>
+                <option value="name">Sort: Name</option>
+                <option value="date-added">Sort: Date added</option>
+              </select>
+              <button type="button" id="latencySortDirectionToggle" aria-label="Reverse the sort order">Asc &#9652;</button>
             </div>
-            <input id="latencyXZoomSlider" type="range" min="0" max="100" value="0" step="1">
+            <div class="svc-filters">
+              <label><span>Category</span><select id="latencyCategorySelect"><option value="">All categories</option></select></label>
+              <label><span>Connection</span><select id="latencyConnectionSelect"><option value="">All connections</option></select></label>
+              <label><span>Tier</span><select id="latencyTierSelect"><option value="">All tiers</option></select></label>
+              <label><span>Sale status</span><select id="latencySaleStatusSelect"><option value="">All sale statuses</option></select></label>
+            </div>
+            <details class="svc-advanced" id="latencyMoreFilters">
+              <summary>More filters: face buttons, home button, adapter input, output mode, firmware<span class="latency-more-count" id="latencyMoreCount"></span></summary>
+              <div class="svc-advanced-body">
+                <div class="svc-filters">
+                  <label><span>Face buttons</span><select id="latencyFaceButtonsSelect" disabled><option value="">All face buttons</option></select></label>
+                  <label><span>Home button</span><select id="latencyHomeButtonSelect" disabled><option value="">Any home button</option></select></label>
+                  <label><span>Adapter input</span><select id="latencyAdapterInputSelect" disabled><option value="">All adapter inputs</option></select></label>
+                  <label><span>Output mode</span><select id="latencyModeSelect"><option value="">All output modes</option></select></label>
+                  <label><span>Firmware</span><select id="latencySourceStatusSelect"><option value="">All firmware</option></select></label>
+                </div>
+                <p class="svc-help">Face and home button filters apply to controllers and arcade sticks; adapter input applies to controller adapters.</p>
+              </div>
+            </details>
           </div>
-        </div>
+          <p class="latency-status" id="latencyStatusBanner" aria-live="polite" hidden>Loading latency data...</p>
+          <div class="svc-tablewrap">
+            <table class="svc-table" id="latencyTable">
+              <thead><tr><th class="svc-num">#</th><th>Device</th><th class="svc-num">Avg ms</th><th class="svc-hide-sm">Log scale</th><th>Tier</th><th class="svc-hide-md">Link</th><th class="svc-hide-md">Category rank</th></tr></thead>
+              <tbody id="latencyRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="svc-page" id="latencyPageMap" role="tabpanel" aria-labelledby="latencyTabMap" hidden>
+          <div class="svc-title"><h2>Latency Map</h2><span class="svc-meta" id="latencyMapMeta">-</span></div>
+          <div class="svc-chart">
+            <div class="svc-readout" id="latencyReadout" aria-live="polite">Point at a device</div>
+            <svg id="latencyScatter" class="latency-chart" role="img" aria-label="Average latency against same-frame probability"></svg>
+            <div id="latencyXPanScrollbar" class="latency-pan" role="region" aria-label="Scan the zoomed latency window" tabindex="0" aria-disabled="true">
+              <div id="latencyXPanTrack" class="latency-pan-fill"></div>
+            </div>
+          </div>
+          <div class="svc-field latency-zoom">
+            <span>Window</span>
+            <div class="svc-rangeline">
+              <input id="latencyXZoomSlider" class="svc-range" type="range" min="0" max="100" value="0" step="1" aria-label="Latency window zoom">
+              <output id="latencyXZoomLabel" for="latencyXZoomSlider">All</output>
+            </div>
+          </div>
+          <p>Each point is one device. Across: average latency on a log scale. Up: chance the press lands in the same 60 Hz frame, from the average. Points past one frame (16.67 ms) show in the warning colour. Scroll over the map or drag the slider to zoom; nearby points fan out under the pointer, and a click opens the device in Ranking.</p>
+          <h3 class="svc-sub">Tiers</h3>
+          <div class="svc-leaders svc-leaders-cols" id="latencyTiers"></div>
+        </section>
+
+        <section class="svc-page" id="latencyPageRecent" role="tabpanel" aria-labelledby="latencyTabRecent" hidden>
+          <div class="svc-title"><h2>Recent</h2><span class="svc-meta" id="latencyRecentMeta">5 newest</span></div>
+          <div class="svc-tablewrap">
+            <table class="svc-table" id="latencyRecentTable">
+              <thead><tr><th>Added</th><th>Device</th><th class="svc-num">Avg ms</th><th>Tier</th><th class="svc-hide-md">Link</th></tr></thead>
+              <tbody id="latencyRecentRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="svc-page" id="latencyPageBest" role="tabpanel" aria-labelledby="latencyTabBest" hidden>
+          <div class="svc-title"><h2>Best by Category</h2><span class="svc-meta">Fastest average in each</span></div>
+          <div class="svc-leaders" id="latencyBest"></div>
+        </section>
+
+        <section class="svc-page" id="latencyPageMethod" role="tabpanel" aria-labelledby="latencyTabMethod" hidden>
+          <div class="svc-title"><h2>Methodology</h2></div>
+          <div class="svc-leaders svc-leaders-cols">
+            <div class="svc-lead"><span class="svc-label">USB polling</span><span class="svc-value">1 ms</span></div>
+            <div class="svc-lead"><span class="svc-label">Theoretical floor</span><span class="svc-value">0.5 ms</span></div>
+            <div class="svc-lead"><span class="svc-label">Fastest measured</span><span class="svc-value" id="latencyMethodBest">-</span></div>
+            <div class="svc-lead"><span class="svc-label">Raw captures</span><span class="svc-value" id="latencyMethodRaw">-</span></div>
+            <div class="svc-lead"><span class="svc-label">Tester core</span><span class="svc-value"><a href="https://github.com/misteraddons/inputlatency/blob/main/test_core/NES_Lag_Tester.rbf" target="_blank" rel="noreferrer noopener">NES_Lag_Tester.rbf</a></span></div>
+            <div class="svc-lead"><span class="svc-label">Press driver</span><span class="svc-value">ATmega32U4</span></div>
+          </div>
+          <p>Each input device is measured on MiSTer at a 1 ms USB polling interval. An ATmega32U4 is wired directly to a button on the controller PCB and presses it at random times by pulling the button line to ground.</p>
+          <p>A custom MiSTer NES core raises a User I/O pin when the USB press arrives, and the microcontroller records the time from commanded press to detection. CSV captures are summarized in R: average, distribution, sample count and percentiles where raw captures exist.</p>
+          <p>MiSTer was chosen for deterministic FPGA GPIO and a low-latency USB stack; the results apply to any device that polls USB at 1 ms. Tester files, including the NES_Lag_Tester.rbf core, are in the <a href="https://github.com/misteraddons/inputlatency" target="_blank" rel="noreferrer noopener">inputlatency GitHub repository</a>, and the results in the <a href="https://docs.google.com/spreadsheets/d/1KlRObr3Be4zLch7Zyqg6qCJzGuhyGmXaOIUrpfncXIM/edit?gid=0#gid=0" target="_blank" rel="noreferrer noopener">source spreadsheet</a>.</p>
+        </section>
       </div>
-      <div class="latency-plot-wrap">
-        <svg id="latencyScatter" class="latency-scatter" role="img" aria-label="Input latency scatter plot"></svg>
-        <div class="latency-tooltip" id="latencyTooltip" hidden></div>
-      </div>
-      <div id="latencyXPanScrollbar" class="latency-pan-scrollbar" role="region" aria-label="Scan zoomed latency range" tabindex="0" aria-disabled="true">
-        <div id="latencyXPanTrack" class="latency-pan-track"></div>
-      </div>
-      <p class="latency-plot-note">Each point is an input device. X is average latency on a logarithmic scale; Y is same-frame probability derived from average latency. Hovering over dense areas fans points horizontally and lifts them in a tapered arc for selection.</p>
-    </details>
 
-    <section class="status-banner" id="latencyStatusBanner" aria-live="polite" hidden>Loading latency data...</section>
-
-    <div class="latency-list-header" id="latencyListHeader" aria-hidden="true">
-      <span class="latency-list-header-rank">#</span>
-      <span class="latency-list-header-title">Device</span>
-      <span class="latency-list-header-metrics">
-        <span>Average</span>
-        <span>Tier</span>
-      </span>
-      <span class="latency-list-header-tags"></span>
-    </div>
-
-    <section class="core-grid latency-grid" id="latencyGrid" aria-live="polite" aria-label="Latency results"></section>
-
-    <template id="latencyCardTemplate">
-      <article class="core-card latency-card rx-list-row">
-        <div class="card-frame">
-          <div class="card-topline">
-            <button class="card-category latency-tier" type="button"></button>
-            <span class="latency-result-label"></span>
-          </div>
-          <span class="latency-rank"></span>
-          <div class="latency-title-row">
-            <h2 class="card-title"></h2>
-          </div>
-          <div class="card-tags"></div>
-          <p class="card-subtitle"></p>
-          <div class="latency-metrics"></div>
-          <div class="latency-detail-panel" hidden>
-            <div class="latency-detail-grid"></div>
-            <p class="latency-detail-note"></p>
-          </div>
-        </div>
-      </article>
-    </template>
-  </main>
+      <footer class="svc-hint"><span><b>/</b> Search</span><span><b>&uarr; &darr;</b> Page, with the menu focused</span><span><b>Enter</b> Open a row</span></footer>
+    </div></div>
+  </div>
 
   <script>
     (function initReflexThemeToggle() {
-      const storageKey = "reflex-theme";
-      const root = document.documentElement;
-      const scopes = [root].concat(Array.from(document.querySelectorAll("[data-reflex-theme-scope]")));
-      const buttons = Array.from(document.querySelectorAll("[data-reflex-theme-option]"));
-      const normalize = (theme) => (theme === "lab" || theme === "light" ? "lab" : "dark");
+      var storageKey = "reflex-theme";
+      var scopes = [document.documentElement].concat(Array.prototype.slice.call(document.querySelectorAll("[data-reflex-theme-scope]")));
+      var toggle = document.getElementById("latencyThemeToggle");
+      var normalize = function (theme) { return theme === "lab" || theme === "light" ? "lab" : "dark"; };
 
       function applyTheme(theme) {
-        const activeTheme = normalize(theme);
-        scopes.forEach((scope) => {
-          if (activeTheme === "lab") {
-            scope.setAttribute("data-reflex-theme", "lab");
-          } else {
-            scope.removeAttribute("data-reflex-theme");
-          }
+        var activeTheme = normalize(theme);
+        scopes.forEach(function (scope) {
+          scope.setAttribute("data-reflex-theme", activeTheme === "lab" ? "midnight-light" : "midnight");
         });
-        buttons.forEach((button) => {
-          button.setAttribute("aria-pressed", String(normalize(button.dataset.reflexThemeOption) === activeTheme));
-        });
+        toggle.setAttribute("data-reflex-theme-option", activeTheme === "lab" ? "dark" : "lab");
+        toggle.textContent = activeTheme === "lab" ? "Dark" : "Light";
         try {
           localStorage.setItem(storageKey, activeTheme);
         } catch (error) {
         }
       }
 
-      let savedTheme = "dark";
+      var savedTheme = "dark";
       try {
         savedTheme = localStorage.getItem(storageKey) || "dark";
       } catch (error) {
       }
       applyTheme(savedTheme);
-      buttons.forEach((button) => button.addEventListener("click", () => applyTheme(button.dataset.reflexThemeOption)));
+      toggle.addEventListener("click", function () { applyTheme(toggle.getAttribute("data-reflex-theme-option")); });
     })();
 
     (function loadLatencyScripts() {

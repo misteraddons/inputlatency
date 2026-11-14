@@ -51,7 +51,7 @@ npm run verify:published        # load the live page and check it rendered this 
 python scripts/check_product_links.py --report build/links.csv
 ```
 
-`verify_published_explorer.mjs` fails when the published page renders no cards,
+`verify_published_explorer.mjs` fails when the published page renders no rows,
 shows the status banner, throws from the explorer assets, or serves a payload
 older than the one in this checkout. Run it after publishing.
 

@@ -5,9 +5,8 @@ const latencyState = {
   sortDescending: false,
   xZoomLevel: 0,
   xPanRatio: 0.5,
-  viewMode: "list",
+  page: "latencyPageRanking",
   selectedItemId: "",
-  selectedDisplayVariantId: "",
 };
 
 const latencyRefs = {
@@ -23,23 +22,28 @@ const latencyRefs = {
   tierSelect: document.getElementById("latencyTierSelect"),
   sortSelect: document.getElementById("latencySortSelect"),
   sortDirectionToggle: document.getElementById("latencySortDirectionToggle"),
-  heroStats: document.getElementById("latencyHeroStats"),
-  recentPanel: document.getElementById("latencyRecentPanel"),
-  recentSummary: document.getElementById("latencyRecentSummary"),
-  recentList: document.getElementById("latencyRecentList"),
+  moreFiltersCount: document.getElementById("latencyMoreCount"),
+  menu: document.getElementById("latencyMenu"),
+  identCount: document.getElementById("latencyIdentCount"),
+  identBest: document.getElementById("latencyIdentBest"),
+  identMedian: document.getElementById("latencyIdentMedian"),
+  identUpdated: document.getElementById("latencyIdentUpdated"),
+  count: document.getElementById("latencyCount"),
+  rows: document.getElementById("latencyRows"),
   statusBanner: document.getElementById("latencyStatusBanner"),
-  grid: document.getElementById("latencyGrid"),
-  cardTemplate: document.getElementById("latencyCardTemplate"),
-  viewOptions: document.querySelectorAll("[data-latency-view-mode]"),
-  xZoomControl: document.querySelector(".latency-zoom-control"),
+  recentMeta: document.getElementById("latencyRecentMeta"),
+  recentRows: document.getElementById("latencyRecentRows"),
+  best: document.getElementById("latencyBest"),
+  methodBest: document.getElementById("latencyMethodBest"),
+  methodRaw: document.getElementById("latencyMethodRaw"),
+  mapMeta: document.getElementById("latencyMapMeta"),
+  readout: document.getElementById("latencyReadout"),
+  tiers: document.getElementById("latencyTiers"),
   xZoomSlider: document.getElementById("latencyXZoomSlider"),
+  xZoomLabel: document.getElementById("latencyXZoomLabel"),
   xPanScrollbar: document.getElementById("latencyXPanScrollbar"),
   xPanTrack: document.getElementById("latencyXPanTrack"),
-  xZoomLabel: document.getElementById("latencyXZoomLabel"),
   scatter: document.getElementById("latencyScatter"),
-  tooltip: document.getElementById("latencyTooltip"),
-  listHeader: document.getElementById("latencyListHeader"),
-  plotSection: document.getElementById("latencyPlotSection"),
 };
 
 const latencyNumberFormatter = new Intl.NumberFormat("en-US");
@@ -50,13 +54,6 @@ const latencyMsFormatter = new Intl.NumberFormat("en-US", {
 const latencyPercentFormatter = new Intl.NumberFormat("en-US", {
   minimumFractionDigits: 1,
   maximumFractionDigits: 1,
-});
-const latencyDateFormatter = new Intl.DateTimeFormat("en-US", {
-  dateStyle: "medium",
-  timeStyle: "short",
-});
-const latencyShortDateFormatter = new Intl.DateTimeFormat("en-US", {
-  dateStyle: "medium",
 });
 const latencyTextCollator = new Intl.Collator("en-US", {
   numeric: true,
@@ -74,17 +71,26 @@ const LATENCY_TIER_LABELS = {
   Copper: "Copper (16.67-33.33 ms)",
   Rust: "Rust (33.33+ ms)",
 };
+const LATENCY_TIER_RANGES = {
+  Diamond: "0-1 ms",
+  Platinum: "1-2 ms",
+  Gold: "2-5 ms",
+  Silver: "5-10 ms",
+  Bronze: "10-16.67 ms",
+  Copper: "16.67-33.33 ms",
+  Rust: "33.33+ ms",
+};
+// Upper bound of each tier but the last, in ms. Copper and Rust are past one 60 Hz frame.
+const LATENCY_TIER_BOUNDS = [1, 2, 5, 10, 16.67, 33.33];
+const LATENCY_LATE_TIERS = new Set(["Copper", "Rust"]);
 const LATENCY_SALE_STATUS_ORDER = ["Actively sold", "Discontinued", "Unknown"];
 const LATENCY_SOURCE_STATUS_ORDER = ["Open Source", "Closed Source"];
 const LATENCY_CONNECTION_ORDER = ["Wired", "Wireless BT", "Wireless 2.4GHz", "Wireless"];
-const LATENCY_TIER_ICON_LABELS = {
-  Diamond: "Diamond tier",
-  Platinum: "Platinum tier",
-  Gold: "Gold tier",
-  Silver: "Silver tier",
-  Bronze: "Bronze tier",
-  Copper: "Copper tier",
-  Rust: "Rust tier",
+const LATENCY_CONNECTION_SHORT = {
+  Wired: "Wired",
+  "Wireless BT": "BT",
+  "Wireless 2.4GHz": "2.4G",
+  Wireless: "Wireless",
 };
 const LATENCY_OUTPUT_MODE_ALIASES = new Map([
   ["pc", "DInput"],
@@ -141,14 +147,13 @@ const LATENCY_ADAPTER_INPUT_EXCLUDED_TYPES = new Set([
   "Uncategorized",
 ]);
 const LATENCY_CONTROLLER_ATTRIBUTE_CATEGORIES = new Set(["Controller", "Arcade Stick"]);
-const LATENCY_SVG_NS = "http://www.w3.org/2000/svg";
 const LATENCY_LOG_X_TICKS = [0.5, 1, 2, 5, 10, 20, 50, 100, 200];
 const LATENCY_X_ZOOM_MAX = 100;
 const LATENCY_X_ZOOM_STEP = 0.04;
 const LATENCY_X_ZOOM_MIN_LOG_RATIO = 0.04;
-const LATENCY_POINT_BASE_RADIUS = 3.8;
+const LATENCY_X_DOMAIN_PAD_RATIO = 0.04;
+const LATENCY_MARK_SIZE = 4;
 const LATENCY_POINT_MAGNIFY_RANGE = 58;
-const LATENCY_POINT_HIT_RADIUS = 22;
 const LATENCY_POINT_LENS_RADIUS = 76;
 const LATENCY_POINT_LENS_SCALE = 2.8;
 const LATENCY_POINT_LENS_HORIZONTAL_SPLAY = 18;
@@ -212,8 +217,9 @@ async function fetchLatencyPayload(url) {
   return response.json();
 }
 
-function showLatencyStatus(message) {
+function showLatencyStatus(message, isError = false) {
   latencyRefs.statusBanner.textContent = message;
+  latencyRefs.statusBanner.classList.toggle("svc-danger", isError);
   latencyRefs.statusBanner.hidden = false;
 }
 
@@ -222,12 +228,47 @@ function hideLatencyStatus() {
   latencyRefs.statusBanner.textContent = "";
 }
 
+function escapeLatencyHtml(value) {
+  return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  }[character]));
+}
+
 function formatLatencyMs(value) {
   return Number.isFinite(value) ? `${latencyMsFormatter.format(value)} ms` : "-";
 }
 
+function formatLatencyMsValue(value) {
+  return Number.isFinite(value) ? latencyMsFormatter.format(value) : "-";
+}
+
 function formatLatencyPercent(value) {
   return Number.isFinite(value) ? `${latencyPercentFormatter.format(value)}%` : "-";
+}
+
+function formatLatencyTick(value) {
+  const digits = value < 1 ? 2 : value < 10 ? 1 : 0;
+  return String(Number(value.toFixed(digits)));
+}
+
+function padLatencyDatePart(value) {
+  return String(value).padStart(2, "0");
+}
+
+function formatLatencyIsoDate(timestamp) {
+  const date = new Date(timestamp);
+  return `${date.getFullYear()}-${padLatencyDatePart(date.getMonth() + 1)}-${padLatencyDatePart(date.getDate())}`;
+}
+
+function formatLatencyTimestamp(value) {
+  const timestamp = Date.parse(value || "");
+  if (Number.isNaN(timestamp)) return "Unknown";
+  const date = new Date(timestamp);
+  return `${formatLatencyIsoDate(timestamp)} ${padLatencyDatePart(date.getHours())}:${padLatencyDatePart(date.getMinutes())}`;
 }
 
 function parseLatencyDate(value) {
@@ -253,7 +294,7 @@ function getLatencyDateSortValue(item) {
 
 function formatLatencyDateAdded(item) {
   const timestamp = getLatencyDateSortValue(item);
-  if (timestamp !== null) return latencyShortDateFormatter.format(new Date(timestamp));
+  if (timestamp !== null) return formatLatencyIsoDate(timestamp);
   return item.dateAdded || "-";
 }
 
@@ -270,59 +311,6 @@ function getMostRecentLatencyItems(items, limit = 5) {
     .map((entry) => entry.item);
 }
 
-function createLatencyRecentItem(item) {
-  const row = document.createElement("button");
-  row.type = "button";
-  row.className = `latency-recent-item tier-${sanitizeLatencyClass(item.averageTier)}`;
-  row.dataset.recentItemId = item.id || "";
-  row.dataset.recentDisplayVariantId = item.displayVariantId || "";
-  row.setAttribute("aria-label", `Show details for ${item.name || "recent latency result"}`);
-
-  const title = document.createElement("strong");
-  title.className = "latency-recent-name";
-  title.textContent = item.name || "Unknown controller";
-
-  const meta = document.createElement("span");
-  meta.className = "latency-recent-meta";
-  meta.textContent = [formatLatencyDateAdded(item), buildLatencySubtitle(item)].filter(Boolean).join(" / ");
-
-  const metrics = document.createElement("div");
-  metrics.className = "latency-recent-metrics";
-
-  const average = document.createElement("span");
-  average.className = "latency-recent-ms";
-  average.textContent = formatLatencyMs(item.averageMs);
-
-  const tier = document.createElement("span");
-  tier.className = "latency-recent-tier";
-  tier.textContent = item.averageTier || "-";
-
-  metrics.append(average, tier);
-  row.append(title, meta, metrics);
-  return row;
-}
-
-function renderLatencyRecentItems(items) {
-  if (!latencyRefs.recentPanel || !latencyRefs.recentSummary || !latencyRefs.recentList) return;
-
-  latencyRefs.recentList.innerHTML = "";
-  if (!items.length) {
-    latencyRefs.recentSummary.textContent = "No dated results";
-    const empty = document.createElement("p");
-    empty.className = "latency-recent-empty";
-    empty.textContent = "No recently dated latency results are available.";
-    latencyRefs.recentList.appendChild(empty);
-    return;
-  }
-
-  latencyRefs.recentSummary.textContent = `${items.length} newest`;
-  const fragment = document.createDocumentFragment();
-  for (const item of items) {
-    fragment.appendChild(createLatencyRecentItem(item));
-  }
-  latencyRefs.recentList.appendChild(fragment);
-}
-
 function clearLatencyFilterControls() {
   latencyRefs.searchInput.value = "";
   latencyRefs.connectionSelect.value = "";
@@ -336,21 +324,12 @@ function clearLatencyFilterControls() {
   latencyRefs.tierSelect.value = "";
 }
 
-function formatLatencyCount(value, singular, plural = `${singular}s`) {
-  const label = value === 1 ? singular : plural;
-  return `${latencyNumberFormatter.format(value)} ${label}`;
-}
-
 function isFiniteLatencyNumber(value) {
   return typeof value === "number" && Number.isFinite(value);
 }
 
 function clampLatencyValue(value, min, max) {
   return Math.min(Math.max(value, min), max);
-}
-
-function sanitizeLatencyClass(value) {
-  return String(value || "unknown").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "unknown";
 }
 
 function uniqueSorted(values) {
@@ -369,6 +348,15 @@ function uniqueSortedByOrder(values, orderValues) {
 
 function getLatencyTierLabel(tier) {
   return LATENCY_TIER_LABELS[tier] || tier;
+}
+
+function isLatencyLateTier(tier) {
+  return LATENCY_LATE_TIERS.has(tier);
+}
+
+function getLatencyTierForMs(value) {
+  const index = LATENCY_TIER_BOUNDS.findIndex((bound) => value <= bound);
+  return LATENCY_TIER_ORDER[index < 0 ? LATENCY_TIER_ORDER.length - 1 : index];
 }
 
 function getLatencyVariants(item) {
@@ -395,10 +383,6 @@ function sortLatencyOutputModes(values) {
 
 function getLatencyOutputModes(item) {
   return sortLatencyOutputModes(splitLatencyOutputModeText(item.outputMode).map(normalizeLatencyOutputMode));
-}
-
-function getLatencyTargetPlatform(item) {
-  return getLatencyOutputModes(item)[0] || "";
 }
 
 function formatLatencyOutputModes(item) {
@@ -442,10 +426,6 @@ function getLatencyConnectionModeSummary(item) {
   if (labels.includes("2.4GHz")) return "USB + 2.4GHz";
   if (labels.includes("Wireless")) return "USB + Wireless";
   return ["USB", "BT", "2.4GHz", "Wireless"].filter((label) => labels.includes(label)).join(" + ");
-}
-
-function getLatencyListModeDisplay(item) {
-  return getLatencyConnectionModeSummary(item) || getLatencyModeDisplay(item);
 }
 
 function getLatencyVariantModeDisplay(item) {
@@ -531,6 +511,11 @@ function getLatencyConnectionFilterValue(item) {
   return kind && kind !== "Unknown" ? kind : "";
 }
 
+function getLatencyConnectionShort(item) {
+  const value = getLatencyConnectionFilterValue(item);
+  return LATENCY_CONNECTION_SHORT[value] || value || "-";
+}
+
 function fillLatencySelect(select, values, currentValue = "", getOptionLabel = (value) => value) {
   if (!select) return;
   const firstOption = select.querySelector("option");
@@ -551,7 +536,6 @@ function syncLatencyAdapterInputAvailability() {
   if (!latencyRefs.adapterInputSelect || !latencyRefs.categorySelect) return;
   const enabled = latencyRefs.categorySelect.value === "Controller Adapter";
   latencyRefs.adapterInputSelect.disabled = !enabled;
-  latencyRefs.adapterInputSelect.closest(".control-block")?.classList.toggle("is-disabled", !enabled);
   if (!enabled && latencyRefs.adapterInputSelect.value) latencyRefs.adapterInputSelect.value = "";
 }
 
@@ -560,10 +544,20 @@ function syncLatencyControllerAttributeAvailability() {
   const enabled = isLatencyControllerAttributeCategory(latencyRefs.categorySelect.value);
   latencyRefs.faceButtonsSelect.disabled = !enabled;
   latencyRefs.homeButtonSelect.disabled = !enabled;
-  latencyRefs.faceButtonsSelect.closest(".control-block")?.classList.toggle("is-disabled", !enabled);
-  latencyRefs.homeButtonSelect.closest(".control-block")?.classList.toggle("is-disabled", !enabled);
   if (!enabled && latencyRefs.faceButtonsSelect.value) latencyRefs.faceButtonsSelect.value = "";
   if (!enabled && latencyRefs.homeButtonSelect.value) latencyRefs.homeButtonSelect.value = "";
+}
+
+function syncLatencyMoreFiltersCount() {
+  if (!latencyRefs.moreFiltersCount) return;
+  const active = [
+    latencyRefs.faceButtonsSelect,
+    latencyRefs.homeButtonSelect,
+    latencyRefs.adapterInputSelect,
+    latencyRefs.modeSelect,
+    latencyRefs.sourceStatusSelect,
+  ].filter((select) => select && select.value).length;
+  latencyRefs.moreFiltersCount.textContent = active ? ` (${active} set)` : "";
 }
 
 function populateLatencyControls(items) {
@@ -635,143 +629,10 @@ function populateLatencyControls(items) {
   syncLatencyControllerAttributeAvailability();
 }
 
-function buildLatencySubtitle(item) {
-  const connection = item.connection || (item.connectionKind === "Unknown" ? "" : item.connectionKind);
-  const category = item.category === "Uncategorized" ? "" : item.category;
-  const parts = [
-    category,
-    connection,
-    item.wirelessConnection && item.wirelessConnection !== "-" ? item.wirelessConnection : "",
-    item.originalSystem,
-  ].filter(Boolean);
-  return parts.join(" / ");
-}
-
-function createLatencyTierIcon(tier) {
-  const icon = document.createElement("i");
-  icon.className = `latency-tier-icon tier-${sanitizeLatencyClass(tier)}`;
-  icon.setAttribute("aria-hidden", "true");
-  icon.title = LATENCY_TIER_ICON_LABELS[tier] || "Latency tier";
-  return icon;
-}
-
-function createLatencyMetric(label, value, kind = "", icon = null) {
-  const metric = document.createElement("div");
-  metric.className = `latency-metric ${kind}`.trim();
-
-  const valueNode = document.createElement("strong");
-  if (icon) {
-    valueNode.append(icon, document.createTextNode(value));
-  } else {
-    valueNode.textContent = value;
-  }
-  metric.appendChild(valueNode);
-
-  const labelNode = document.createElement("span");
-  labelNode.textContent = label;
-  metric.appendChild(labelNode);
-
-  return metric;
-}
-
-function createLatencyTag(label, options = {}) {
-  const tag = options.href ? document.createElement("a") : options.filter ? document.createElement("button") : document.createElement("span");
-  tag.className = `card-tag ${options.kind ? `tag-${options.kind}` : ""}`.trim();
-  tag.textContent = label;
-  if (options.href) {
-    tag.href = options.href;
-    tag.target = "_blank";
-    tag.rel = "noreferrer noopener";
-  } else {
-    tag.type = "button";
-    if (options.filter) {
-      tag.dataset.filter = options.filter;
-      tag.dataset.value = options.value || label;
-    }
-  }
-  if (options.title) tag.title = options.title;
-  return tag;
-}
-
-function buildLatencyTags(item) {
-  const tags = [];
-  if (item.connectionTag) {
-    tags.push(createLatencyTag(item.connectionTag, {
-      kind: "connection",
-      title: "Transport type",
-    }));
-  }
-  if (item.isOpenSource) {
-    tags.push(createLatencyTag("Open Source", {
-      kind: "source-open",
-      filter: "sourceStatus",
-      value: "Open Source",
-      title: "Open source firmware is available",
-    }));
-  }
-  if (Number.isFinite(item.modeRank) && item.rankMode) {
-    tags.push(createLatencyTag(`#${latencyNumberFormatter.format(item.modeRank)} ${item.rankMode}`, {
-      kind: "rank-mode",
-      title: `Ranked by average latency within all ${item.rankMode} results`,
-    }));
-  }
-  return tags;
-}
-
 const EMPTY_LATENCY_DETAIL_VALUES = new Set(["", "-", "--", "N/A", "n/a"]);
 
 function isEmptyLatencyDetailValue(value) {
   return value === null || value === undefined || EMPTY_LATENCY_DETAIL_VALUES.has(String(value).trim());
-}
-
-function createLatencyDetailItem(label, value, kind = "") {
-  const item = document.createElement("div");
-  item.className = `latency-detail-item ${kind}`.trim();
-
-  const labelNode = document.createElement("span");
-  labelNode.textContent = label;
-  const valueNode = document.createElement("strong");
-  valueNode.textContent = value;
-  item.append(labelNode, valueNode);
-  return item;
-}
-
-function createLatencyModeVariants(item) {
-  const variants = getLatencyVariants(item);
-  if (variants.length <= 1) return null;
-
-  const panel = document.createElement("div");
-  panel.className = "latency-mode-variants";
-
-  const title = document.createElement("h3");
-  title.textContent = "Measured modes";
-  panel.appendChild(title);
-
-  const rows = document.createElement("div");
-  rows.className = "latency-mode-variant-grid";
-  for (const variant of [...variants].sort((left, right) => (left.averageMs ?? Infinity) - (right.averageMs ?? Infinity))) {
-    const row = document.createElement("div");
-    row.className = "latency-mode-variant";
-    if (variant.id === item.displayVariantId || (!item.displayVariantId && variant.id === item.id)) {
-      row.classList.add("is-current");
-    }
-
-    const mode = document.createElement("strong");
-    mode.textContent = getLatencyVariantModeDisplay(variant) || variant.name || "-";
-    const average = document.createElement("span");
-    average.textContent = formatLatencyMs(variant.averageMs);
-    const tier = document.createElement("span");
-    tier.textContent = variant.averageTier || "-";
-    const source = document.createElement("span");
-    const sourceParts = [
-      variant.connectionTag || variant.connectionKind || variant.resultLabel || "",
-    ].filter(Boolean);
-    source.textContent = sourceParts.join(" / ") || "-";
-    row.append(mode, average, tier, source);
-    rows.appendChild(row);
-  }
-  panel.appendChild(rows);
-  return panel;
 }
 
 function getLatencyDetailSource(item) {
@@ -787,211 +648,252 @@ function buildLatencyDetailNote(item) {
     return `Average subtracts the ${formatLatencyMs(item.adapterAverageMs)} Reflex Adapt${mode} baseline from the ${formatLatencyMs(item.measuredAverageMs)} measured total. Same-frame is derived from the adjusted average for consistent comparison.`;
   }
   if (item.hasRawCapture) {
-    return "Chart same-frame is derived from average latency for consistent comparison. Observed same-frame, 99th percentile, and sample count come from raw capture data.";
+    return "Same frame (from avg) is derived from average latency for consistent comparison. Observed same-frame, 99th percentile, and sample count come from raw capture data.";
   }
   if (isFiniteLatencyNumber(item.observedSameFramePct)) {
-    return "Chart same-frame is derived from average latency for consistent comparison. Source same-frame is retained separately when provided.";
+    return "Same frame (from avg) is derived from average latency for consistent comparison. Source same-frame is retained separately when provided.";
   }
-  return "Chart same-frame is derived from average latency. This row does not include separate observed same-frame or 99th percentile data.";
+  return "Same frame (from avg) is derived from average latency. This row does not include separate observed same-frame or 99th percentile data.";
 }
 
-function renderLatencyCard(item) {
-  const card = latencyRefs.cardTemplate.content.firstElementChild.cloneNode(true);
-  card.classList.add(`tier-${sanitizeLatencyClass(item.averageTier)}`);
-  card.classList.add(`result-${sanitizeLatencyClass(item.resultType)}`);
-  card.classList.add("is-expandable");
-  if (Number.isFinite(item.modeVariantCount) && item.modeVariantCount > 1) {
-    card.classList.add("has-variants");
-    card.dataset.variantCount = String(item.modeVariantCount);
-  }
-  card.dataset.itemId = item.id || "";
-  card.dataset.displayVariantId = item.displayVariantId || "";
-  card.tabIndex = 0;
-  card.setAttribute("role", "button");
-  card.setAttribute("aria-expanded", "false");
-  if (latencyState.selectedItemId === item.id) {
-    card.classList.add("is-selected");
-    card.setAttribute("aria-current", "true");
-  }
+function formatLatencyMinMax(item) {
+  if (!isFiniteLatencyNumber(item.minMs) || !isFiniteLatencyNumber(item.maxMs)) return "-";
+  return `${formatLatencyMsValue(item.minMs)} / ${formatLatencyMs(item.maxMs)}`;
+}
 
-  const title = card.querySelector(".card-title");
-  const titleUrl = normalizeExternalProductUrl(item.buyUrl || item.sourceUrl);
-  if (titleUrl) {
-    const titleLink = document.createElement("a");
-    titleLink.className = "card-title-link";
-    titleLink.href = titleUrl;
-    titleLink.target = "_blank";
-    titleLink.rel = "noreferrer noopener";
-    titleLink.textContent = item.name;
-    titleLink.title = item.buyUrl ? "Open product page" : "Open source page";
-    title.appendChild(titleLink);
-  } else {
-    title.textContent = item.name;
-  }
-
-  const rank = card.querySelector(".latency-rank");
-  if (rank) {
-    rank.textContent = Number.isFinite(item.overallRank) ? `#${latencyNumberFormatter.format(item.overallRank)}` : "";
-    rank.title = "Ranked by average latency across all results";
-  }
-
-  const subtitle = card.querySelector(".card-subtitle");
-  const subtitleText = buildLatencySubtitle(item);
-  subtitle.textContent = subtitleText || " ";
-
-  const metrics = card.querySelector(".latency-metrics");
-  metrics.append(
-    createLatencyMetric("Average", formatLatencyMs(item.averageMs), "metric-average"),
-    createLatencyMetric("Tier", item.averageTier || "-", "metric-tier", createLatencyTierIcon(item.averageTier)),
-    createLatencyMetric("Mode", getLatencyListModeDisplay(item) || "-", "metric-mode"),
-  );
-
-  const details = card.querySelector(".latency-detail-panel");
-  const detailGrid = card.querySelector(".latency-detail-grid");
+function getLatencyDetailFields(item) {
   // Fields with nothing to report are left out rather than printed as N/A,
-  // which keeps the panel to the rows that actually carry data.
-  const detailFields = [
-    ["99th", formatLatencyMs(item.p99Ms), "detail-p99"],
-    ["Same Frame from Avg", formatLatencyPercent(item.sameFramePct), "detail-modeled"],
-    [
-      item.hasRawCapture ? "Observed Same Frame" : "Source Same Frame",
-      formatLatencyPercent(item.observedSameFramePct),
-      item.hasRawCapture ? "detail-raw" : "detail-modeled",
-    ],
-    ["Samples", item.sampleCount ? latencyNumberFormatter.format(item.sampleCount) : "-", "detail-samples"],
-    ["Stats Source", getLatencyDetailSource(item), item.hasRawCapture ? "detail-raw" : "detail-modeled"],
-    ["Date Added", formatLatencyDateAdded(item), "detail-date"],
-    ["Category", item.category || "-", "detail-category"],
-    ["Controller Adapter Input", formatLatencyAdapterInputs(item), "detail-adapter-input"],
-    ["Sale Status", getLatencySaleStatus(item), "detail-sale-status"],
-    ["Firmware", getLatencySourceStatus(item), "detail-source-status"],
-    ["Connection", item.connection || item.connectionKind || "-", "detail-connection"],
-    ["Input Mode", simplifyLatencyModeLabel(item.modeRaw || item.modeDisplay || item.modeLabel) || "-", "detail-mode"],
-    ["Output Mode", formatLatencyOutputModes(item), "detail-mode"],
-    ["Face Buttons", getLatencyFaceButtons(item) || "N/A", "detail-face-buttons"],
-    ["Home Button", getLatencyHomeButton(item) || "N/A", "detail-home-button"],
-    ["VID:PID", normalizeLatencyLabel(item.joystickId) || "N/A", "detail-vid-pid"],
-    ["Weight", formatLatencyWeight(item), "detail-weight"],
+  // which keeps the leader lines to the values that actually carry data.
+  const fields = [
+    ["Same frame (from avg)", formatLatencyPercent(item.sameFramePct)],
+    [item.hasRawCapture ? "Same frame (observed)" : "Same frame (source)", formatLatencyPercent(item.observedSameFramePct)],
+    ["99th percentile", formatLatencyMs(item.p99Ms)],
+    ["Std deviation", formatLatencyMs(item.sdMs)],
+    ["Min / max", formatLatencyMinMax(item)],
+    ["Samples", item.sampleCount ? latencyNumberFormatter.format(item.sampleCount) : "-"],
+    ["Stats source", getLatencyDetailSource(item)],
+    ["Added", formatLatencyDateAdded(item)],
+    ["Category", item.category || "-"],
+    ["Adapter input", formatLatencyAdapterInputs(item)],
+    ["Connection", item.connection || item.connectionKind || "-"],
+    ["Input mode", simplifyLatencyModeLabel(item.modeRaw || item.modeDisplay || item.modeLabel) || "-"],
+    ["Output mode", formatLatencyOutputModes(item)],
+    ["Face buttons", getLatencyFaceButtons(item) || "N/A"],
+    ["Home button", getLatencyHomeButton(item) || "N/A"],
+    ["Sale status", getLatencySaleStatus(item)],
+    ["Firmware", getLatencySourceStatus(item)],
+    ["VID:PID", normalizeLatencyLabel(item.joystickId) || "N/A"],
+    ["Weight", formatLatencyWeight(item)],
   ];
   if (isFiniteLatencyNumber(item.measuredAverageMs)) {
-    detailFields.push(["Measured Total", formatLatencyMs(item.measuredAverageMs), "detail-raw"]);
+    fields.push(["Measured total", formatLatencyMs(item.measuredAverageMs)]);
   }
   if (isFiniteLatencyNumber(item.adapterAverageMs)) {
     const adapterLabel = item.adapterMode ? `${formatLatencyMs(item.adapterAverageMs)} ${item.adapterMode}` : formatLatencyMs(item.adapterAverageMs);
-    detailFields.push(["Adapter Baseline", adapterLabel, "detail-modeled"]);
+    fields.push(["Adapter baseline", adapterLabel]);
   }
-  const detailItems = detailFields
-    .filter(([, value]) => !isEmptyLatencyDetailValue(value))
-    .map(([label, value, kind]) => createLatencyDetailItem(label, value, kind));
-  detailGrid.append(...detailItems);
-  const modeVariantItem = latencyState.selectedItemId === item.id && latencyState.selectedDisplayVariantId
-    ? { ...item, displayVariantId: latencyState.selectedDisplayVariantId }
-    : item;
-  const modeVariants = createLatencyModeVariants(modeVariantItem);
-  if (modeVariants) {
-    details.insertBefore(modeVariants, card.querySelector(".latency-detail-note"));
-  }
-  const note = card.querySelector(".latency-detail-note");
-  note.textContent = buildLatencyDetailNote(item);
-  const selected = latencyState.selectedItemId === item.id;
-  details.hidden = !selected;
-  if (selected) {
-    card.classList.add("is-expanded");
-    card.dataset.selectionExpanded = "true";
-    card.setAttribute("aria-expanded", "true");
-  }
+  return fields.filter(([, value]) => !isEmptyLatencyDetailValue(value));
+}
 
-  const tags = card.querySelector(".card-tags");
-  for (const tag of buildLatencyTags(item)) {
-    tags.appendChild(tag);
-  }
+function renderLatencyLead(label, valueHtml, valueClass = "") {
+  return `<div class="svc-lead"><span class="svc-label">${escapeLatencyHtml(label)}</span><span class="svc-value ${valueClass}">${valueHtml}</span></div>`;
+}
 
-  return card;
+function getLatencyMeterRatio(value) {
+  // Fixed 0.5-50 ms log scale, so bars compare across filters.
+  if (!isFiniteLatencyNumber(value) || value <= 0) return 0;
+  return clampLatencyValue((Math.log10(value) - Math.log10(0.5)) / 2, 0, 1);
+}
+
+function getLatencyProductLinks(item) {
+  const links = [];
+  const buyUrl = normalizeExternalProductUrl(item.buyUrl);
+  const sourceUrl = normalizeExternalProductUrl(item.sourceUrl);
+  if (/^https?:\/\//i.test(buyUrl)) links.push({ label: "Buy", href: buyUrl, title: "Open product page" });
+  if (/^https?:\/\//i.test(sourceUrl) && sourceUrl !== buyUrl) links.push({ label: "Source", href: sourceUrl, title: "Open source page" });
+  return links;
+}
+
+function renderLatencyModeVariants(item) {
+  const variants = getLatencyVariants(item);
+  if (variants.length <= 1) return "";
+  const rows = [...variants]
+    .sort((left, right) => (left.averageMs ?? Infinity) - (right.averageMs ?? Infinity))
+    .map((variant) => {
+      const current = variant.id === item.displayVariantId;
+      const value = [
+        formatLatencyMs(variant.averageMs),
+        variant.averageTier || "-",
+        variant.connectionTag || variant.connectionKind || variant.resultLabel || "",
+      ].filter(Boolean).join(" · ");
+      const late = isLatencyLateTier(variant.averageTier) ? " svc-danger" : "";
+      return renderLatencyLead(getLatencyVariantModeDisplay(variant) || variant.name || "-", escapeLatencyHtml(value), `${current ? "svc-changed" : ""}${late}`);
+    });
+  return `<h3 class="svc-sub">Measured modes</h3><div class="svc-leaders latency-modes">${rows.join("")}</div>`;
+}
+
+function renderLatencyDetail(item) {
+  const leads = getLatencyDetailFields(item).map(([label, value]) => renderLatencyLead(label, escapeLatencyHtml(value))).join("");
+  const links = getLatencyProductLinks(item)
+    .map((link, index) => `<a class="latency-action svc-sm${index === 0 ? " svc-primary" : ""}" href="${escapeLatencyHtml(link.href)}" target="_blank" rel="noreferrer noopener" title="${escapeLatencyHtml(link.title)}">${escapeLatencyHtml(link.label)}</a>`)
+    .join("");
+  return `<tr class="svc-detail" data-detail-for="${escapeLatencyHtml(item.id)}"><td colspan="7">`
+    + `<div class="svc-leaders svc-leaders-cols">${leads}</div>`
+    + renderLatencyModeVariants(item)
+    + `<p class="latency-note">${escapeLatencyHtml(buildLatencyDetailNote(item))}</p>`
+    + (links ? `<div class="svc-row">${links}</div>` : "")
+    + "</td></tr>";
+}
+
+function renderLatencyRow(item, open) {
+  const late = isLatencyLateTier(item.averageTier);
+  const danger = late ? " svc-danger" : "";
+  const rank = Number.isFinite(item.overallRank) ? latencyNumberFormatter.format(item.overallRank) : "-";
+  const modeRank = Number.isFinite(item.modeRank) && item.rankMode
+    ? `<span title="${escapeLatencyHtml(`Ranked by average latency within all ${item.rankMode} results`)}">#${latencyNumberFormatter.format(item.modeRank)} ${escapeLatencyHtml(item.rankMode)}</span>`
+    : "-";
+  const meter = (getLatencyMeterRatio(item.averageMs) * 100).toFixed(1);
+  return `<tr class="latency-row js-row" tabindex="0" aria-expanded="${open}" data-item-id="${escapeLatencyHtml(item.id)}">`
+    + `<td class="svc-num svc-muted" title="Ranked by average latency across all results">${rank}</td>`
+    + `<td class="svc-name">${escapeLatencyHtml(item.name)}</td>`
+    + `<td class="svc-num${danger}">${formatLatencyMsValue(item.averageMs)}</td>`
+    + `<td class="svc-hide-sm"><span class="svc-meter" aria-hidden="true"><i class="${late ? "svc-danger" : ""}" style="width:${meter}%"></i></span></td>`
+    + `<td class="latency-tier${danger}">${escapeLatencyHtml(item.averageTier || "-")}</td>`
+    + `<td class="svc-hide-md svc-muted">${escapeLatencyHtml(getLatencyConnectionShort(item))}</td>`
+    + `<td class="svc-hide-md svc-muted">${modeRank}</td>`
+    + "</tr>";
 }
 
 function renderLatencyItems(items) {
-  latencyRefs.grid.innerHTML = "";
-  latencyRefs.grid.classList.remove("view-list", "view-card", "rx-list");
-  latencyRefs.grid.classList.add(latencyState.viewMode === "tiles" ? "view-card" : "view-list");
-  if (latencyState.viewMode !== "tiles") latencyRefs.grid.classList.add("rx-list");
   if (latencyState.selectedItemId && !items.some((item) => item.id === latencyState.selectedItemId)) {
     latencyState.selectedItemId = "";
-    latencyState.selectedDisplayVariantId = "";
-    hideLatencyTooltip(true);
   }
-  const displayItems = latencyState.selectedItemId
-    ? items.filter((item) => item.id === latencyState.selectedItemId)
-    : items;
-
-  if (!displayItems.length) {
-    const empty = document.createElement("p");
-    empty.className = "empty-state";
-    empty.textContent = "No latency results match the selected filters.";
-    latencyRefs.grid.appendChild(empty);
-    syncLatencyListHeader(false);
+  latencyRefs.count.textContent = `${latencyNumberFormatter.format(items.length)} of ${latencyNumberFormatter.format(latencyState.items.length)}`;
+  if (!items.length) {
+    latencyRefs.rows.innerHTML = '<tr><td colspan="7" class="svc-muted latency-empty">No devices match. Clear the search or a filter.</td></tr>';
     return;
   }
-
-  const fragment = document.createDocumentFragment();
-  for (const item of displayItems) {
-    fragment.appendChild(renderLatencyCard(item));
-  }
-  latencyRefs.grid.appendChild(fragment);
-  syncLatencyListHeader(true);
+  latencyRefs.rows.innerHTML = items.map((item) => {
+    const open = item.id === latencyState.selectedItemId;
+    return renderLatencyRow(item, open) + (open ? renderLatencyDetail(item) : "");
+  }).join("");
 }
 
-function syncLatencyListHeader(hasRows) {
-  if (!latencyRefs.listHeader) return;
-  const showHeader = hasRows && latencyState.viewMode !== "tiles";
-  latencyRefs.listHeader.classList.toggle("is-visible", showHeader);
+function getLatencyRowElement(itemId) {
+  return latencyRefs.rows.querySelector(`tr.js-row[data-item-id="${CSS.escape(itemId || "")}"]`);
 }
 
-const LATENCY_PLOT_KEY = "latency-plot-open";
-
-function readLatencyPreference(key) {
-  try {
-    return localStorage.getItem(key);
-  } catch (error) {
-    return null;
+function focusLatencyRow(itemId, options = {}) {
+  const row = getLatencyRowElement(itemId);
+  if (!row) return;
+  row.focus({ preventScroll: true });
+  if (options.scroll && typeof row.scrollIntoView === "function") {
+    row.scrollIntoView({ block: "center", behavior: "smooth" });
   }
 }
 
-function writeLatencyPreference(key, value) {
-  try {
-    localStorage.setItem(key, value);
-  } catch (error) {
+function toggleLatencyRow(itemId) {
+  latencyState.selectedItemId = latencyState.selectedItemId === itemId ? "" : itemId;
+  renderLatencyItems(latencyState.filtered);
+  syncLatencyScatterSelection();
+  focusLatencyRow(itemId);
+}
+
+function openLatencyItem(itemId, options = {}) {
+  if (!latencyState.filtered.some((item) => item.id === itemId)) return;
+  latencyState.selectedItemId = itemId;
+  renderLatencyItems(latencyState.filtered);
+  syncLatencyScatterSelection();
+  showLatencyPage("latencyPageRanking");
+  focusLatencyRow(itemId, { scroll: options.scroll !== false });
+}
+
+function selectLatencyRecentItem(itemId) {
+  if (!latencyState.items.some((item) => item.id === itemId)) return;
+  clearLatencyFilterControls();
+  applyLatencyFilters();
+  openLatencyItem(itemId);
+}
+
+function renderLatencyRecentItems(items) {
+  if (!latencyRefs.recentRows) return;
+  latencyRefs.recentMeta.textContent = items.length ? `${items.length} newest` : "No dated results";
+  if (!items.length) {
+    latencyRefs.recentRows.innerHTML = '<tr><td colspan="5" class="svc-muted">No recently dated latency results are available.</td></tr>';
+    return;
+  }
+  latencyRefs.recentRows.innerHTML = items.map((item) => {
+    const danger = isLatencyLateTier(item.averageTier) ? " svc-danger" : "";
+    return `<tr class="latency-jump" tabindex="0" data-recent-item-id="${escapeLatencyHtml(item.id)}" title="Open in Ranking">`
+      + `<td class="svc-muted">${escapeLatencyHtml(formatLatencyDateAdded(item))}</td>`
+      + `<td class="svc-name">${escapeLatencyHtml(item.name)}</td>`
+      + `<td class="svc-num${danger}">${formatLatencyMsValue(item.averageMs)}</td>`
+      + `<td class="latency-tier${danger}">${escapeLatencyHtml(item.averageTier || "-")}</td>`
+      + `<td class="svc-hide-md svc-muted">${escapeLatencyHtml(getLatencyConnectionShort(item))}</td>`
+      + "</tr>";
+  }).join("");
+}
+
+function renderLatencyBestByCategory(items) {
+  if (!latencyRefs.best) return;
+  const groups = new Map();
+  for (const item of items) {
+    const category = item.category && item.category !== "Uncategorized" ? item.category : "Other";
+    if (!groups.has(category)) groups.set(category, []);
+    groups.get(category).push(item);
+  }
+  latencyRefs.best.innerHTML = [...groups.entries()]
+    .sort((left, right) => right[1].length - left[1].length || latencyTextCollator.compare(left[0], right[0]))
+    .map(([category, groupItems]) => {
+      const best = [...groupItems].sort(compareLatencyRankItems)[0];
+      const danger = isLatencyLateTier(best.averageTier) ? "svc-danger" : "";
+      return renderLatencyLead(`${category} (${groupItems.length})`, `${escapeLatencyHtml(best.name)} &middot; ${escapeLatencyHtml(formatLatencyMs(best.averageMs))}`, danger);
+    })
+    .join("");
+}
+
+function renderLatencyTierCounts(items) {
+  if (!latencyRefs.tiers) return;
+  const counts = new Map();
+  for (const item of items) counts.set(item.averageTier, (counts.get(item.averageTier) || 0) + 1);
+  latencyRefs.tiers.innerHTML = LATENCY_TIER_ORDER
+    .map((tier) => renderLatencyLead(`${tier} ${LATENCY_TIER_RANGES[tier]}`, latencyNumberFormatter.format(counts.get(tier) || 0), isLatencyLateTier(tier) ? "svc-danger" : ""))
+    .join("");
+}
+
+function renderLatencyIdent(summary) {
+  const total = summary.totalItems || latencyState.items.length;
+  latencyRefs.identCount.textContent = `${latencyNumberFormatter.format(total)} ${total === 1 ? "result" : "results"}`;
+  latencyRefs.identBest.textContent = formatLatencyMs(summary.bestAverageMs);
+  latencyRefs.identMedian.textContent = formatLatencyMs(summary.medianAverageMs);
+  latencyRefs.identUpdated.textContent = formatLatencyTimestamp(latencyState.generatedAt);
+  if (latencyRefs.methodBest) latencyRefs.methodBest.textContent = formatLatencyMs(summary.bestAverageMs);
+  if (latencyRefs.methodRaw) {
+    const raw = Number.isFinite(summary.rawCaptureItems)
+      ? summary.rawCaptureItems
+      : latencyState.items.filter((item) => item.hasRawCapture).length;
+    const share = total ? (raw / total) * 100 : 0;
+    latencyRefs.methodRaw.textContent = `${latencyNumberFormatter.format(raw)} of ${latencyNumberFormatter.format(total)} (${latencyPercentFormatter.format(share)}%)`;
   }
 }
 
-function initLatencyPlotDisclosure() {
-  const plot = latencyRefs.plotSection;
-  if (!plot) return;
-  if (readLatencyPreference(LATENCY_PLOT_KEY) === "0") {
-    plot.open = false;
-  }
-  plot.addEventListener("toggle", () => {
-    writeLatencyPreference(LATENCY_PLOT_KEY, plot.open ? "1" : "0");
-    // The scatter is sized from its rendered box, which is zero while collapsed.
-    if (plot.open) renderLatencyScatter(latencyState.filtered);
-  });
+function getLatencyMenuTabs() {
+  return latencyRefs.menu ? Array.from(latencyRefs.menu.querySelectorAll('[role="tab"]')) : [];
 }
 
-function toggleLatencyCard(card, force) {
-  const details = card.querySelector(".latency-detail-panel");
-  if (!details) return;
-  const nextExpanded = typeof force === "boolean" ? force : !card.classList.contains("is-expanded");
-  card.classList.toggle("is-expanded", nextExpanded);
-  card.setAttribute("aria-expanded", String(nextExpanded));
-  details.hidden = !nextExpanded;
-  if (!nextExpanded) delete card.dataset.selectionExpanded;
-}
-
-function createLatencySvgElement(name, attributes = {}) {
-  const element = document.createElementNS(LATENCY_SVG_NS, name);
-  for (const [key, value] of Object.entries(attributes)) {
-    element.setAttribute(key, String(value));
+function showLatencyPage(pageId) {
+  const tabs = getLatencyMenuTabs();
+  if (!tabs.some((tab) => tab.dataset.page === pageId)) return;
+  latencyState.page = pageId;
+  for (const tab of tabs) {
+    const selected = tab.dataset.page === pageId;
+    tab.setAttribute("aria-selected", String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+    const page = document.getElementById(tab.dataset.page);
+    if (page) page.hidden = !selected;
   }
-  return element;
+  // The map is sized from its rendered box, which is empty while its page is hidden.
+  if (pageId === "latencyPageMap") renderLatencyScatter(latencyState.filtered);
 }
 
 function getLatencyStableAngle(value, fallback = 0) {
@@ -1023,22 +925,18 @@ function getLatencyLogDomain(values) {
       max: Math.pow(10, logValue + 0.15),
     };
   }
-  return { min: minValue, max: maxValue };
-}
-
-function isLatencyTickNearValue(tick, value) {
-  return Math.abs(Math.log10(tick) - Math.log10(value)) < 0.045;
+  // A small margin keeps the fastest and slowest marks off the frame.
+  const pad = (Math.log10(maxValue) - Math.log10(minValue)) * LATENCY_X_DOMAIN_PAD_RATIO;
+  return {
+    min: Math.pow(10, Math.log10(minValue) - pad),
+    max: Math.pow(10, Math.log10(maxValue) + pad),
+  };
 }
 
 function getLatencyLogTicks(domain) {
-  const ticks = [domain.min];
-  for (const tick of LATENCY_LOG_X_TICKS) {
-    if (tick <= domain.min || tick >= domain.max) continue;
-    if (isLatencyTickNearValue(tick, domain.min) || isLatencyTickNearValue(tick, domain.max)) continue;
-    ticks.push(tick);
-  }
-  ticks.push(domain.max);
-  return Array.from(new Set(ticks.map((tick) => Number(tick.toFixed(6))))).sort((left, right) => left - right);
+  const ticks = LATENCY_LOG_X_TICKS.filter((tick) => tick >= domain.min && tick <= domain.max);
+  if (ticks.length >= 2) return ticks;
+  return Array.from(new Set([domain.min, ...ticks, domain.max])).sort((left, right) => left - right);
 }
 
 function getLatencyVisibleLogRange(baseLogRange, zoomLevel = latencyState.xZoomLevel) {
@@ -1081,20 +979,11 @@ function isLatencyItemInXDomain(item, xDomain) {
   return item.averageMs >= xDomain.min && item.averageMs <= xDomain.max;
 }
 
-function getLatencyXZoomLabel(visibleCount, allCount, xDomain, baseDomain) {
-  const resultLabel = visibleCount === 1 ? "RESULT" : "RESULTS";
-  const sameDomain = (
-    !baseDomain
-    || Math.abs(Math.log10(xDomain.min) - Math.log10(baseDomain.min)) < 0.0001
+function isLatencyFullXDomain(xDomain, baseDomain) {
+  return !baseDomain || (
+    Math.abs(Math.log10(xDomain.min) - Math.log10(baseDomain.min)) < 0.0001
     && Math.abs(Math.log10(xDomain.max) - Math.log10(baseDomain.max)) < 0.0001
   );
-  const windowLabel = sameDomain
-    ? "All"
-    : `${formatLatencyMs(xDomain.min)}-${formatLatencyMs(xDomain.max)}`;
-  const countLabel = sameDomain
-    ? allCount
-    : visibleCount;
-  return `${windowLabel} / ${latencyNumberFormatter.format(countLabel)} ${resultLabel}`;
 }
 
 function getLatencyScatterCursorRatio(event) {
@@ -1147,24 +1036,27 @@ function setLatencyXZoomLevel(value, anchorRatio = null) {
 }
 
 function syncLatencyXZoomControl(visibleCount, allCount = visibleCount, xDomain = null, baseDomain = null) {
-  const isZoomed = latencyState.xZoomLevel > 0.01;
-  if (latencyRefs.xZoomControl) {
-    latencyRefs.xZoomControl.classList.toggle("is-zoomed", isZoomed);
-  }
+  const fullDomain = !xDomain || isLatencyFullXDomain(xDomain, baseDomain);
+  const isZoomed = latencyState.xZoomLevel > 0.01 && !fullDomain;
   if (latencyRefs.xPanScrollbar) {
     latencyRefs.xPanScrollbar.classList.toggle("is-zoomed", isZoomed);
   }
   if (latencyRefs.xZoomSlider) {
-    latencyRefs.xZoomSlider.min = "0";
     latencyRefs.xZoomSlider.max = String(LATENCY_X_ZOOM_MAX);
-    latencyRefs.xZoomSlider.step = "1";
     latencyRefs.xZoomSlider.value = String(Math.round(latencyState.xZoomLevel));
   }
   syncLatencyPanScrollbar(isZoomed, xDomain, baseDomain);
   if (latencyRefs.xZoomLabel) {
-    latencyRefs.xZoomLabel.textContent = xDomain
-      ? getLatencyXZoomLabel(visibleCount, allCount, xDomain, baseDomain)
-      : `All / ${latencyNumberFormatter.format(allCount)} ${allCount === 1 ? "RESULT" : "RESULTS"}`;
+    latencyRefs.xZoomLabel.textContent = fullDomain
+      ? "All"
+      : `${formatLatencyTick(xDomain.min)}-${formatLatencyTick(xDomain.max)} ms`;
+  }
+  if (latencyRefs.mapMeta) {
+    const total = latencyState.items.length;
+    const count = latencyNumberFormatter.format;
+    latencyRefs.mapMeta.textContent = fullDomain
+      ? `${allCount === total ? count(allCount) : `${count(allCount)} of ${count(total)}`} ${allCount === 1 ? "device" : "devices"}`
+      : `${count(visibleCount)} of ${count(allCount)} in window`;
   }
 }
 
@@ -1206,309 +1098,157 @@ function handleLatencyScatterWheel(event) {
   setLatencyXZoomLevel(latencyState.xZoomLevel - delta * LATENCY_X_ZOOM_STEP, getLatencyScatterCursorRatio(event));
 }
 
-function makeLatencyAxisTick(value, x1, y1, x2, y2, label, anchor = "middle") {
-  const group = createLatencySvgElement("g", { class: "latency-axis-tick" });
-  group.appendChild(createLatencySvgElement("line", { x1, y1, x2, y2 }));
-  const text = createLatencySvgElement("text", { x: x2, y: y2 + 18, "text-anchor": anchor });
-  text.textContent = label;
-  group.appendChild(text);
-  return group;
-}
-
 function renderLatencyScatter(items) {
-  if (!latencyRefs.scatter) return;
+  const svg = latencyRefs.scatter;
+  if (!svg) return;
 
   latencyActiveScatterPoint = null;
-  if (!latencyState.selectedItemId) hideLatencyTooltip(true);
-  latencyRefs.scatter.innerHTML = "";
-
   const allPlotItems = getLatencyPlotItems(items);
   const baseXDomain = getLatencyLogDomain(allPlotItems.map((item) => item.averageMs));
   const xDomain = getLatencyXDomain(allPlotItems);
   const plotItems = allPlotItems.filter((item) => isLatencyItemInXDomain(item, xDomain));
-  if (latencyState.selectedItemId && !allPlotItems.some((item) => item.id === latencyState.selectedItemId)) {
-    latencyState.selectedItemId = "";
-    latencyState.selectedDisplayVariantId = "";
-    hideLatencyTooltip(true);
-  }
   syncLatencyXZoomControl(plotItems.length, allPlotItems.length, xDomain, baseXDomain);
-  const height = 360;
-  const renderedBox = latencyRefs.scatter.getBoundingClientRect();
-  const renderedWidth = renderedBox.width || 760;
-  const renderedHeight = renderedBox.height || height;
-  const width = Math.max(520, Math.round(renderedWidth / Math.max(renderedHeight, 1) * height));
-  latencyRefs.scatter.setAttribute("viewBox", `0 0 ${width} ${height}`);
-  const widePlot = width > 900;
-  const padding = widePlot
-    ? { top: 34, right: 72, bottom: 54, left: 112 }
-    : { top: 34, right: 36, bottom: 54, left: 96 };
-  const yLabelX = widePlot ? 24 : 18;
-  const chartWidth = width - padding.left - padding.right;
-  const chartHeight = height - padding.top - padding.bottom;
-  const bottom = padding.top + chartHeight;
-  const clientScaleX = renderedBox.width / Math.max(width, 1);
+
+  // One viewBox unit per CSS pixel keeps 11 px labels and 4 px marks true to size.
+  const width = Math.round(svg.clientWidth);
+  const height = Math.round(svg.clientHeight);
+  if (!width || !height) {
+    latencyScatterLayout = null;
+    return;
+  }
+  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+  const padding = { top: 22, right: 14, bottom: 40, left: 46 };
+  const chartWidth = Math.max(width - padding.left - padding.right, 10);
+  const bottom = height - padding.bottom;
+  const chartHeight = Math.max(bottom - padding.top, 10);
+  const box = svg.getBoundingClientRect();
+  const clientScale = box.width / Math.max(width + svg.clientLeft * 2, 1);
   latencyScatterLayout = {
-    clientChartLeft: renderedBox.left + padding.left * clientScaleX,
-    clientChartWidth: chartWidth * clientScaleX,
+    clientChartLeft: box.left + (svg.clientLeft + padding.left) * clientScale,
+    clientChartWidth: chartWidth * clientScale,
   };
-  latencyRefs.scatter.dataset.plotLeft = String(padding.left);
-  latencyRefs.scatter.dataset.plotRight = String(padding.left + chartWidth);
-  latencyRefs.scatter.dataset.plotTop = String(padding.top);
-  latencyRefs.scatter.dataset.plotBottom = String(bottom);
+  svg.dataset.plotLeft = String(padding.left);
+  svg.dataset.plotRight = String(padding.left + chartWidth);
+  svg.dataset.plotTop = String(padding.top);
+  svg.dataset.plotBottom = String(bottom);
 
   if (!plotItems.length) {
-    const empty = createLatencySvgElement("text", {
-      x: width / 2,
-      y: height / 2,
-      class: "latency-plot-empty",
-      "text-anchor": "middle",
-    });
-    empty.textContent = "No chartable latency data in this filter.";
-    latencyRefs.scatter.appendChild(empty);
+    svg.innerHTML = `<text class="svc-axis-text" x="${width / 2}" y="${height / 2}" text-anchor="middle">No chartable latency data in this filter.</text>`;
     return;
   }
 
   const xLogMin = Math.log10(xDomain.min);
   const xLogRange = Math.max(Math.log10(xDomain.max) - xLogMin, 0.000001);
-  const xScale = (value) => {
-    const clamped = clampLatencyValue(value, xDomain.min, xDomain.max);
-    return padding.left + ((Math.log10(clamped) - xLogMin) / xLogRange) * chartWidth;
-  };
+  const xScale = (value) => padding.left + ((Math.log10(clampLatencyValue(value, xDomain.min, xDomain.max)) - xLogMin) / xLogRange) * chartWidth;
   const yScale = (value) => bottom - (clampLatencyValue(value, 0, 100) / 100) * chartHeight;
+  const right = padding.left + chartWidth;
+  let markup = "";
 
-  const axisLayer = createLatencySvgElement("g", { class: "latency-axis-layer" });
-  axisLayer.appendChild(createLatencySvgElement("line", { x1: padding.left, y1: bottom, x2: padding.left + chartWidth, y2: bottom }));
-  axisLayer.appendChild(createLatencySvgElement("line", { x1: padding.left, y1: padding.top, x2: padding.left, y2: bottom }));
+  for (const percent of [0, 25, 50, 75, 100]) {
+    const y = yScale(percent).toFixed(1);
+    markup += `<line class="svc-grid-line" x1="${padding.left}" x2="${right}" y1="${y}" y2="${y}"/>`;
+    markup += `<text class="svc-axis-text" x="${padding.left - 8}" y="${Number(y) + 4}" text-anchor="end">${percent}%</text>`;
+  }
 
+  const bounds = LATENCY_TIER_BOUNDS.filter((bound) => bound > xDomain.min && bound < xDomain.max);
+  for (const bound of bounds) {
+    const x = xScale(bound).toFixed(1);
+    markup += `<line class="svc-guide-line" x1="${x}" x2="${x}" y1="${padding.top}" y2="${bottom}"/>`;
+  }
+  const edges = [xDomain.min, ...bounds, xDomain.max];
+  for (let index = 0; index < edges.length - 1; index += 1) {
+    const left = xScale(edges[index]);
+    const bandRight = xScale(edges[index + 1]);
+    if (bandRight - left < 32) continue;
+    const tier = getLatencyTierForMs(Math.sqrt(edges[index] * edges[index + 1]));
+    markup += `<text class="svc-axis-text" x="${((left + bandRight) / 2).toFixed(1)}" y="${padding.top - 7}" text-anchor="middle">${tier.slice(0, 4).toUpperCase()}</text>`;
+  }
+
+  let lastTickX = -Infinity;
   for (const tick of getLatencyLogTicks(xDomain)) {
     const x = xScale(tick);
-    axisLayer.appendChild(makeLatencyAxisTick(tick, x, bottom, x, bottom + 5, formatLatencyMs(tick)));
+    if (x - lastTickX < 28) continue;
+    lastTickX = x;
+    markup += `<text class="svc-axis-text" x="${x.toFixed(1)}" y="${bottom + 16}" text-anchor="middle">${formatLatencyTick(tick)}</text>`;
   }
-
-  for (const tick of [0, 50, 100]) {
-    const y = yScale(tick);
-    const group = createLatencySvgElement("g", { class: "latency-axis-tick latency-axis-y-tick" });
-    group.appendChild(createLatencySvgElement("line", { x1: padding.left - 5, y1: y, x2: padding.left + chartWidth, y2: y }));
-    const text = createLatencySvgElement("text", { x: padding.left - 10, y: y + 4, "text-anchor": "end" });
-    text.textContent = formatLatencyPercent(tick);
-    group.appendChild(text);
-    axisLayer.appendChild(group);
-  }
+  markup += `<text class="svc-axis-text" x="${(padding.left + chartWidth / 2).toFixed(1)}" y="${height - 6}" text-anchor="middle">AVERAGE MS, LOG SCALE</text>`;
 
   const medianAverage = getLatencyMedianAverage(allPlotItems);
   if (isFiniteLatencyNumber(medianAverage) && medianAverage >= xDomain.min && medianAverage <= xDomain.max) {
     const medianX = xScale(medianAverage);
-    const medianGroup = createLatencySvgElement("g", { class: "latency-median-line" });
-    medianGroup.appendChild(createLatencySvgElement("line", {
-      x1: medianX,
-      y1: padding.top,
-      x2: medianX,
-      y2: bottom,
-    }));
-    const medianLabel = createLatencySvgElement("text", {
-      x: medianX + 6,
-      y: padding.top + 13,
-      "text-anchor": "start",
-    });
-    medianLabel.textContent = `Median ${formatLatencyMs(medianAverage)}`;
-    medianGroup.appendChild(medianLabel);
-    axisLayer.appendChild(medianGroup);
+    const labelOnLeft = medianX > right - 120;
+    markup += `<g class="latency-median"><line class="svc-ref-line" x1="${medianX.toFixed(1)}" x2="${medianX.toFixed(1)}" y1="${padding.top}" y2="${bottom}"/>`;
+    markup += `<text class="svc-ref-label" x="${(medianX + (labelOnLeft ? -6 : 6)).toFixed(1)}" y="${padding.top + 14}" text-anchor="${labelOnLeft ? "end" : "start"}">MEDIAN ${escapeLatencyHtml(formatLatencyMs(medianAverage).toUpperCase())}</text></g>`;
   }
+  markup += `<line class="svc-cursor latency-cursor" x1="0" x2="0" y1="${padding.top}" y2="${bottom}" visibility="hidden"/>`;
 
-  const xLabel = createLatencySvgElement("text", {
-    x: padding.left + chartWidth / 2,
-    y: height - 12,
-    class: "latency-axis-label",
-    "text-anchor": "middle",
-  });
-  xLabel.textContent = "Average latency, log scale";
-  axisLayer.appendChild(xLabel);
-
-  const yLabel = createLatencySvgElement("text", {
-    x: yLabelX,
-    y: padding.top + chartHeight / 2,
-    class: "latency-axis-label latency-axis-y-label",
-    "text-anchor": "middle",
-    transform: `rotate(-90 ${yLabelX} ${padding.top + chartHeight / 2})`,
-  });
-  yLabel.textContent = "Same-frame probability";
-  axisLayer.appendChild(yLabel);
-  latencyRefs.scatter.appendChild(axisLayer);
-
-  const hitLayer = createLatencySvgElement("g", { class: "latency-hit-layer" });
-  const pointsLayer = createLatencySvgElement("g", { class: "latency-points-layer" });
-  for (const item of plotItems) {
+  const half = LATENCY_MARK_SIZE / 2;
+  const marks = plotItems.map((item) => {
     const pointX = xScale(item.averageMs);
     const pointY = yScale(item.sameFramePct);
-    const displayVariantId = item.displayVariantId || "";
-    const hitArea = createLatencySvgElement("circle", {
-      class: "latency-point-hitarea",
-      cx: pointX,
-      cy: pointY,
-      r: LATENCY_POINT_HIT_RADIUS,
-      "aria-hidden": "true",
-      "data-item-id": item.id,
-      "data-display-variant-id": displayVariantId,
-      "data-base-cx": pointX.toFixed(2),
-      "data-base-cy": pointY.toFixed(2),
-    });
-    const point = createLatencySvgElement("circle", {
-      class: `latency-point tier-${sanitizeLatencyClass(item.averageTier)}`,
-      cx: pointX,
-      cy: pointY,
-      r: LATENCY_POINT_BASE_RADIUS,
-      tabindex: "0",
-      role: "button",
-      "aria-label": `${item.name}, ${formatLatencyMs(item.averageMs)} average`,
-      "data-base-radius": LATENCY_POINT_BASE_RADIUS,
-      "data-item-id": item.id,
-      "data-display-variant-id": displayVariantId,
-      "data-base-cx": pointX.toFixed(2),
-      "data-base-cy": pointY.toFixed(2),
-    });
-    hitLayer.appendChild(hitArea);
-    pointsLayer.appendChild(point);
-  }
-  latencyRefs.scatter.appendChild(hitLayer);
-  latencyRefs.scatter.appendChild(pointsLayer);
+    const late = isLatencyLateTier(item.averageTier) ? " svc-mark-danger" : "";
+    return `<rect class="svc-mark latency-mark${late}" data-item-id="${escapeLatencyHtml(item.id)}"`
+      + ` data-base-cx="${pointX.toFixed(2)}" data-base-cy="${pointY.toFixed(2)}"`
+      + ` x="${(pointX - half).toFixed(2)}" y="${(pointY - half).toFixed(2)}" width="${LATENCY_MARK_SIZE}" height="${LATENCY_MARK_SIZE}"/>`;
+  });
+  markup += `<g class="latency-marks">${marks.join("")}</g>`;
+  svg.innerHTML = markup;
   syncLatencyScatterSelection();
+  resetLatencyReadout();
 }
 
 function getLatencyItemById(itemId) {
   return latencyState.filtered.find((item) => item.id === itemId) || latencyState.items.find((item) => item.id === itemId);
 }
 
-function isLatencySelectedItemId(itemId) {
-  return Boolean(latencyState.selectedItemId && itemId === latencyState.selectedItemId);
+function getLatencyScatterPoints() {
+  return latencyRefs.scatter ? Array.from(latencyRefs.scatter.querySelectorAll(".latency-mark")) : [];
 }
 
-function syncLatencyResultSelection(options = {}) {
-  if (!latencyRefs.grid) return null;
-  let selectedCard = null;
-  for (const card of latencyRefs.grid.querySelectorAll(".latency-card")) {
-    const selected = isLatencySelectedItemId(card.dataset.itemId);
-    card.classList.toggle("is-selected", selected);
-    if (selected) {
-      card.setAttribute("aria-current", "true");
-      selectedCard = card;
-      if (!card.classList.contains("is-expanded")) {
-        card.dataset.selectionExpanded = "true";
-        toggleLatencyCard(card, true);
-      }
-    } else {
-      card.removeAttribute("aria-current");
-      if (card.dataset.selectionExpanded) {
-        toggleLatencyCard(card, false);
-        delete card.dataset.selectionExpanded;
-      }
-    }
-  }
-  if (selectedCard && options.scroll && typeof selectedCard.scrollIntoView === "function") {
-    selectedCard.scrollIntoView({ block: "center", behavior: "smooth" });
-  }
-  return selectedCard;
-}
-
-function syncLatencyScatterSelection(event) {
-  if (!latencyRefs.scatter) return null;
+function syncLatencyScatterSelection() {
   let selectedPoint = null;
-  for (const point of latencyRefs.scatter.querySelectorAll(".latency-point")) {
-    const selected = isLatencySelectedItemId(point.dataset.itemId);
-    point.classList.toggle("is-selected", selected);
-    if (selected) {
-      selectedPoint = point;
-      point.classList.add("is-active", "is-selected");
-      point.classList.remove("is-lensed");
-      point.setAttribute("r", point.dataset.baseRadius || LATENCY_POINT_BASE_RADIUS);
-      if (point.parentNode) point.parentNode.appendChild(point);
-    } else if (!point.classList.contains("is-lensed")) {
-      point.classList.remove("is-active", "is-selected");
-      point.setAttribute("r", point.dataset.baseRadius || LATENCY_POINT_BASE_RADIUS);
-    }
+  for (const point of getLatencyScatterPoints()) {
+    const selected = Boolean(latencyState.selectedItemId) && point.dataset.itemId === latencyState.selectedItemId;
+    point.classList.toggle("svc-on", selected || point === latencyActiveScatterPoint);
+    if (selected) selectedPoint = point;
   }
-  if (selectedPoint && event) showLatencyTooltip(event, selectedPoint);
+  if (selectedPoint && selectedPoint.parentNode) selectedPoint.parentNode.appendChild(selectedPoint);
   return selectedPoint;
 }
 
-function selectLatencyScatterPoint(point, event) {
-  const item = getLatencyItemById(point.dataset.itemId);
+function describeLatencyItem(item) {
+  return [
+    item.name,
+    formatLatencyMs(item.averageMs),
+    `${formatLatencyPercent(item.sameFramePct)} same frame`,
+    item.averageTier || "",
+    getLatencyConnectionShort(item),
+  ].filter((part) => part && part !== "-").join(" · ");
+}
+
+function resetLatencyReadout() {
+  if (!latencyRefs.readout) return;
+  const selected = latencyState.selectedItemId ? getLatencyItemById(latencyState.selectedItemId) : null;
+  latencyRefs.readout.textContent = selected ? describeLatencyItem(selected) : "Point at a device";
+}
+
+function setLatencyCursor(x) {
+  const cursor = latencyRefs.scatter && latencyRefs.scatter.querySelector(".latency-cursor");
+  if (!cursor) return;
+  if (x === null) {
+    cursor.setAttribute("visibility", "hidden");
+    return;
+  }
+  cursor.setAttribute("x1", x.toFixed(2));
+  cursor.setAttribute("x2", x.toFixed(2));
+  cursor.setAttribute("visibility", "visible");
+}
+
+function selectLatencyScatterPoint(point) {
+  const item = point && getLatencyItemById(point.dataset.itemId);
   if (!item) return;
-  latencyState.selectedItemId = item.id;
-  latencyState.selectedDisplayVariantId = point.dataset.displayVariantId || item.displayVariantId || "";
-  renderLatencyItems(latencyState.filtered);
-  const selectedPoint = syncLatencyScatterSelection(event) || point;
-  syncLatencyResultSelection({ scroll: true });
-  showLatencyTooltip(event, selectedPoint);
-}
-
-function selectLatencyRecentItem(itemId, displayVariantId = "") {
-  const item = getLatencyItemById(itemId);
-  if (!item) return;
-  clearLatencyFilterControls();
-  applyLatencyFilters();
-  latencyState.selectedItemId = item.id;
-  latencyState.selectedDisplayVariantId = displayVariantId || item.displayVariantId || "";
-  renderLatencyItems(latencyState.filtered);
-  syncLatencyScatterSelection();
-  syncLatencyResultSelection({ scroll: true });
   resetLatencyScatterMagnification();
-  hideLatencyTooltip(true);
-}
-
-function clearLatencyScatterSelection() {
-  if (!latencyState.selectedItemId && !latencyState.selectedDisplayVariantId) return;
-  latencyState.selectedItemId = "";
-  latencyState.selectedDisplayVariantId = "";
-  latencyActiveScatterPoint = null;
-  renderLatencyItems(latencyState.filtered);
-  syncLatencyResultSelection();
-  resetLatencyScatterMagnification();
-  hideLatencyTooltip(true);
-}
-
-function setLatencyTooltipContent(item) {
-  if (!latencyRefs.tooltip) return;
-  latencyRefs.tooltip.innerHTML = "";
-  const title = document.createElement("strong");
-  title.textContent = item.name;
-  const details = document.createElement("span");
-  details.textContent = `${formatLatencyMs(item.averageMs)} average / ${formatLatencyPercent(item.sameFramePct)} same frame from average`;
-  const meta = document.createElement("span");
-  const metaParts = [
-    item.connectionTag || "",
-    getLatencyModeDisplay(item) || "",
-    formatLatencyAdapterInputs(item) !== "-" ? formatLatencyAdapterInputs(item) : "",
-    Number.isFinite(item.overallRank) ? `#${latencyNumberFormatter.format(item.overallRank)} Overall` : "",
-    item.connectionKind && item.connectionKind !== "Unknown" ? item.connectionKind : "",
-    item.hasRawCapture ? "Raw capture stats available" : "Modeled consistency details",
-  ].filter(Boolean);
-  meta.textContent = metaParts.join(" / ");
-  latencyRefs.tooltip.append(title, details, meta);
-}
-
-function positionLatencyTooltip(event) {
-  if (!latencyRefs.tooltip || !latencyRefs.scatter) return;
-  const wrap = latencyRefs.scatter.closest(".latency-plot-wrap");
-  if (!wrap) return;
-  const bounds = wrap.getBoundingClientRect();
-  latencyRefs.tooltip.hidden = false;
-  const left = clampLatencyValue(event.clientX - bounds.left + 14, 8, bounds.width - latencyRefs.tooltip.offsetWidth - 8);
-  const top = clampLatencyValue(event.clientY - bounds.top + 14, 8, bounds.height - latencyRefs.tooltip.offsetHeight - 8);
-  latencyRefs.tooltip.style.left = `${left}px`;
-  latencyRefs.tooltip.style.top = `${top}px`;
-}
-
-function showLatencyTooltip(event, point) {
-  const item = getLatencyItemById(point.dataset.itemId);
-  if (!item || !latencyRefs.tooltip) return;
-  setLatencyTooltipContent(item);
-  positionLatencyTooltip(event);
-}
-
-function hideLatencyTooltip(force = false) {
-  if (!latencyRefs.tooltip) return;
-  if (!force && latencyState.selectedItemId) return;
-  latencyRefs.tooltip.hidden = true;
+  openLatencyItem(item.id);
 }
 
 function getLatencySvgPointer(event) {
@@ -1522,27 +1262,13 @@ function getLatencySvgPointer(event) {
 }
 
 function getLatencyPointBasePosition(point) {
-  const x = Number(point.dataset.baseCx || point.getAttribute("cx"));
-  const y = Number(point.dataset.baseCy || point.getAttribute("cy"));
-  return { x, y };
+  return { x: Number(point.dataset.baseCx), y: Number(point.dataset.baseCy) };
 }
 
-function setLatencyPointDisplayPosition(point, x, y, hitAreas = null) {
-  point.setAttribute("cx", x.toFixed(2));
-  point.setAttribute("cy", y.toFixed(2));
-  const hitArea = hitAreas
-    ? hitAreas.get(point.dataset.itemId)
-    : latencyRefs.scatter && latencyRefs.scatter.querySelector(`.latency-point-hitarea[data-item-id="${CSS.escape(point.dataset.itemId || "")}"]`);
-  if (hitArea) {
-    hitArea.setAttribute("cx", x.toFixed(2));
-    hitArea.setAttribute("cy", y.toFixed(2));
-  }
-}
-
-function resetLatencyPointDisplayPosition(point, hitAreas = null) {
-  const base = getLatencyPointBasePosition(point);
-  if (!Number.isFinite(base.x) || !Number.isFinite(base.y)) return;
-  setLatencyPointDisplayPosition(point, base.x, base.y, hitAreas);
+function setLatencyPointDisplayPosition(point, x, y) {
+  const half = LATENCY_MARK_SIZE / 2;
+  point.setAttribute("x", (x - half).toFixed(2));
+  point.setAttribute("y", (y - half).toFixed(2));
 }
 
 function getLatencyPointDistance(point, cursor) {
@@ -1576,7 +1302,7 @@ function getLatencyLensPosition(point, cursor, bounds, peakLift = 0, isAnchor = 
   const strength = clampLatencyValue(1 - distance / LATENCY_POINT_LENS_RADIUS, 0, 1);
   const eased = strength * strength * (3 - 2 * strength);
   const scale = 1 + (LATENCY_POINT_LENS_SCALE - 1) * eased;
-  const angle = getLatencyStableAngle(`${point.dataset.itemId}|${point.dataset.displayVariantId}`);
+  const angle = getLatencyStableAngle(point.dataset.itemId);
   const xDistance = base.x - cursor.x;
   const side = Math.sign(xDistance) || (Math.cos(angle) >= 0 ? 1 : -1);
   let x = cursor.x + xDistance * scale
@@ -1596,43 +1322,40 @@ function getLatencyLensPosition(point, cursor, bounds, peakLift = 0, isAnchor = 
 
 function resetLatencyScatterMagnification() {
   latencyActiveScatterPoint = null;
-  if (!latencyRefs.scatter) return;
-  const hitAreas = new Map(Array.from(latencyRefs.scatter.querySelectorAll(".latency-point-hitarea")).map((hitArea) => [hitArea.dataset.itemId, hitArea]));
-  for (const point of latencyRefs.scatter.querySelectorAll(".latency-point")) {
-    resetLatencyPointDisplayPosition(point, hitAreas);
-    point.setAttribute("r", point.dataset.baseRadius || LATENCY_POINT_BASE_RADIUS);
-    if (isLatencySelectedItemId(point.dataset.itemId)) {
-      point.classList.add("is-active", "is-selected");
-      point.classList.remove("is-lensed");
-    } else {
-      point.classList.remove("is-lensed", "is-active", "is-selected");
-    }
+  for (const point of getLatencyScatterPoints()) {
+    const base = getLatencyPointBasePosition(point);
+    if (Number.isFinite(base.x) && Number.isFinite(base.y)) setLatencyPointDisplayPosition(point, base.x, base.y);
   }
-  hideLatencyTooltip();
+  syncLatencyScatterSelection();
+  setLatencyCursor(null);
+  resetLatencyReadout();
 }
 
-function activateLatencyScatterPoint(point, event) {
-  if (!point) return;
-  if (latencyActiveScatterPoint && latencyActiveScatterPoint !== point) {
-    latencyActiveScatterPoint.classList.remove("is-active");
-  }
+function activateLatencyScatterPoint(point) {
   latencyActiveScatterPoint = point;
-  point.classList.add("is-active");
+  syncLatencyScatterSelection();
+  point.classList.add("svc-on");
   if (point.parentNode) point.parentNode.appendChild(point);
-  showLatencyTooltip(event, point);
+  setLatencyCursor(getLatencyPointBasePosition(point).x);
+  const item = getLatencyItemById(point.dataset.itemId);
+  if (item && latencyRefs.readout) latencyRefs.readout.textContent = describeLatencyItem(item);
 }
 
 function updateLatencyScatterMagnification(event) {
-  if (!latencyRefs.scatter) return;
   const cursor = getLatencySvgPointer(event);
   if (!cursor) return;
-  const points = Array.from(latencyRefs.scatter.querySelectorAll(".latency-point"));
-  const hitAreas = new Map(Array.from(latencyRefs.scatter.querySelectorAll(".latency-point-hitarea")).map((hitArea) => [hitArea.dataset.itemId, hitArea]));
+  const points = getLatencyScatterPoints();
   const bounds = getLatencyPlotBounds();
   let maxLensStrength = 0;
   let minLensBaseY = Number.POSITIVE_INFINITY;
+  let nearest = null;
+  let nearestDistance = Number.POSITIVE_INFINITY;
   for (const point of points) {
     const distance = getLatencyPointDistance(point, cursor);
+    if (distance < nearestDistance) {
+      nearest = point;
+      nearestDistance = distance;
+    }
     if (!Number.isFinite(distance) || distance > LATENCY_POINT_LENS_RADIUS) continue;
     minLensBaseY = Math.min(minLensBaseY, getLatencyPointBasePosition(point).y);
     const strength = clampLatencyValue(1 - distance / LATENCY_POINT_LENS_RADIUS, 0, 1);
@@ -1640,64 +1363,25 @@ function updateLatencyScatterMagnification(event) {
   }
   const requestedPeakLift = maxLensStrength * LATENCY_POINT_LENS_VERTICAL_LIFT;
   const peakLift = Math.min(requestedPeakLift, Math.max(0, minLensBaseY - bounds.top));
-  let nearest = null;
-  let nearestDistance = Number.POSITIVE_INFINITY;
-
-  for (const point of points) {
-    const distance = getLatencyPointDistance(point, cursor);
-    if (distance < nearestDistance) {
-      nearest = point;
-      nearestDistance = distance;
-    }
-  }
   const anchorPoint = nearest && nearestDistance <= LATENCY_POINT_MAGNIFY_RANGE ? nearest : null;
 
   for (const point of points) {
     const lens = getLatencyLensPosition(point, cursor, bounds, peakLift, point === anchorPoint);
-    setLatencyPointDisplayPosition(point, lens.x, lens.y, hitAreas);
-    point.setAttribute("r", point.dataset.baseRadius || LATENCY_POINT_BASE_RADIUS);
-    if (isLatencySelectedItemId(point.dataset.itemId)) {
-      point.classList.add("is-active", "is-selected");
-      point.classList.toggle("is-lensed", lens.strength > 0.03);
-    } else {
-      point.classList.toggle("is-lensed", lens.strength > 0.03);
-      point.classList.remove("is-active", "is-selected");
-    }
+    setLatencyPointDisplayPosition(point, lens.x, lens.y);
   }
 
   if (!anchorPoint) {
     latencyActiveScatterPoint = null;
-    hideLatencyTooltip();
+    syncLatencyScatterSelection();
+    setLatencyCursor(null);
+    resetLatencyReadout();
     return;
   }
-
-  activateLatencyScatterPoint(anchorPoint, event);
-}
-
-function resetLatencyScatterMagnificationOutsideChart(event) {
-  if ((!latencyActiveScatterPoint && !latencyState.selectedItemId) || !latencyRefs.scatter) return;
-  if (!latencyRefs.scatter.contains(event.target)) resetLatencyScatterMagnification();
-}
-
-function getLatencyScatterClickPoint(event) {
-  if (!event.target || typeof event.target.closest !== "function") return latencyActiveScatterPoint;
-  const hitTarget = latencyActiveScatterPoint || event.target.closest(".latency-point") || event.target.closest(".latency-point-hitarea");
-  if (!hitTarget || !latencyRefs.scatter) return null;
-  const itemId = hitTarget.dataset.itemId;
-  if (!itemId) return null;
-  return latencyRefs.scatter.querySelector(`.latency-point[data-item-id="${CSS.escape(itemId)}"]`) || hitTarget;
-}
-
-function syncLatencyViewToggle() {
-  Array.from(latencyRefs.viewOptions || []).forEach((button) => {
-    const isActive = button.dataset.latencyViewMode === latencyState.viewMode;
-    button.classList.toggle("is-active", isActive);
-    button.setAttribute("aria-pressed", String(isActive));
-  });
+  activateLatencyScatterPoint(anchorPoint);
 }
 
 function scheduleLatencyScatterResize() {
-  if (!latencyState.filtered.length || latencyScatterResizeFrame) return;
+  if (latencyState.page !== "latencyPageMap" || latencyScatterResizeFrame) return;
   latencyScatterResizeFrame = requestAnimationFrame(() => {
     latencyScatterResizeFrame = 0;
     renderLatencyScatter(latencyState.filtered);
@@ -1833,47 +1517,16 @@ function resolveLatencyDisplayItem(item, filters) {
 }
 
 function syncLatencySortDirectionToggle() {
-  latencyRefs.sortDirectionToggle.textContent = latencyState.sortDescending ? "Descending" : "Ascending";
-  latencyRefs.sortDirectionToggle.setAttribute("aria-pressed", String(latencyState.sortDescending));
+  latencyRefs.sortDirectionToggle.innerHTML = latencyState.sortDescending ? "Desc &#9662;" : "Asc &#9652;";
   latencyRefs.sortDirectionToggle.title = latencyState.sortDescending
     ? "Switch to ascending sort"
     : "Switch to descending sort";
 }
 
-function updateLatencyMeta(items) {
-}
-
-function renderLatencyHeroStats(summary) {
-  latencyRefs.heroStats.innerHTML = "";
-  const generatedAt = latencyState.generatedAt ? latencyDateFormatter.format(new Date(latencyState.generatedAt)) : "Unknown";
-  const stats = [
-    { label: "Results", value: latencyNumberFormatter.format(summary.totalItems || 0), filter: "" },
-    { label: "Best Average", value: formatLatencyMs(summary.bestAverageMs), filter: "" },
-    { label: "Updated", value: generatedAt, filter: "" },
-  ];
-
-  for (const stat of stats) {
-    const button = document.createElement("button");
-    button.className = "hero-stat latency-hero-stat";
-    button.type = "button";
-    if (stat.filter) button.dataset.heroFilter = stat.filter;
-    const value = document.createElement("strong");
-    value.textContent = stat.value;
-    const label = document.createElement("span");
-    label.textContent = stat.label;
-    button.append(value, label);
-    latencyRefs.heroStats.appendChild(button);
-  }
-}
-
 function applyLatencyFilters() {
   syncLatencyAdapterInputAvailability();
   syncLatencyControllerAttributeAvailability();
-  if (latencyState.selectedItemId) {
-    latencyState.selectedItemId = "";
-    latencyState.selectedDisplayVariantId = "";
-    hideLatencyTooltip(true);
-  }
+  syncLatencyMoreFiltersCount();
   const query = latencyRefs.searchInput.value.trim().toLowerCase();
   const filters = {
     query,
@@ -1891,25 +1544,9 @@ function applyLatencyFilters() {
     .map((item) => resolveLatencyDisplayItem(item, filters))
     .filter(Boolean);
   latencyState.filtered = sortLatencyItems(filtered);
-  updateLatencyMeta(latencyState.filtered);
   renderLatencyItems(latencyState.filtered);
+  renderLatencyTierCounts(latencyState.filtered);
   renderLatencyScatter(latencyState.filtered);
-}
-
-function applyLatencyQuickFilter(filter, value) {
-  if (filter === "tier") {
-    latencyRefs.tierSelect.value = value;
-    applyLatencyFilters();
-  } else if (filter === "saleStatus") {
-    latencyRefs.saleStatusSelect.value = value;
-    applyLatencyFilters();
-  } else if (filter === "sourceStatus") {
-    latencyRefs.sourceStatusSelect.value = value;
-    applyLatencyFilters();
-  } else if (filter === "search") {
-    latencyRefs.searchInput.value = value;
-    applyLatencyFilters();
-  }
 }
 
 async function loadLatencyData() {
@@ -1925,138 +1562,108 @@ async function loadLatencyData() {
 
     assignLatencyDisplayRanks(latencyState.items);
     populateLatencyControls(latencyState.items);
-    renderLatencyHeroStats(latencyState.summary);
+    renderLatencyIdent(latencyState.summary);
     renderLatencyRecentItems(getMostRecentLatencyItems(latencyState.items));
+    renderLatencyBestByCategory(latencyState.items);
+    // The fastest device opens on arrival so the leader lines show what a row holds.
+    const fastest = latencyState.items.find((item) => item.overallRank === 1);
+    latencyState.selectedItemId = fastest ? fastest.id : "";
     hideLatencyStatus();
     applyLatencyFilters();
   } catch (error) {
-    showLatencyStatus(`Could not load latency data: ${error.message}`);
+    latencyRefs.identCount.textContent = "No data";
+    showLatencyStatus(`Could not load latency data: ${error.message}`, true);
   }
 }
 
+function isLatencyTextEntry(element) {
+  return Boolean(element && element.closest && element.closest("input, select, textarea, [contenteditable]"));
+}
+
+for (const select of [
+  latencyRefs.connectionSelect,
+  latencyRefs.modeSelect,
+  latencyRefs.adapterInputSelect,
+  latencyRefs.faceButtonsSelect,
+  latencyRefs.homeButtonSelect,
+  latencyRefs.categorySelect,
+  latencyRefs.saleStatusSelect,
+  latencyRefs.sourceStatusSelect,
+  latencyRefs.tierSelect,
+  latencyRefs.sortSelect,
+]) {
+  select.addEventListener("change", applyLatencyFilters);
+}
 latencyRefs.searchInput.addEventListener("input", applyLatencyFilters);
-latencyRefs.connectionSelect.addEventListener("change", applyLatencyFilters);
-latencyRefs.modeSelect.addEventListener("change", applyLatencyFilters);
-latencyRefs.adapterInputSelect.addEventListener("change", applyLatencyFilters);
-latencyRefs.faceButtonsSelect.addEventListener("change", applyLatencyFilters);
-latencyRefs.homeButtonSelect.addEventListener("change", applyLatencyFilters);
-latencyRefs.categorySelect.addEventListener("change", () => {
-  syncLatencyAdapterInputAvailability();
-  syncLatencyControllerAttributeAvailability();
-  applyLatencyFilters();
-});
-latencyRefs.saleStatusSelect.addEventListener("change", applyLatencyFilters);
-latencyRefs.sourceStatusSelect.addEventListener("change", applyLatencyFilters);
-latencyRefs.tierSelect.addEventListener("change", applyLatencyFilters);
-latencyRefs.sortSelect.addEventListener("change", applyLatencyFilters);
 latencyRefs.sortDirectionToggle.addEventListener("click", () => {
   latencyState.sortDescending = !latencyState.sortDescending;
   syncLatencySortDirectionToggle();
   applyLatencyFilters();
 });
-Array.from(latencyRefs.viewOptions || []).forEach((button) => {
-  button.addEventListener("click", () => {
-    const nextMode = button.dataset.latencyViewMode || "list";
-    if (latencyState.viewMode === nextMode) return;
-    latencyState.viewMode = nextMode;
-    syncLatencyViewToggle();
-    renderLatencyItems(latencyState.filtered);
-  });
+
+latencyRefs.menu.addEventListener("click", (event) => {
+  const tab = event.target.closest('[role="tab"]');
+  if (tab) showLatencyPage(tab.dataset.page);
 });
-if (latencyRefs.recentList) {
-  latencyRefs.recentList.addEventListener("click", (event) => {
-    const target = event.target.closest("[data-recent-item-id]");
-    if (!target || !latencyRefs.recentList.contains(target)) return;
-    event.stopPropagation();
-    selectLatencyRecentItem(target.dataset.recentItemId, target.dataset.recentDisplayVariantId || "");
-  });
-}
-if (latencyRefs.xZoomSlider) {
-  latencyRefs.xZoomSlider.addEventListener("input", () => {
-    setLatencyXZoomLevel(Number.parseFloat(latencyRefs.xZoomSlider.value) || 0);
-  });
-}
-if (latencyRefs.xPanScrollbar) {
-  latencyRefs.xPanScrollbar.addEventListener("scroll", () => {
-    if (latencyPanScrollbarSyncing || latencyState.xZoomLevel <= 0) return;
-    const maxScroll = Math.max(latencyRefs.xPanScrollbar.scrollWidth - latencyRefs.xPanScrollbar.clientWidth, 0);
-    if (maxScroll <= 0) return;
-    setLatencyXPanRatio(latencyRefs.xPanScrollbar.scrollLeft / maxScroll);
-  });
-}
-latencyRefs.grid.addEventListener("click", (event) => {
-  const target = event.target.closest("[data-filter]");
-  if (target) {
-    applyLatencyQuickFilter(target.dataset.filter, target.dataset.value || target.textContent);
-    return;
-  }
-  if (event.target.closest("a, button, input, select, textarea")) return;
-  const card = event.target.closest(".latency-card.is-expandable");
-  if (!card || !latencyRefs.grid.contains(card)) return;
-  toggleLatencyCard(card);
-});
-latencyRefs.grid.addEventListener("keydown", (event) => {
-  if (event.key !== "Enter" && event.key !== " ") return;
-  if (event.target.closest("a, button, input, select, textarea")) return;
-  const card = event.target.closest(".latency-card.is-expandable");
-  if (!card || !latencyRefs.grid.contains(card)) return;
+latencyRefs.menu.addEventListener("keydown", (event) => {
+  const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[event.key];
+  if (!step) return;
+  const tabs = getLatencyMenuTabs();
+  const index = tabs.indexOf(document.activeElement);
+  if (index < 0) return;
   event.preventDefault();
-  toggleLatencyCard(card);
+  const next = tabs[(index + step + tabs.length) % tabs.length];
+  next.focus();
+  showLatencyPage(next.dataset.page);
 });
-if (latencyRefs.scatter) {
-  window.addEventListener("resize", scheduleLatencyScatterResize);
-  document.addEventListener("pointermove", resetLatencyScatterMagnificationOutsideChart);
-  latencyRefs.scatter.addEventListener("wheel", handleLatencyScatterWheel, { passive: false });
-  latencyRefs.scatter.addEventListener("pointermove", updateLatencyScatterMagnification);
-  latencyRefs.scatter.addEventListener("pointerleave", resetLatencyScatterMagnification);
-  latencyRefs.scatter.addEventListener("mouseleave", resetLatencyScatterMagnification);
-  latencyRefs.scatter.addEventListener("pointercancel", resetLatencyScatterMagnification);
-  latencyRefs.scatter.addEventListener("focusin", (event) => {
-    const point = event.target.closest(".latency-point");
-    if (!point) return;
-    resetLatencyScatterMagnification();
-    point.setAttribute("r", point.dataset.baseRadius || LATENCY_POINT_BASE_RADIUS);
-    point.classList.add("is-active");
-    if (point.parentNode) point.parentNode.appendChild(point);
-  });
-  latencyRefs.scatter.addEventListener("focusout", (event) => {
-    if (event.target.closest(".latency-point")) resetLatencyScatterMagnification();
-  });
-  latencyRefs.scatter.addEventListener("click", (event) => {
-    const point = getLatencyScatterClickPoint(event);
-    event.stopPropagation();
-    if (point) {
-      selectLatencyScatterPoint(point, event);
-      return;
-    }
-    clearLatencyScatterSelection();
-  });
-  latencyRefs.scatter.addEventListener("keydown", (event) => {
-    if (event.key !== "Enter" && event.key !== " ") return;
-    const point = event.target.closest(".latency-point");
-    if (!point) return;
-    event.preventDefault();
-    selectLatencyScatterPoint(point, event);
-  });
-}
-document.addEventListener("click", (event) => {
-  if (!latencyState.selectedItemId) return;
-  const target = event.target;
-  if (target && typeof target.closest === "function") {
-    if (target.closest(".latency-point, .latency-point-hitarea, .latency-card.is-selected, .latency-tooltip")) return;
-  }
-  clearLatencyScatterSelection();
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "/" || event.ctrlKey || event.metaKey || event.altKey || isLatencyTextEntry(document.activeElement)) return;
+  event.preventDefault();
+  showLatencyPage("latencyPageRanking");
+  latencyRefs.searchInput.focus();
 });
-latencyRefs.heroStats.addEventListener("click", (event) => {
-  const target = event.target.closest("[data-hero-filter]");
-  if (!target) return;
-  latencyRefs.searchInput.value = target.dataset.heroFilter || "";
-  applyLatencyFilters();
+
+latencyRefs.rows.addEventListener("click", (event) => {
+  if (event.target.closest("a, button, input, select, textarea")) return;
+  const row = event.target.closest("tr.js-row");
+  if (row) toggleLatencyRow(row.dataset.itemId);
+});
+latencyRefs.rows.addEventListener("keydown", (event) => {
+  if ((event.key !== "Enter" && event.key !== " ") || !event.target.matches("tr.js-row")) return;
+  event.preventDefault();
+  toggleLatencyRow(event.target.dataset.itemId);
+});
+latencyRefs.recentRows.addEventListener("click", (event) => {
+  const row = event.target.closest("[data-recent-item-id]");
+  if (row) selectLatencyRecentItem(row.dataset.recentItemId);
+});
+latencyRefs.recentRows.addEventListener("keydown", (event) => {
+  if ((event.key !== "Enter" && event.key !== " ") || !event.target.matches("[data-recent-item-id]")) return;
+  event.preventDefault();
+  selectLatencyRecentItem(event.target.dataset.recentItemId);
+});
+
+latencyRefs.xZoomSlider.addEventListener("input", () => {
+  setLatencyXZoomLevel(Number.parseFloat(latencyRefs.xZoomSlider.value) || 0);
+});
+latencyRefs.xPanScrollbar.addEventListener("scroll", () => {
+  if (latencyPanScrollbarSyncing || latencyState.xZoomLevel <= 0) return;
+  const maxScroll = Math.max(latencyRefs.xPanScrollbar.scrollWidth - latencyRefs.xPanScrollbar.clientWidth, 0);
+  if (maxScroll <= 0) return;
+  setLatencyXPanRatio(latencyRefs.xPanScrollbar.scrollLeft / maxScroll);
+});
+window.addEventListener("resize", scheduleLatencyScatterResize);
+latencyRefs.scatter.addEventListener("wheel", handleLatencyScatterWheel, { passive: false });
+latencyRefs.scatter.addEventListener("pointermove", updateLatencyScatterMagnification);
+// A tap sends no pointermove first, so pick the nearest mark on pointerdown too.
+latencyRefs.scatter.addEventListener("pointerdown", updateLatencyScatterMagnification);
+latencyRefs.scatter.addEventListener("pointerleave", resetLatencyScatterMagnification);
+latencyRefs.scatter.addEventListener("pointercancel", resetLatencyScatterMagnification);
+latencyRefs.scatter.addEventListener("click", () => {
+  if (latencyActiveScatterPoint) selectLatencyScatterPoint(latencyActiveScatterPoint);
 });
 
 syncLatencySortDirectionToggle();
-syncLatencyViewToggle();
 syncLatencyXZoomControl(0);
-initLatencyPlotDisclosure();
 showLatencyStatus("Loading latency data...");
 loadLatencyData();

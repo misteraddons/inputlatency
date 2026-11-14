@@ -50,17 +50,17 @@ page.on("console", (message) => {
 console.log(`Verifying ${url}`);
 try {
   await page.goto(url, { waitUntil: "networkidle", timeout: 90000 });
-  await page.locator(".latency-card").first().waitFor({ timeout: 30000 });
+  await page.locator("#latencyRows tr.js-row").first().waitFor({ timeout: 30000 });
   await page.waitForTimeout(1500);
 } catch (error) {
-  failures.push(`the page never rendered a result card: ${String(error.message).split("\n")[0]}`);
+  failures.push(`the page never rendered a result row: ${String(error.message).split("\n")[0]}`);
 }
 
 const state = await page.evaluate(() => {
-  const grid = document.getElementById("latencyGrid");
+  const rows = document.getElementById("latencyRows");
   const banner = document.getElementById("latencyStatusBanner");
   return {
-    cards: grid ? grid.querySelectorAll(".latency-card").length : 0,
+    rows: rows ? rows.querySelectorAll("tr.js-row").length : 0,
     bannerHeight: banner ? Math.round(banner.getBoundingClientRect().height) : 0,
     bannerText: banner ? banner.textContent.trim() : "",
     generatedAt: globalThis.MISTER_LATENCY_DATA?.generatedAt ?? null,
@@ -68,14 +68,14 @@ const state = await page.evaluate(() => {
   };
 });
 
-note(`cards rendered: ${state.cards}`);
+note(`rows rendered: ${state.rows}`);
 note(`payload items: ${state.itemCount}`);
 note(`payload built: ${state.generatedAt}`);
 
-if (!state.cards) failures.push("no result cards rendered");
+if (!state.rows) failures.push("no result rows rendered");
 if (state.bannerHeight > 0) failures.push(`the status banner is visible: "${state.bannerText}"`);
-if (state.itemCount && state.cards && state.cards !== state.itemCount) {
-  failures.push(`rendered ${state.cards} cards for ${state.itemCount} payload items`);
+if (state.itemCount && state.rows && state.rows !== state.itemCount) {
+  failures.push(`rendered ${state.rows} rows for ${state.itemCount} payload items`);
 }
 
 if (!skipFreshness) {
